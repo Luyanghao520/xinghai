@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星海艺术团 · 内容管理</title>
+<style>
+  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:40px;}
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+  header .logo{font-weight:800;color:var(--navy);letter-spacing:1px;font-size:16px;}
+  header .logo span{color:var(--gold);}
+  header .key{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);}
+  header .key input{padding:8px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;width:150px;outline:none;}
+  header .key input:focus{border-color:var(--blue);}
+  .save-btn{margin-left:auto;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:11px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;}
+  .save-btn:disabled{opacity:.6;}
+  .status{font-size:12.5px;width:100%;min-height:16px;}
+  .status.ok{color:#2E9E5B;} .status.err{color:#E0564B;}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:20px;box-shadow:0 8px 30px rgba(15,42,82,.05);}
+  .card h2{font-size:17px;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .card h2::before{content:"";width:5px;height:18px;background:linear-gradient(var(--blue),var(--gold));border-radius:3px;}
+  .card .hint{font-size:12px;color:var(--sub);margin-bottom:16px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .field textarea,.field input[type=text]{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#FBFCFE;outline:none;resize:vertical;}
+  .field textarea:focus,.field input:focus{border-color:var(--blue);background:#fff;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .up-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .up-card{background:#FBFCFE;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
+  .up-card .up-name{font-size:14px;font-weight:700;color:var(--navy);}
+  .up-btn{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;border-radius:9px;padding:8px 14px;font-size:12.5px;cursor:pointer;user-select:none;}
+  .up-prev{min-height:96px;display:flex;align-items:center;justify-content:center;}
+  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1px solid var(--line);}
+  .up-del{background:none;border:1px solid #f0c9c4;color:#c0392b;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;}
+  .consult-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
+  .consult-box .up-prev{min-height:160px;min-width:160px;}
+  footer{text-align:center;font-size:12px;color:var(--sub);margin-top:30px;}
+  @media(max-width:640px){.grid2,.up-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">星海<span>·</span>内容管理</div>
+  <div class="key">管理密码 <input id="keyInput" type="text" value="xinghai2026"></div>
+  <button class="save-btn" id="saveBtn" onclick="save()">💾 保存全部修改</button>
+  <div class="status" id="status"></div>
+</header>
+
+<div class="wrap">
+  <!-- 基础文案 -->
+  <div class="card">
+    <h2>基础文案</h2>
+    <div class="hint">修改后点右上角「保存全部修改」生效。留空 = 沿用招新网页当前默认文案。</div>
+    <div class="field">
+      <label>Hero 欢迎语（封面大字下方那段话，可用 &lt;br&gt; 换行、&lt;b&gt;加粗）</label>
+      <textarea id="hero_welcome" rows="4"></textarea>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>加入理由 · 第1条</label><textarea id="b0" rows="2"></textarea></div>
+      <div class="field"><label>加入理由 · 第2条</label><textarea id="b1" rows="2"></textarea></div>
+      <div class="field"><label>加入理由 · 第3条</label><textarea id="b2" rows="2"></textarea></div>
+      <div class="field"><label>加入理由 · 第4条</label><textarea id="b3" rows="2"></textarea></div>
+      <div class="field"><label>指导老师 · 魏启旦 简介</label><textarea id="t_wei" rows="3"></textarea></div>
+      <div class="field"><label>指导老师 · 戴旭彤 简介</label><textarea id="t_dai" rows="2"></textarea></div>
+    </div>
+    <div class="field">
+      <label>页脚文案（可用 &lt;br&gt; 换行）</label>
+      <textarea id="footer" rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- 咨询群二维码 -->
+  <div class="card">
+    <h2>招新咨询群二维码</h2>
+    <div class="hint">放在网页最下方「扫码加入招新咨询群」位置。</div>
+    <div class="consult-box">
+      <div class="up-prev" id="consultPrev"></div>
+      <div>
+        <input type="file" id="consultInp" accept="image/*" style="display:none">
+        <button class="up-btn" onclick="document.getElementById('consultInp').click()">上传咨询群二维码</button>
+        <div style="margin-top:10px;"><button class="up-del" onclick="delConsult()">移除</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 团队招新群二维码 -->
+  <div class="card">
+    <h2>各团队 / 部门 招新群二维码</h2>
+    <div class="hint">报名某团队成功后，会自动弹出对应团队的群码（未设置则提示留意咨询群）。</div>
+    <div class="up-grid" id="teamQrGrid"></div>
+  </div>
+
+  <!-- 团队简介 -->
+  <div class="card">
+    <h2>各团队 / 部门 简介文案</h2>
+    <div class="hint">对应招新网页上每个卡片下方那句介绍。</div>
+    <div class="grid2" id="descGrid"></div>
+  </div>
+
+  <footer>修改保存到内容库后，刷新招新网页即可看到效果。</footer>
+</div>
+
+<script>
+  const TEAMS=[
+    ['办公室','艺术团运转的「中枢」：统筹排期、会议记录、文书归档与内外联络。适合细心靠谱、喜欢把事情理顺的你。'],
+    ['资产管理部','器材服装、道具与舞台设备的登记、维护与调度，是每场演出背后的「后勤总管」。'],
+    ['外联部','对外接洽赞助、联动兄弟社团与校外资源。能说会道、想锻炼谈判与商务沟通？这里最合适。'],
+    ['企宣部','公众号推文、海报视频、活动现场拍摄与品牌包装。审美在线、会点设计或剪辑的同学别错过。'],
+    ['合唱团','天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径，把热爱唱成奖杯。'],
+    ['交响乐团','管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。'],
+    ['民乐团','国风雅韵，丝竹声声。民族乐器爱好者的主场，传统与现代编曲兼修，奏出东方气韵。'],
+    ['舞蹈团','翩若惊鸿，力与美并存。街舞、民族、现代多舞种并行，舞台表现力直接拉满。'],
+    ['话剧团','声台形表，戏梦人生。剧本、表演、舞美全能成长，年度大戏由你撑起台前幕后。'],
+    ['主持团','妙语连珠，控场担当。校级晚会、赛事主持系统训练，让你在镜头前从容不慌。'],
+    ['礼仪队','端庄优雅，形象先锋。大型活动接待、颁奖礼仪，气质与仪态双修，是门面的存在。']
+  ];
+  const DEFAULTS={
+    hero_welcome:'学校的舞台上，处处有我们的身影——迎新晚会、十佳歌手、毕业季草坪音乐会……<br>校园里大大小小的活动，很大程度上都由<b>星海艺术团</b>统筹。<br><br>2026级的你，要不要成为这束光的一部分？<b>我们，招新啦。</b>',
+    b0:'校迎新晚会、十佳歌手大赛、毕业季音乐会……核心活动由我们统筹，聚光灯为你而亮。',
+    b1:'来自各学院、却同样热爱艺术的伙伴，会变成并肩作战、也一起玩闹的挚友。',
+    b2:'策划、统筹、表达、审美——在一次次实战里，把「想做」变成「能做」。',
+    b3:'近五年 40+ 奖项、连续三届全国大学生艺术展演一等奖，这里有拿奖的土壤。',
+    t_wei:'华东师范大学音乐学硕士，中国声乐学会理事、上海市美学学会理事、上海音乐家协会会员。近五年带队斩获国家级、市级奖项 40 余项，连续三届全国大学生艺术展演一等奖。承担《戏剧鉴赏》《流行音乐文化》等课程。',
+    t_dai:'协助魏老师处理艺术团日常事务，陪伴大家一起成长、一起登台。',
+    footer:'上海立信会计金融学院 · 星海艺术团主席团<br>2026 年新生招新 · 期待与你相遇 ♪'
+  };
+  const state={hero_welcome:'',b0:'',b1:'',b2:'',b3:'',t_wei:'',t_dai:'',footer:'',consult_qr:'',team_qr:{},dept_desc:{}};
+  const KEY=document.getElementById('keyInput');
+  const teamWrap=document.getElementById('teamQrGrid');
+  const descWrap=document.getElementById('descGrid');
+  const consultPrev=document.getElementById('consultPrev');
+
+  function status(t,cls){const s=document.getElementById('status');s.textContent=t;s.className='status'+(cls?' '+cls:'');}
+  function preview(url,box){box.innerHTML=url?'<img src="'+url+'" alt="preview">':'<span style="color:#9aa3b0;font-size:12px">未设置</span>';}
+  function setVal(id,v){const el=document.getElementById(id);if(el)el.value=v;}
+  async function uploadFile(file){
+    const fd=new FormData();fd.append('file',file);
+    const r=await fetch('/api/upload?key='+encodeURIComponent(KEY.value),{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok||!d.ok)throw new Error(d.error||'上传失败');
+    return d.url;
+  }
+
+  // 构建 11 个团队卡片
+  TEAMS.forEach(([name,def])=>{
+    const card=document.createElement('div');card.className='up-card';
+    card.innerHTML='<div class="up-name">'+name+'</div>'+
+      '<input type="file" accept="image/*" class="f" style="display:none">'+
+      '<div class="up-btn">上传群码</div>'+
+      '<div class="up-prev"></div>'+
+      '<button class="up-del">移除</button>';
+    teamWrap.appendChild(card);
+    const inp=card.querySelector('.f'),prev=card.querySelector('.up-prev'),btn=card.querySelector('.up-btn'),del=card.querySelector('.up-del');
+    btn.addEventListener('click',()=>inp.click());
+    inp.addEventListener('change',async()=>{
+      if(!inp.files[0])return;inp.disabled=true;
+      try{const url=await uploadFile(inp.files[0]);state.team_qr[name]=url;preview(url,prev);}
+      catch(e){alert('上传失败：'+e.message);}finally{inp.disabled=false;inp.value='';}
+    });
+    del.addEventListener('click',()=>{delete state.team_qr[name];preview('',prev);});
+
+    const d=document.createElement('div');d.className='field';
+    d.innerHTML='<label>'+name+'</label><textarea class="desc" rows="2"></textarea>';
+    descWrap.appendChild(d);d._name=name;
+  });
+
+  // 咨询群码
+  const consultInp=document.getElementById('consultInp');
+  consultInp.addEventListener('change',async()=>{
+    if(!consultInp.files[0])return;consultInp.disabled=true;
+    try{const url=await uploadFile(consultInp.files[0]);state.consult_qr=url;preview(url,consultPrev);}
+    catch(e){alert('上传失败：'+e.message);}finally{consultInp.disabled=false;consultInp.value='';}
+  });
+  function delConsult(){state.consult_qr='';preview('',consultPrev);}
+
+  // 载入已有内容
+  fetch('/api/content').then(r=>r.json()).then(C=>{
+    setVal('hero_welcome',C.hero_welcome||DEFAULTS.hero_welcome);
+    ['b0','b1','b2','b3','t_wei','t_dai','footer'].forEach(k=>setVal(k,C[k]||DEFAULTS[k]));
+    state.consult_qr=C.consult_qr||'';preview(state.consult_qr,consultPrev);
+    state.team_qr=C.team_qr||{};
+    teamWrap.querySelectorAll('.up-card').forEach((card,i)=>{preview(state.team_qr[TEAMS[i][0]]||'',card.querySelector('.up-prev'));});
+    state.dept_desc=C.dept_desc||{};
+    descWrap.querySelectorAll('.field').forEach(f=>{
+      const name=f._name;
+      f.querySelector('.desc').value=(state.dept_desc[name]!=null)?state.dept_desc[name]:TEAMS.find(t=>t[0]===name)[1];
+    });
+  }).catch(()=>{});
+
+  async function save(){
+    const payload={
+      hero_welcome:document.getElementById('hero_welcome').value,
+      b0:document.getElementById('b0').value,b1:document.getElementById('b1').value,
+      b2:document.getElementById('b2').value,b3:document.getElementById('b3').value,
+      t_wei:document.getElementById('t_wei').value,t_dai:document.getElementById('t_dai').value,
+      footer:document.getElementById('footer').value,
+      consult_qr:state.consult_qr,team_qr:state.team_qr,dept_desc:{}
+    };
+    descWrap.querySelectorAll('.field').forEach(f=>{payload.dept_desc[f._name]=f.querySelector('.desc').value;});
+    const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
+    try{
+      const r=await fetch('/api/content?key='+encodeURIComponent(KEY.value),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const d=await r.json();
+      if(r.ok&&d.ok)status('✅ 已保存，刷新招新网页即可生效','ok');
+      else status('❌ '+(d.error||'保存失败（密码错误？）'),'err');
+    }catch(e){status('❌ 网络异常','err');}
+    btn.disabled=false;btn.textContent='💾 保存全部修改';
+  }
+</script>
+</body>
+</html>

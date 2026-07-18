@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星海艺术团 · 上海立信会计金融学院</title>
+<meta name="description" content="上海立信会计金融学院星海艺术团官方网站——关于星海、组织架构、团队风采、活动荣誉与新生招新。">
+<style>
+  :root{
+    --navy:#0F2A52; --blue:#2B579A; --gold:#D4A24E; --gold-2:#E9C07A;
+    --ink:#1A2233; --sub:#6B7280; --bg:#F5F7FB; --line:#E7ECF3; --card:#fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  #nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;transition:.35s;transform:translateY(-100%);opacity:0;}
+  #nav.solid{transform:translateY(0);opacity:1;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);
+    box-shadow:0 2px 20px rgba(15,42,82,.08);}
+  #nav .brand{font-weight:800;font-size:17px;color:var(--navy);letter-spacing:1px;display:flex;align-items:center;gap:7px;}
+  #nav .brand span{color:var(--gold);}
+  .nav-logo{height:30px;width:30px;border-radius:50%;object-fit:contain;}
+  #nav .links{display:flex;gap:22px;font-size:13.5px;}
+  #nav .links a{color:var(--sub);text-decoration:none;font-weight:600;transition:.2s;}
+  #nav .links a:hover{color:var(--navy);}
+  #nav .nav-cta{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;
+    padding:9px 20px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;
+    box-shadow:0 4px 14px rgba(43,87,154,.35);}
+  #nav   .nav-ai{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#3a2a08;border:none;
+    padding:9px 18px;border-radius:30px;font-size:13px;font-weight:800;cursor:pointer;margin-right:10px;
+    box-shadow:0 4px 14px rgba(212,162,78,.4);animation:botPulse 2.4s infinite;}
+  .nav-login{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.4);
+    padding:8px 16px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;margin-right:10px;transition:.2s;}
+  .nav-login:hover{background:rgba(255,255,255,.28);}
+  /* 登录弹窗 */
+  #loginMask{position:fixed;inset:0;background:rgba(15,42,82,.5);z-index:90;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+  #loginMask.open{display:flex;animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1;}}
+  .login-card{background:#fff;border-radius:20px;width:360px;max-width:100%;padding:30px 26px;box-shadow:0 30px 80px rgba(8,22,46,.4);position:relative;}
+  .login-card .lc-brand{text-align:center;font-weight:800;font-size:20px;color:var(--navy);letter-spacing:1px;}
+  .login-card .lc-brand span{color:var(--gold);}
+  .login-card .lc-sub{text-align:center;font-size:12.5px;color:var(--sub);margin:6px 0 20px;}
+  .login-card label{display:block;font-size:13px;color:var(--navy);font-weight:700;margin:14px 0 6px;}
+  .login-card input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:14px;outline:none;background:#FBFCFE;font-family:inherit;}
+  .login-card input:focus{border-color:var(--blue);background:#fff;}
+  .login-card .lc-btn{width:100%;margin-top:20px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+    padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+  .login-card .lc-btn:disabled{opacity:.6;}
+  .login-card .lc-err{color:#E0564B;font-size:12.5px;text-align:center;margin-top:12px;min-height:16px;}
+  .login-card .lc-close{position:absolute;top:14px;right:18px;font-size:22px;color:#9aa3b0;cursor:pointer;line-height:1;}
+  .login-card .lc-foot{text-align:center;margin-top:14px;font-size:12.5px;color:var(--sub);}
+  .login-card .lc-foot a{color:var(--blue);text-decoration:none;font-weight:600;}
+  @keyframes botPulse{0%{box-shadow:0 0 0 0 rgba(212,162,78,.5);}70%{box-shadow:0 0 0 14px rgba(212,162,78,0);}100%{box-shadow:0 0 0 0 rgba(212,162,78,0);}}
+  section{padding:64px 0;position:relative;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 22px;}
+  .sec-tint{background:linear-gradient(180deg,#EEF3FB,#F6F8FC);}
+  .sec-head{text-align:center;margin-bottom:36px;}
+  .sec-head .kicker{font-size:12px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+  .sec-head h2{font-size:27px;font-weight:850;color:var(--navy);margin-top:8px;letter-spacing:1px;}
+  .sec-head p{font-size:13.5px;color:var(--sub);margin-top:10px;}
+
+  /* HERO */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;color:#fff;overflow:hidden;padding:80px 24px;
+    background:radial-gradient(120% 120% at 50% 0%,#1b3a6b 0%,#0F2A52 55%,#091C3A 100%);}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;animation:float 14s ease-in-out infinite;}
+  .blob.b1{width:340px;height:340px;background:rgba(43,87,154,.7);top:-60px;left:-40px;}
+  .blob.b2{width:300px;height:300px;background:rgba(212,162,78,.4);bottom:-80px;right:-30px;animation-delay:-5s;}
+  .blob.b3{width:220px;height:220px;background:rgba(74,138,210,.5);top:40%;left:55%;animation-delay:-9s;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-40px) scale(1.1);}66%{transform:translate(-25px,25px) scale(.95);}}
+  .hero .badge{position:relative;z-index:2;display:inline-block;font-size:12px;letter-spacing:3px;color:var(--gold-2);
+    border:1px solid rgba(233,192,122,.4);border-radius:30px;padding:5px 16px;margin-bottom:24px;}
+  .hero h1{position:relative;z-index:2;font-size:clamp(40px,11vw,72px);font-weight:900;letter-spacing:6px;line-height:1.05;
+    background:linear-gradient(180deg,#fff 30%,#E9C07A 130%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 30px rgba(0,0,0,.25);}
+  .hero .sub{position:relative;z-index:2;font-size:15px;letter-spacing:1px;opacity:.92;margin-top:14px;}
+  .hero .welcome{position:relative;z-index:2;margin-top:26px;max-width:560px;background:rgba(255,255,255,.08);
+    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:20px 22px;font-size:14px;
+    line-height:2;text-align:left;}
+  .hero-cta{position:relative;z-index:2;margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .cta{font-size:15px;font-weight:700;padding:14px 30px;border-radius:34px;cursor:pointer;text-decoration:none;transition:.25s;border:none;}
+  .cta.primary{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#3a2a08;box-shadow:0 8px 24px rgba(212,162,78,.45);}
+  .cta.primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(212,162,78,.55);}
+  .cta.ghost{border:1px solid rgba(255,255,255,.5);color:#fff;background:transparent;}
+  .cta.ghost:hover{background:rgba(255,255,255,.12);}
+  .scroll-ind{position:relative;z-index:2;margin-top:34px;font-size:11px;letter-spacing:2px;opacity:.7;animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+  /* 卡片网格 */
+  .grid{display:grid;gap:16px;}
+  .grid.g2{grid-template-columns:1fr 1fr;} .grid.g3{grid-template-columns:repeat(3,1fr);} .grid.g4{grid-template-columns:repeat(4,1fr);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 30px rgba(15,42,82,.05);
+    transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden;}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--gold));}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(15,42,82,.1);}
+  .card .ic{font-size:28px;margin-bottom:8px;}
+  .card .t{font-weight:800;color:var(--navy);font-size:16px;margin-bottom:6px;}
+  .card .d{font-size:13px;color:var(--sub);line-height:1.7;}
+  .grouptitle{font-size:14px;font-weight:800;color:var(--blue);margin:26px 0 12px;letter-spacing:.5px;
+    display:flex;align-items:center;gap:8px;}
+  .grouptitle::before{content:"";width:18px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--blue));}
+
+  /* 荣誉数据墙 */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .stat{background:linear-gradient(160deg,#fff,#f3f7fd);border:1px solid var(--line);border-radius:18px;padding:24px 16px;text-align:center;position:relative;overflow:hidden;}
+  .stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--gold));}
+  .stat .num{font-size:40px;font-weight:900;color:var(--navy);line-height:1;font-variant-numeric:tabular-nums;}
+  .stat .num small{font-size:19px;color:var(--gold);}
+  .stat .label{font-size:12.5px;color:var(--sub);margin-top:8px;}
+  .honor{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
+  .honor .row{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;}
+  .honor .row .y{font-weight:900;color:var(--gold);font-size:14px;min-width:54px;}
+  .honor .row .x{font-size:13.5px;color:var(--ink);} .honor .row .x b{color:var(--navy);}
+
+  /* 新闻 */
+  .news{display:flex;flex-direction:column;gap:12px;}
+  .news .item{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;align-items:center;transition:.2s;}
+  .news .item:hover{transform:translateX(3px);box-shadow:0 8px 24px rgba(15,42,82,.08);}
+  .news .date{font-weight:900;color:var(--blue);font-size:13px;min-width:60px;text-align:center;line-height:1.4;}
+  .news .date small{display:block;color:var(--sub);font-size:10px;font-weight:600;}
+  .news .body .h{font-weight:800;color:var(--navy);font-size:14.5px;}
+  .news .body .p{font-size:12.5px;color:var(--sub);margin-top:3px;}
+
+  /* 招新 CTA */
+  .recruit-cta{background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:24px;padding:44px 30px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+  .recruit-cta h3{font-size:26px;font-weight:850;margin-bottom:10px;}
+  .recruit-cta p{font-size:14px;opacity:.9;margin-bottom:24px;}
+  .recruit-cta a{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#3a2a08;font-weight:800;
+    padding:14px 36px;border-radius:34px;text-decoration:none;font-size:15px;box-shadow:0 8px 24px rgba(212,162,78,.45);transition:.25s;}
+  .recruit-cta a:hover{transform:translateY(-3px);}
+
+  /* 联系我们 */
+  .contact{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;}
+  .contact .info .line{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin-bottom:12px;color:var(--ink);}
+  .contact .info .line .e{font-size:18px;}
+  .contact .info .line b{color:var(--navy);}
+  .qr{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center;box-shadow:0 8px 30px rgba(15,42,82,.06);}
+  .qr img{width:200px;height:200px;object-fit:cover;border-radius:12px;margin:0 auto 10px;background:#f3f7fd;}
+  .qr .cap{font-size:12.5px;color:var(--sub);}
+
+  footer{background:var(--navy);color:rgba(255,255,255,.8);text-align:center;padding:34px 22px;font-size:12.5px;line-height:1.9;}
+  footer .fb{color:#fff;font-weight:800;font-size:15px;letter-spacing:1px;margin-bottom:6px;}
+  footer a{color:var(--gold-2);text-decoration:none;}
+
+  /* AI 浮动按钮与面板 */
+  #bot{position:fixed;left:18px;bottom:22px;z-index:75;display:flex;align-items:center;gap:7px;
+    background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:30px;padding:13px 22px;
+    font-size:15px;font-weight:800;letter-spacing:.5px;cursor:pointer;box-shadow:0 10px 30px rgba(43,87,154,.45);animation:botPulse 2s infinite;}
+  #bot .emo{font-size:20px;}
+  #botHint{position:fixed;left:18px;bottom:82px;z-index:74;background:#fff;border:1px solid var(--line);color:var(--navy);
+    font-size:13px;font-weight:600;padding:11px 14px;border-radius:14px;box-shadow:0 8px 30px rgba(15,42,82,.18);
+    max-width:220px;line-height:1.55;opacity:0;transform:translateY(8px);transition:.4s;pointer-events:none;}
+  #botHint.show{opacity:1;transform:none;pointer-events:auto;cursor:pointer;}
+  #botHint::after{content:"";position:absolute;left:26px;bottom:-7px;width:14px;height:14px;background:#fff;
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);}
+  #chat{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);z-index:72;width:100%;max-width:420px;height:72vh;max-height:640px;
+    background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 50px rgba(15,42,82,.2);display:flex;flex-direction:column;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);overflow:hidden;}
+  #chat.open{transform:translate(-50%,0);}
+  #chat .ch-head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  #chat .ch-head .av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:19px;}
+  #chat .ch-head .ti{font-size:15px;font-weight:700;} #chat .ch-head .st{font-size:11px;opacity:.82;margin-top:1px;}
+  #chat .ch-close{margin-left:auto;font-size:22px;cursor:pointer;opacity:.85;line-height:1;} #chat .ch-close:hover{opacity:1;}
+  #chat .ch-body{flex:1;overflow-y:auto;padding:16px 14px;background:#F5F7FB;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:82%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.65;word-break:break-word;}
+  .msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.me{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .msg .qchip{display:inline-block;margin:6px 6px 0 0;font-size:12px;color:var(--blue);background:#EEF4FB;border:1px solid #dbe6f3;padding:5px 11px;border-radius:18px;cursor:pointer;}
+  #chat .ch-quick{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px 4px;background:#F5F7FB;}
+  #chat .ch-quick span{font-size:12px;color:var(--blue);background:#EEF4FB;border:1px solid #dbe6f3;padding:6px 12px;border-radius:18px;cursor:pointer;}
+  #chat .ch-input{display:flex;gap:8px;padding:10px 14px 14px;background:#fff;border-top:1px solid var(--line);flex-shrink:0;}
+  #chat .ch-input input{flex:1;border:1px solid var(--line);border-radius:22px;padding:11px 15px;font-size:14px;font-family:inherit;outline:none;}
+  #chat .ch-input input:focus{border-color:var(--blue);}
+  #chat .ch-input button{border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:22px;padding:0 18px;font-size:14px;font-weight:700;cursor:pointer;}
+
+  @media(max-width:760px){
+    .grid.g3,.grid.g4,.stats{grid-template-columns:1fr 1fr;}
+    .contact,.grid.g2{grid-template-columns:1fr;}
+    #nav .links{display:none;}
+  }
+
+  /* 精彩活动 · 轮播 */
+  .showcase{position:relative;max-width:1180px;margin:0 auto;padding:56px 22px 64px;}
+  .sc-head{text-align:center;margin-bottom:24px;}
+  .sc-head .kicker{font-size:12px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+  .sc-head h2{font-size:27px;font-weight:850;color:var(--navy);margin-top:8px;letter-spacing:1px;}
+  .sc-stage{position:relative;height:440px;border-radius:22px;overflow:hidden;box-shadow:0 24px 70px rgba(15,42,82,.18);background:var(--navy);}
+  .sc-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);font-size:14px;}
+  .sc-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;display:flex;align-items:flex-end;padding:50px;color:#fff;
+    background-size:cover;background-position:center;background-repeat:no-repeat;}
+  .sc-slide.on{opacity:1;}
+  .sc-slide .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,22,46,.15) 0%,rgba(8,22,46,.25) 40%,rgba(8,22,46,.82) 100%);}
+  .sc-slide .sc-cap{position:relative;z-index:2;max-width:640px;}
+  .sc-slide .sc-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1px;background:rgba(212,162,78,.94);color:#3a2a08;padding:4px 13px;border-radius:20px;margin-bottom:14px;}
+  .sc-slide h3{font-size:clamp(24px,4vw,38px);font-weight:900;line-height:1.18;text-shadow:0 2px 22px rgba(0,0,0,.35);}
+  .sc-slide p{font-size:14.5px;opacity:.94;margin-top:12px;line-height:1.85;max-width:580px;}
+  .sc-slide .sc-link{display:inline-block;margin-top:18px;font-size:13.5px;font-weight:700;color:#3a2a08;background:var(--gold-2);padding:9px 22px;border-radius:30px;text-decoration:none;transition:.2s;}
+  .sc-slide .sc-link:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(233,192,122,.5);}
+  .sc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,.86);color:var(--navy);font-size:26px;line-height:1;cursor:pointer;z-index:6;box-shadow:0 6px 20px rgba(15,42,82,.22);transition:.2s;}
+  .sc-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08);}
+  .sc-arrow.left{left:18px;} .sc-arrow.right{right:18px;}
+  .sc-dots{position:absolute;bottom:18px;right:48px;z-index:6;display:flex;gap:8px;}
+  .sc-dots span{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:.25s;}
+  .sc-dots span.on{background:var(--gold-2);width:28px;border-radius:6px;}
+  @media(max-width:640px){
+    .showcase{padding:40px 14px 48px;}
+    .sc-stage{height:360px;}
+    .sc-slide{padding:26px 22px;}
+    .sc-arrow{width:38px;height:38px;font-size:22px;}
+    .sc-arrow.left{left:10px;} .sc-arrow.right{right:10px;}
+    .sc-dots{bottom:14px;right:22px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div id="nav">
+  <div class="brand"><img src="/static/uploads/logo.png" alt="星海艺术团" class="nav-logo">星海<span>·</span>艺术团</div>
+  <nav class="links">
+    <a href="#showcase">精彩活动</a>
+    <a href="#about">关于星海</a>
+    <a href="#org">组织架构</a>
+    <a href="#show">团队风采</a>
+    <a href="#honor">活动荣誉</a>
+    <a href="#news">新闻动态</a>
+    <a href="#contact">联系我们</a>
+  </nav>
+  <div style="display:flex;align-items:center;margin-left:auto;">
+    <button class="nav-login" onclick="openLogin()">👤 成员登录</button>
+    <button class="nav-ai" onclick="openChat()">🤖 AI答疑</button>
+    <a class="nav-cta" href="/recruit">立即招新</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="badge">SHANGHAI LIXIN · XINGHAI ART TROUPE</div>
+  <h1>星海艺术团</h1>
+  <div class="sub">上海立信会计金融学院 · 校级学生艺术团体</div>
+  <div class="welcome">
+    这里汇聚 <b>合唱、交响、民乐、舞蹈、话剧、主持、礼仪</b> 七支表演团队，与
+    <b>办公室、资产管理部、外联部、企宣部</b> 四个行政部门。<br>
+    21 年累计斩获 <b>304 项</b>各级奖项，<b>51 个一等奖 / 特等奖</b>，连续七届全国艺术展演获奖。<br>
+    因为热爱，所以闪耀。期待在星海，遇见发光的你。
+  </div>
+  <div class="hero-cta">
+    <a class="cta primary" href="/recruit">🎯 2026 新生招新</a>
+    <a class="cta ghost" href="#about">了解星海</a>
+  </div>
+  <div class="scroll-ind">向下滚动 ↓</div>
+</section>
+
+<!-- 精彩活动 · 轮播展示 -->
+<section id="showcase" class="showcase">
+  <div class="sc-head">
+    <div class="kicker">ACTIVITIES · 星海现场</div>
+    <h2>精彩活动</h2>
+  </div>
+  <div class="sc-stage" id="scStage">
+    <div class="sc-loading">活动加载中…</div>
+  </div>
+  <button class="sc-arrow left" aria-label="上一项" onclick="scMove(-1)">‹</button>
+  <button class="sc-arrow right" aria-label="下一项" onclick="scMove(1)">›</button>
+  <div class="sc-dots" id="scDots"></div>
+</section>
+
+<!-- 关于星海 -->
+<section id="about" class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">ABOUT US</div>
+      <h2>关于星海艺术团</h2>
+      <p>由校团委指导的校级学生艺术团体，浦东、松江两校区协同运作</p>
+    </div>
+    <div class="grid g3">
+      <div class="card"><div class="ic">🎓</div><div class="t">立德树人 · 以美育人</div>
+        <div class="d">以艺术实践为载体的美育平台，培养有审美、有担当、有舞台的青年。</div></div>
+      <div class="card"><div class="ic">🏆</div><div class="t">荣誉殿堂</div>
+        <div class="d">近五年 40+ 国家级 / 市级奖项，连续三届全国大学生艺术展演一等奖。</div></div>
+      <div class="card"><div class="ic">🤝</div><div class="t">双校区协同</div>
+        <div class="d">浦东、松江两校区同步招新、排练与演出，主席团统筹协调。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 组织架构 -->
+<section id="org">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">STRUCTURE</div>
+      <h2>组织架构</h2>
+      <p>「主席团 + 7 支表演团队 + 4 个行政部门」的运行体系</p>
+    </div>
+
+    <div class="grouptitle">主席团</div>
+    <div class="grid g3">
+      <div class="card"><div class="ic">👑</div><div class="t">主席</div><div class="d">统筹艺术团整体发展、对外联络与重大决策。</div></div>
+      <div class="card"><div class="ic">🧭</div><div class="t">副主席（浦东）陈嘉豪</div><div class="d">分管浦东校区招新与日常运营。</div></div>
+      <div class="card"><div class="ic">🧭</div><div class="t">副主席（松江）郝博雅</div><div class="d">分管松江校区招新与日常运营。</div></div>
+    </div>
+
+    <div class="grouptitle">表演团队（7 支）</div>
+    <div class="grid g3">
+      <div class="card"><div class="ic">🎤</div><div class="t">合唱团</div><div class="d">天籁和声，屡获金奖，分声部系统训练。</div></div>
+      <div class="card"><div class="ic">🎻</div><div class="t">交响乐团</div><div class="d">管弦齐鸣，面向有器乐基础的同学。</div></div>
+      <div class="card"><div class="ic">🎶</div><div class="t">民乐团</div><div class="d">国风雅韵，民族乐器爱好者的主场。</div></div>
+      <div class="card"><div class="ic">💃</div><div class="t">舞蹈团</div><div class="d">街舞 / 民族 / 现代多舞种并行。</div></div>
+      <div class="card"><div class="ic">🎭</div><div class="t">话剧团</div><div class="d">声台形表，年度大戏由你撑起。</div></div>
+      <div class="card"><div class="ic">🎙️</div><div class="t">主持团</div><div class="d">校级晚会、赛事主持系统训练。</div></div>
+      <div class="card"><div class="ic">💐</div><div class="t">礼仪队</div><div class="d">大型活动接待、颁奖礼仪，形象先锋。</div></div>
+      <div class="card"><div class="ic">✨</div><div class="t">更多可能</div><div class="d">新方向持续孵化中，欢迎带着创意加入。</div></div>
+    </div>
+
+    <div class="grouptitle">行政部门（4 个）</div>
+    <div class="grid g4">
+      <div class="card"><div class="ic">🗂️</div><div class="t">办公室</div><div class="d">统筹排期、会议记录、文书归档与联络。</div></div>
+      <div class="card"><div class="ic">🎛️</div><div class="t">资产管理部</div><div class="d">器材服装、道具与舞台设备调度。</div></div>
+      <div class="card"><div class="ic">🤝</div><div class="t">外联部</div><div class="d">赞助对接、联动兄弟社团与校外资源。</div></div>
+      <div class="card"><div class="ic">📣</div><div class="t">企宣部</div><div class="d">推文海报、视频拍摄与品牌包装。</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 团队风采 -->
+<section id="show" class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">SHOWCASE</div>
+      <h2>团队风采</h2>
+      <p>舞台之上，每一次亮相都是热爱的回响</p>
+    </div>
+    <div class="grid g3">
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#0F2A52,#2B579A);display:flex;align-items:center;justify-content:center;font-size:46px;">🎤</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">合唱专场音乐会</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">多声部交织，把热爱唱成奖杯。</div></div></div>
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#2B579A,#4A8AD2);display:flex;align-items:center;justify-content:center;font-size:46px;">🎻</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">交响新年音乐会</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">管弦齐鸣，大气磅礴的年度盛典。</div></div></div>
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#D4A24E,#E9C07A);display:flex;align-items:center;justify-content:center;font-size:46px;">💃</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">舞蹈团专场</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">力与美并存，舞台表现力拉满。</div></div></div>
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#B5556B,#E08AA0);display:flex;align-items:center;justify-content:center;font-size:46px;">🎭</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">年度大戏</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">剧本、表演、舞美全员成长。</div></div></div>
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#0F2A52,#4A8AD2);display:flex;align-items:center;justify-content:center;font-size:46px;">🎙️</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">校级晚会主持</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">镜头前从容不慌的控场担当。</div></div></div>
+      <div class="card" style="padding:0;"><div style="height:150px;background:linear-gradient(135deg,#2E9E5B,#7FCBA0);display:flex;align-items:center;justify-content:center;font-size:46px;">🏆</div><div style="padding:16px;"><div class="t" style="font-weight:800;color:var(--navy);">赛场荣耀</div><div class="d" style="font-size:13px;color:var(--sub);margin-top:6px;">国家级 / 市级赛场的星海身影。</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 活动荣誉 -->
+<section id="honor">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">HONORS</div>
+      <h2>活动荣誉</h2>
+      <p>用实力说话：近五年累计 40+ 国家级 / 市级奖项</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">304<small>+</small></div><div class="label">累计获奖记录（2004–2025）</div></div>
+      <div class="stat"><div class="num">51<small>项</small></div><div class="label">一等奖 / 金奖 / 特等奖</div></div>
+      <div class="stat"><div class="num">7<small>届</small></div><div class="label">连续全国艺术展演获奖</div></div>
+      <div class="stat"><div class="num">2<small>校区</small></div><div class="label">浦东 · 松江 协同运作</div></div>
+    </div>
+    <div class="honor">
+      <div class="row"><div class="y">2024</div><div class="x"><b>第七届全国大学生艺术展演</b> 舞蹈《莲叶翩翩》国家级一等奖；声乐、戏剧、书法多项市级一等奖</div></div>
+      <div class="row"><div class="y">2023</div><div class="x"><b>校园短剧展演</b> 《为人民而歌》特等奖（全市最高等级）</div></div>
+      <div class="row"><div class="y">2025</div><div class="x"><b>第十届"汇创青春"</b> 中国舞《莲叶翩翩》一等奖、优秀组织奖</div></div>
+      <div class="row"><div class="y">历年</div><div class="x"><b>2004–至今 21 年</b> 累计斩获 304 项各级奖项，覆盖合唱、舞蹈、戏剧、器乐、书法等全门类</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 新闻动态 -->
+<section id="news" class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">NEWS</div>
+      <h2>新闻动态</h2>
+      <p>星海的最新脚步，从这里看见</p>
+    </div>
+    <div class="news">
+      <div class="item"><div class="date">09<small>2026</small></div><div class="body"><div class="h">2026 级新生招新正式启动</div><div class="p">9 月 6 日浦东、松江双校区线下招新，线上通道同步开放。</div></div></div>
+      <div class="item"><div class="date">08<small>2026</small></div><div class="body"><div class="h">暑期集训圆满收官</div><div class="p">各团队完成新剧目排练，为新学期演出蓄力。</div></div></div>
+      <div class="item"><div class="date">06<small>2026</small></div><div class="body"><div class="h">毕业季专场演出温情落幕</div><div class="p">致敬每一位在星海发光的毕业生，山海远阔，后会有期。</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 招新 CTA -->
+<section>
+  <div class="wrap">
+    <div class="recruit-cta">
+      <h3>🎯 2026 新生招新进行中</h3>
+      <p>零基础也欢迎！线上填表 + 9 月 6 日双校区线下招新，扫码进咨询群随时答疑。</p>
+      <a href="/recruit">进入招新通道 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- 联系我们 -->
+<section id="contact" class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">CONTACT</div>
+      <h2>联系我们</h2>
+      <p>扫码加入招新咨询群，或前往两校区招新摊位现场了解</p>
+    </div>
+    <div class="contact">
+      <div class="info">
+        <div class="line"><span class="e">📍</span><div><b>校区</b>：浦东校区 / 松江校区，双校区同步招新与活动</div></div>
+        <div class="line"><span class="e">👤</span><div><b>招新负责</b>：副主席陈嘉豪（浦东）、郝博雅（松江）</div></div>
+        <div class="line"><span class="e">🧑‍🏫</span><div><b>指导老师</b>：魏启旦老师（校团委艺术教育中心）、戴旭彤老师</div></div>
+        <div class="line"><span class="e">💬</span><div><b>咨询群</b>：扫码右侧二维码，各团队每天轮值答疑</div></div>
+      </div>
+      <div class="qr">
+        <img id="qrImg" alt="招新咨询群二维码" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23f3f7fd'/%3E%3Ctext x='100' y='105' font-size='14' text-anchor='middle' fill='%239aa3b0' font-family='sans-serif'%3E群码加载中…%3C/text%3E%3C/svg%3E">
+        <div class="cap" id="qrCap">招新咨询群二维码</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">星海艺术团</div>
+  上海立信会计金融学院 · 校团委指导 · 校级学生艺术团体<br>
+  浦东校区 / 松江校区　|　招新咨询：扫码上方二维码加入咨询群<br>
+  © 2026 星海艺术团主席团　·　<a href="/login">工作人员入口</a>
+</footer>
+
+<!-- 浮动 AI -->
+<button id="bot" aria-label="AI智能答疑"><span class="emo">🤖</span><span>AI 答疑</span></button>
+<div id="botHint">👋 我是星海 AI 小星，关于星海 / 招新 / 部门，随时问我</div>
+
+<!-- 聊天面板 -->
+<div id="chat">
+  <div class="ch-head">
+    <div class="av">🤖</div>
+    <div><div class="ti">星海智能小助手</div><div class="st">关于星海 · 部门 · 招新，随时问我</div></div>
+    <div class="ch-close" onclick="closeChat()">×</div>
+  </div>
+  <div class="ch-body" id="chBody"></div>
+  <div class="ch-quick" id="chQuick"></div>
+  <div class="ch-input">
+    <input id="chInput" placeholder="输入你的问题…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button id="chSend" onclick="sendMsg()">发送</button>
+  </div>
+</div>
+
+<!-- 成员 / 干部登录弹窗 -->
+<div id="loginMask">
+  <div class="login-card">
+    <span class="lc-close" onclick="closeLogin()">×</span>
+    <div class="lc-brand">星海<span>·</span>工作端</div>
+    <div class="lc-sub">成员 / 干部登录 · 招新与访客无需登录</div>
+    <label>学号 / 工号</label>
+    <input id="lxh" placeholder="如 251400143" autocomplete="username">
+    <label>密码</label>
+    <input id="lpwd" type="password" placeholder="请输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lc-btn" id="lbtn" onclick="doLogin()">登 录</button>
+    <div class="lc-err" id="lerr"></div>
+    <div class="lc-foot"><a href="/" onclick="closeLogin()">← 返回官网首页</a></div>
+  </div>
+</div>
+
+<script>
+/* ===== 成员 / 干部登录弹窗 ===== */
+function openLogin(){document.getElementById('loginMask').classList.add('open');
+  setTimeout(()=>document.getElementById('lxh').focus(),50);}
+function closeLogin(){document.getElementById('loginMask').classList.remove('open');
+  document.getElementById('lerr').textContent='';}
+document.getElementById('loginMask').addEventListener('click',e=>{
+  if(e.target.id==='loginMask')closeLogin();});
+function doLogin(){
+  const xh=document.getElementById('lxh').value.trim();
+  const pwd=document.getElementById('lpwd').value;
+  const err=document.getElementById('lerr');
+  const btn=document.getElementById('lbtn');
+  err.textContent='';
+  if(!xh||!pwd){err.textContent='请输入学号/工号和密码';return;}
+  btn.disabled=true;btn.textContent='登录中…';
+  fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({xh:xh,pwd:pwd})})
+  .then(r=>r.json().then(d=>({ok:r.ok, d})))
+  .then(({ok,d})=>{
+    if(ok&&d.ok){location.href='/work';}
+    else{err.textContent=(d&&d.error)||'登录失败';btn.disabled=false;btn.textContent='登 录';}
+  })
+  .catch(()=>{err.textContent='网络异常，请重试';btn.disabled=false;btn.textContent='登 录';});
+}
+
+/* ===== 导航滚动态 ===== */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>{nav.classList.toggle('solid',scrollY>40);});
+
+/* ===== AI 智能助手（官网版 KB，含招新 + 星海介绍） ===== */
+const KB=[
+  {k:['你好','您好','在吗','hi','hello','哈喽','嗨','你是谁'],a:'你好呀～我是星海艺术团智能小助手 🤖 关于星海艺术团、各个团队、招新报名的任何问题都可以问我！'},
+  {k:['星海','艺术团介绍','是什么','关于星海','官网','学校'],a:'星海艺术团是上海立信会计金融学院的<b>校级学生艺术团体</b>，由校团委指导，浦东、松江两校区协同运作。下设 7 支表演团队（合唱、交响、民乐、舞蹈、话剧、主持、礼仪）和 4 个行政部门（办公室、资产管理部、外联部、企宣部）。'},
+  {k:['荣誉','奖项','获奖','拿过什么奖','厉害吗'],a:'近五年累计斩获 <b>40+ 国家级 / 市级奖项</b>，连续三届全国大学生艺术展演一等奖，是校内获奖最多的学生团体之一。'},
+  {k:['组织架构','结构','有哪些部门','部门','团队有哪些'],a:'运行体系是「主席团 + 7 支表演团队 + 4 个行政部门」：<br>• 主席团：主席、副主席（浦东陈嘉豪 / 松江郝博雅）<br>• 表演团队：合唱团、交响乐团、民乐团、舞蹈团、话剧团、主持团、礼仪队<br>• 行政部门：办公室、资产管理部、外联部、企宣部'},
+  {k:['招新时间','什么时候','几号','哪天','9月6','线下','什么时候招新'],a:'线下正式招新是 <b>2026 年 9 月 6 日（周六）8:00–17:00</b>，浦东和松江两校区同步进行。线上报名通道现在就开了，点顶部「立即招新」或底部招新入口即可。'},
+  {k:['怎么报名','如何报名','报名方式','线上报名','在哪里报名'],a:'两种方式：① <b>线上</b>——点页面右上「立即招新」进入招新系统填表提交；② <b>线下</b>——9 月 6 日到两校区招新摊位现场填表+简短面试。'},
+  {k:['零基础','没基础','不会','小白','能报吗','可以吗'],a:'完全可以！很多同学入学时零基础。表演团队有系统培养路径，行政部门更看责任心与执行力，整体很友好～'},
+  {k:['合唱团'],a:'合唱团——天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径。'},
+  {k:['交响乐团','交响'],a:'交响乐团——管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。'},
+  {k:['民乐团','民乐'],a:'民乐团——国风雅韵，丝竹声声。民族乐器爱好者的主场，传统与现代编曲兼修。'},
+  {k:['舞蹈团','舞蹈'],a:'舞蹈团——翩若惊鸿，力与美并存。街舞、民族、现代多舞种并行，舞台表现力直接拉满。'},
+  {k:['话剧团','话剧'],a:'话剧团——声台形表，戏梦人生。剧本、表演、舞美全能成长，年度大戏由你撑起台前幕后。'},
+  {k:['主持团','主持'],a:'主持团——妙语连珠，控场担当。校级晚会、赛事主持系统训练，让你在镜头前从容不慌。'},
+  {k:['礼仪队','礼仪'],a:'礼仪队——端庄优雅，形象先锋。大型活动接待、颁奖礼仪，气质与仪态双修。'},
+  {k:['办公室'],a:'办公室——艺术团运转的「中枢」：统筹排期、会议记录、文书归档与内外联络。'},
+  {k:['资产管理部','资产'],a:'资产管理部——器材服装、道具与舞台设备的登记、维护与调度，是每场演出背后的「后勤总管」。'},
+  {k:['外联部','外联'],a:'外联部——对外接洽赞助、联动兄弟社团与校外资源。能说会道、想锻炼沟通的同学最合适。'},
+  {k:['企宣部','企宣'],a:'企宣部——公众号推文、海报视频、活动现场拍摄与品牌包装。审美在线、会点设计或剪辑的同学别错过。'},
+  {k:['校区','浦东','松江','两个校区'],a:'招新在浦东和松江两校区同步进行。报名时选你所在的校区即可，后续活动也按校区安排。'},
+  {k:['咨询群','二维码','加群','微信群','怎么进群'],a:'页面底部「联系我们」放有招新咨询群二维码，用微信/QQ 扫一下就能进群，各团队每天轮值答疑。'},
+  {k:['面试','复试','门槛','要求','严吗'],a:'表演团队可能安排简短面试或才艺展示，行政部门更看重执行力与靠谱程度，整体友好开放。'},
+  {k:['魏老师','魏启旦','指导老师','老师','戴老师','戴旭彤'],a:'艺术团由校团委老师指导。魏启旦老师是团委艺术教育中心副主任、副教授，华东师大音乐学硕士，近五年带队拿了 40 多项国家级/市级奖项。戴旭彤老师协助处理日常事务。'},
+  {k:['副主席','陈嘉豪','郝博雅','负责人','主席'],a:'招新由主席团统筹：副主席陈嘉豪（浦东）和郝博雅（松江）共同负责，具体事宜进咨询群问最方便～'},
+  {k:['工作人员','后台','工作端','登录','入口'],a:'工作人员（成员 / 干部）登录入口在页面底部「工作人员入口」，使用学号 + 密码登录，可管理成员信息、招新数据等。'},
+  {k:['谢谢','感谢','多谢','辛苦'],a:'不客气～期待在星海遇见你 🎉'}
+];
+const QUICK=['星海艺术团是啥？','有哪些团队？','招新是哪天？','零基础能报吗？','怎么进咨询群？'];
+const chat=document.getElementById('chat'),body=document.getElementById('chBody'),
+      qk=document.getElementById('chQuick'),inp=document.getElementById('chInput'),
+      sendBtn=document.getElementById('chSend');
+function scrollBody(){body.scrollTop=body.scrollHeight;}
+function addMsg(text,who){const d=document.createElement('div');d.className='msg '+(who==='me'?'me':'bot');d.innerHTML=text;body.appendChild(d);scrollBody();}
+function answer(q){
+  const t=q.toLowerCase();let best=0,bestA='';
+  KB.forEach(it=>{let s=0;it.k.forEach(k=>{if(t.indexOf(k.toLowerCase())>=0)s+=k.length;});if(s>best){best=s;bestA=it.a;}});
+  if(best===0)return '这个问题我还在学习中 🤔 你可以试试问我：<br>'+
+    '<span class="qchip" onclick="ask(\'星海艺术团是啥？\')">星海介绍</span>'+
+    '<span class="qchip" onclick="ask(\'有哪些团队？\')">有哪些团队</span>'+
+    '<span class="qchip" onclick="ask(\'招新是哪天？\')">招新时间</span>'+
+    '<span class="qchip" onclick="ask(\'怎么进咨询群？\')">怎么进群</span>';
+  return bestA;
+}
+function ask(q){inp.value='';addMsg(q,'me');setTimeout(()=>addMsg(answer(q),'bot'),350);}
+function sendMsg(){const q=inp.value.trim();if(!q)return;addMsg(q,'me');inp.value='';sendBtn.disabled=true;setTimeout(()=>{addMsg(answer(q),'bot');sendBtn.disabled=false;},400);}
+function renderQuick(){QUICK.forEach(q=>{const s=document.createElement('span');s.textContent=q;s.onclick=()=>ask(q);qk.appendChild(s);});}
+function openChat(){
+  chat.classList.add('open');const h=document.getElementById('botHint');if(h)h.classList.remove('show');
+  if(!body.childElementCount){addMsg('嗨～我是星海艺术团智能小助手 🤖<br>星海介绍、各部门、怎么报名……都可以问我！','bot');renderQuick();}
+}
+function closeChat(){chat.classList.remove('open');}
+window.openChat=openChat;window.closeChat=closeChat;window.ask=ask;
+document.getElementById('bot').addEventListener('click',openChat);
+(function(){const hint=document.getElementById('botHint');if(!hint)return;
+  hint.addEventListener('click',()=>{hint.classList.remove('show');openChat();});
+  setTimeout(()=>hint.classList.add('show'),1500);setTimeout(()=>hint.classList.remove('show'),10000);})();
+
+/* ===== 加载咨询群二维码（来自 CMS content.json） ===== */
+fetch('/api/content').then(r=>r.json()).then(c=>{
+  const qr=c&&c.consult_qr;
+  if(qr){document.getElementById('qrImg').src=qr;}
+  if(c&&c.contact_caption){document.getElementById('qrCap').textContent=c.contact_caption;}
+}).catch(()=>{});
+
+/* ===== 精彩活动 · 轮播 ===== */
+const SC=[
+  {img:'/static/uploads/showcase/sc02.jpg',tag:'舞蹈专场',title:'《扇韵》· 旗袍群舞',desc:'身着蓝白条纹旗袍的舞者以蒲扇为道具，整齐划一的队形展现东方古典韵味之美。',link:'#show',linkText:'团队风采'},
+  {img:'/static/uploads/showcase/sc03.jpg',tag:'活力青春',title:'多彩青春 · 群舞绽放',desc:'彩虹色系服装的青春群舞，举手投足间洋溢着立信学子的朝气与活力。',link:'/recruit',linkText:'加入我们'},
+  {img:'/static/uploads/showcase/sc04.jpg',tag:'古典舞',title:'《莲叶翩翩》· 全国一等奖',desc:'粉蓝渐变汉服、水袖翩跹——这支舞蹈斩获第七届全国大学生艺术展演一等奖。',link:'#honor',linkText:'查看荣誉'},
+  {img:'/static/uploads/showcase/sc05.jpg',tag:'古风意境',title:'白蛇缘起 · 古风双人舞',desc:'一袭白衣执卷、一袭青衣执扇，舞台灯光下演绎东方美学的极致写意。',link:'#show',linkText:'更多作品'},
+  {img:'/static/uploads/showcase/sc06.jpg',tag:'现代编舞',title:'《书页之光》· 创意群舞',desc:'蓝色长裙舞者手持发光书页，在蓝色追光中铺展出一幅关于知识与梦想的画卷。',link:'#show',linkText:'团队风采'},
+  {img:'/static/uploads/showcase/sc07.jpg',tag:'拉丁热舞',title:'热情桑巴 · 拉丁专场',desc:'红裙飞扬、黑裙流苏，拉丁舞团用热烈节奏点燃全场，光芒与汗水交织的舞台。',link:'#show',linkText:'舞蹈团'},
+  {img:'/static/uploads/showcase/sc09.jpg',tag:'敦煌飞天',title:'《千手观音》· 经典再现',desc:'多层手臂、华丽头饰、金色聚光灯——敦煌风格的震撼视觉，致敬经典艺术的永恒魅力。',link:'#honor',linkText:'荣誉殿堂'},
+  {img:'/static/uploads/showcase/sc10.jpg',tag:'K-Pop街舞',title:'Z世代节拍 · 街舞风暴',desc:'迷彩工装裤+潮牌穿搭，街舞团以最in的编舞和超强律动征服年轻观众。',link:'/recruit',linkText:'加入星海'}
+];
+let scI=0,scTimer=null;
+const scStage=document.getElementById('scStage'),scDots=document.getElementById('scDots');
+function scRender(){
+  scStage.innerHTML=SC.map((s,i)=>
+    `<div class="sc-slide${i===scI?' on':''}" style="background-image:url('${s.img}')">
+      <div class="ov"></div>
+      <div class="sc-cap"><span class="sc-tag">${s.tag}</span>
+        <h3>${s.title}</h3><p>${s.desc}</p>
+        <a class="sc-link" href="${s.link}">${s.linkText} →</a></div>
+    </div>`).join('');
+  scDots.innerHTML=SC.map((_,i)=>`<span class="${i===scI?'on':''}" onclick="scGo(${i})"></span>`).join('');
+}
+function scGo(i){scI=(i%SC.length+SC.length)%SC.length;scRender();scReset();}
+function scMove(d){scGo(scI+d);}
+function scReset(){clearInterval(scTimer);scTimer=setInterval(()=>scGo(scI+1),4500);}
+if(scStage){
+  scStage.addEventListener('mouseenter',()=>clearInterval(scTimer));
+  scStage.addEventListener('mouseleave',scReset);
+  scRender();scReset();
+}
+</script>
+</body>
+</html>

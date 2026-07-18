@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>报销申请 · 星海工作端</title>
+<style>
+  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;--ok:#2E9E5B;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+  header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:13px 20px;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .brand{font-weight:800;font-size:16px;color:var(--navy);letter-spacing:1px;}
+  .brand span{color:var(--gold);}
+  .crumb{font-size:12.5px;color:var(--sub);} .crumb a{color:var(--blue);text-decoration:none;}
+  .user{margin-left:auto;font-size:13px;color:var(--sub);} .user b{color:var(--navy);} .user a{margin-left:12px;color:var(--blue);text-decoration:none;font-weight:600;}
+  .wrap{max-width:1000px;margin:22px auto;padding:0 18px;}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .bar .grow{flex:1;}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,var(--navy),var(--blue));transition:transform .15s,opacity .15s;}
+  .btn:active{transform:scale(.97);} .btn.gold{background:linear-gradient(135deg,var(--gold),#E9C07A);color:#3a2a08;}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--line);}
+  .btn.sm{padding:6px 12px;font-size:12.5px;} .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .toggle{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .toggle button{border:none;background:transparent;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--sub);font-weight:600;}
+  .toggle button.on{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;}
+  .count{font-size:12.5px;color:var(--sub);margin-left:auto;}
+  .form{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 8px 30px rgba(15,42,82,.05);display:none;}
+  .form.open{display:block;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;}
+  .fld{display:flex;flex-direction:column;}
+  .fld.full{grid-column:1/-1;}
+  .fld label{font-size:12px;color:var(--navy);font-weight:700;margin-bottom:5px;}
+  .fld label .req{color:#C0392B;}
+  .fld input,.fld select,.fld textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;background:#FBFCFE;outline:none;}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue);background:#fff;}
+  .fld textarea{resize:vertical;min-height:52px;}
+  .err{color:#E0564B;font-size:12px;margin:10px 0 0;min-height:14px;}
+  .mfoot{display:flex;gap:10px;margin-top:16px;} .mfoot .btn{flex:1;}
+  .tablewrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(15,42,82,.05);}
+  .scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:760px;}
+  th,td{border-bottom:1px solid #eef2f7;padding:10px 11px;text-align:left;vertical-align:top;white-space:nowrap;}
+  th{background:var(--navy);color:#fff;font-weight:700;position:sticky;top:0;}
+  tbody tr:hover{background:#f7faff;}
+  td.title{font-weight:700;color:var(--navy);white-space:normal;min-width:140px;}
+  td.amt{font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;}
+  .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;}
+  .tag.wait{background:#FBF1DC;color:#B5860B;} .tag.ok{background:#E7F6EC;color:var(--ok);} .tag.no{background:#FDECEB;color:#C0392B;}
+  .op{color:var(--blue);cursor:pointer;text-decoration:underline;margin-right:8px;font-weight:600;}
+  .op.del{color:#C0392B;} .op.dis{color:#9aa3b0;cursor:default;text-decoration:none;}
+  .empty{text-align:center;color:#9aa3b0;padding:36px;font-size:13px;}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;
+    padding:11px 20px;border-radius:30px;font-size:13.5px;opacity:0;transition:.3s;z-index:90;pointer-events:none;box-shadow:0 10px 30px rgba(15,42,82,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">星海<span>·</span>工作端</div>
+  <div class="crumb"><a href="/work">总览</a> / 报销申请</div>
+  <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
+</header>
+
+<div class="wrap">
+  <div class="bar">
+    <button class="btn" onclick="document.getElementById('form').classList.toggle('open')">＋ 新建报销</button>
+    <div class="toggle">
+      <button id="tAll" class="on" onclick="setView('all')">全部</button>
+      <button id="tMine" onclick="setView('mine')">我的</button>
+    </div>
+    <span class="count" id="count">—</span>
+  </div>
+
+  <div class="form" id="form">
+    <div class="grid2">
+      <div class="fld"><label>报销事项 <span class="req">*</span></label><input id="f_title" placeholder="如 合唱团演出服装采购"></div>
+      <div class="fld"><label>类别 <span class="req">*</span></label>
+        <select id="f_category"><option></option><option>器材采购</option><option>活动经费</option><option>差旅</option><option>培训</option><option>其他</option></select></div>
+      <div class="fld"><label>金额（元） <span class="req">*</span></label><input id="f_amount" type="number" min="0" step="0.01" placeholder="如 358.50"></div>
+      <div class="fld"><label>说明</label><input id="f_note" placeholder="发票/用途说明"></div>
+    </div>
+    <div class="err" id="fErr"></div>
+    <div class="mfoot"><button class="btn ghost" onclick="document.getElementById('form').classList.remove('open')">取消</button>
+      <button class="btn" id="saveBtn" onclick="save()">提交申请</button></div>
+  </div>
+
+  <div class="tablewrap"><div class="scroll">
+    <table>
+      <thead><tr><th>ID</th><th>事项</th><th>类别</th><th>金额</th><th>申请人</th><th>状态</th><th>提交时间</th><th>操作</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="8" class="empty">加载中…</td></tr></tbody>
+    </table>
+  </div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+let role='', view='all', uid='';
+const $=id=>document.getElementById(id);
+fetch('/api/me').then(r=>r.json()).then(d=>{
+  if(!d.ok){location.href='/login';return;}
+  $('uname').textContent=d.name;$('urole').textContent=d.role;role=d.role;uid=d.uid;load();
+});
+
+function setView(v){view=v;$('tAll').classList.toggle('on',v==='all');$('tMine').classList.toggle('on',v==='mine');load();}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function statusTag(s){return s==='已通过'?'<span class="tag ok">已通过</span>':s==='已驳回'?'<span class="tag no">已驳回</span>':'<span class="tag wait">待审</span>';}
+function amt(v){return '¥'+(+v).toFixed(2);}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+function load(){
+  const p=new URLSearchParams();if(view==='mine')p.set('mine','1');
+  fetch('/api/reimburse?'+p.toString()).then(r=>r.json()).then(rows=>{
+    $('count').textContent='共 '+rows.length+' 条';
+    const tb=$('tbody');
+    if(!rows.length){tb.innerHTML='<tr><td colspan="8" class="empty">暂无报销记录</td></tr>';return;}
+    tb.innerHTML=rows.map(r=>{
+      const isOwner=(r.xh===uid);
+      const isAppr=(role==='主席'||role==='副主席');
+      let ops='<span class="op del" onclick="del('+r.id+')">删除</span>';
+      if(isAppr&&r.status==='待审'){
+        ops+='<span class="op" onclick="setSt('+r.id+',\'已通过\')">通过</span>'+
+             '<span class="op" onclick="setSt('+r.id+',\'已驳回\')">驳回</span>';
+      } else if(!isAppr&&!isOwner){ops='<span class="op dis">—</span>';}
+      return '<tr><td>'+r.id+'</td><td class="title">'+esc(r.title)+'</td><td>'+(esc(r.category)||'—')+
+        '</td><td class="amt">'+amt(r.amount)+'</td><td>'+esc(r.name)+'</td><td>'+statusTag(r.status)+
+        '</td><td>'+(esc(r.created)||'—')+'</td><td>'+ops+'</td></tr>';
+    }).join('');
+  });
+}
+
+function save(){
+  const d={title:$('f_title').value.trim(),category:$('f_category').value.trim(),
+    amount:$('f_amount').value.trim(),note:$('f_note').value.trim()};
+  if(!d.title||!d.category||!d.amount){$('fErr').textContent='请填写事项、类别与金额';return;}
+  $('fErr').textContent='';const b=$('saveBtn');b.disabled=true;b.textContent='提交中…';
+  fetch('/api/reimburse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+    .then(r=>r.json()).then(res=>{b.disabled=false;b.textContent='提交申请';
+      if(res.ok){toast('已提交，等待审批');$('form').classList.remove('open');
+        ['f_title','f_category','f_amount','f_note'].forEach(i=>$(i).value='');load();}
+      else{$('fErr').textContent=res.error||'提交失败';}})
+    .catch(()=>{b.disabled=false;b.textContent='提交申请';$('fErr').textContent='网络异常';});
+}
+function del(id){if(!confirm('确认删除该报销记录？'))return;
+  fetch('/api/reimburse/'+id,{method:'DELETE'}).then(r=>r.json()).then(res=>{if(res.ok){toast('已删除');load();}else alert('删除失败');});}
+function setSt(id,st){fetch('/api/reimburse/'+id+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:st})})
+  .then(r=>r.json()).then(res=>{if(res.ok){toast('已'+st);load();}else alert(res.error||'操作失败');});}
+</script>
+</body>
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星海艺术团 · 2026新生招新</title>
+<style>
+  :root{
+    --navy:#0F2A52; --blue:#2B579A; --gold:#D4A24E; --gold-2:#E9C07A;
+    --ink:#1A2233; --sub:#6B7280; --bg:#F5F7FB; --line:#E7ECF3; --card:#FFFFFF;
+    --ok:#2E9E5B; --shadow:0 10px 40px rgba(15,42,82,.08);
+    --a-blue:#2B579A; --a-blue-soft:rgba(43,87,154,.10);
+    --a-gold:#D4A24E; --a-gold-soft:rgba(212,162,78,.14);
+    --a-rose:#B5556B; --a-rose-soft:rgba(181,85,107,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+        background:var(--bg);color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  img{max-width:100%;display:block;}
+  ::selection{background:rgba(212,162,78,.25);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:99;
+    background:linear-gradient(90deg,var(--gold),var(--gold-2));transition:width .1s;}
+  #nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;transition:.35s;transform:translateY(-100%);opacity:0;}
+  #nav.solid{transform:translateY(0);opacity:1;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
+    box-shadow:0 2px 20px rgba(15,42,82,.08);}
+  #nav .brand{font-weight:800;font-size:17px;color:var(--navy);letter-spacing:1px;}
+  #nav .brand span{color:var(--gold);}
+  #nav .nav-btn{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;
+    padding:9px 20px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;
+    box-shadow:0 4px 14px rgba(43,87,154,.35);transition:transform .2s;}
+  #nav .nav-btn:active{transform:scale(.95);}
+  section{position:relative;padding:62px 0;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 22px;}
+  .sec-tint{background:linear-gradient(180deg,#EEF3FB,#F6F8FC);}
+  .sec-tint + .sec-tint{border-top:1px solid #fff;}
+  .divider{height:1px;max-width:680px;margin:0 auto;
+    background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent);}
+  .sec-head{text-align:center;margin-bottom:38px;}
+  .sec-head .kicker{font-size:12px;letter-spacing:4px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+  .sec-head h2{font-size:27px;font-weight:850;color:var(--navy);margin-top:8px;letter-spacing:1px;}
+  .sec-head p{font-size:13.5px;color:var(--sub);margin-top:10px;}
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+
+  /* HERO */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;color:#fff;overflow:hidden;padding:80px 24px;
+    background:radial-gradient(120% 120% at 50% 0%,#1b3a6b 0%,#0F2A52 55%,#091C3A 100%);}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:float 14s ease-in-out infinite;}
+  .blob.b1{width:340px;height:340px;background:rgba(43,87,154,.7);top:-60px;left:-40px;}
+  .blob.b2{width:300px;height:300px;background:rgba(212,162,78,.45);bottom:-80px;right:-30px;animation-delay:-5s;}
+  .blob.b3{width:220px;height:220px;background:rgba(74,138,210,.5);top:40%;left:55%;animation-delay:-9s;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-40px) scale(1.1);}66%{transform:translate(-25px,25px) scale(.95);}}
+  .note{position:absolute;bottom:-34px;z-index:1;pointer-events:none;color:rgba(233,192,122,.85);
+    text-shadow:0 0 14px rgba(233,192,122,.45);animation:rise linear forwards;}
+  @keyframes rise{0%{transform:translateY(0) translateX(0) rotate(0);opacity:0;}8%{opacity:1;}88%{opacity:.85;}100%{transform:translateY(-92vh) translateX(var(--dx)) rotate(50deg);opacity:0;}}
+  .eq{position:absolute;bottom:0;left:0;right:0;height:62px;display:flex;align-items:flex-end;justify-content:center;
+    gap:4px;z-index:1;opacity:.55;padding:0 0 10px;pointer-events:none;overflow:hidden;}
+  .eq i{width:4px;border-radius:3px;height:8px;background:linear-gradient(var(--gold-2),var(--gold));animation:eq 1.1s ease-in-out infinite;}
+  @keyframes eq{0%,100%{height:8px;}50%{height:var(--h);}}
+  .hero .badge{position:relative;z-index:2;display:inline-block;font-size:12px;letter-spacing:3px;color:var(--gold-2);
+    border:1px solid rgba(233,192,122,.4);border-radius:30px;padding:5px 16px;margin-bottom:26px;animation:fadeDown .9s ease both;}
+  .hero h1{position:relative;z-index:2;font-size:clamp(40px,11vw,72px);font-weight:900;letter-spacing:6px;line-height:1.05;
+    background:linear-gradient(180deg,#fff 30%,#E9C07A 130%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 30px rgba(0,0,0,.25);animation:fadeUp 1s ease .1s both;}
+  .hero .sub{position:relative;z-index:2;font-size:15px;letter-spacing:1px;opacity:.92;margin-top:14px;animation:fadeUp 1s ease .25s both;}
+  .hero .welcome{position:relative;z-index:2;margin-top:28px;max-width:540px;background:rgba(255,255,255,.08);
+    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:20px 22px;font-size:14px;
+    line-height:2;text-align:left;animation:fadeUp 1s ease .4s both;}
+  .hero .welcome b{color:var(--gold-2);}
+  .hero-cta{position:relative;z-index:2;margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s ease .55s both;}
+  .cta{font-size:15px;font-weight:700;padding:14px 30px;border-radius:34px;cursor:pointer;text-decoration:none;transition:.25s;border:none;}
+  .cta.primary{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#3a2a08;box-shadow:0 8px 24px rgba(212,162,78,.45);}
+  .cta.primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(212,162,78,.55);}
+  .cta.ghost{border:1px solid rgba(255,255,255,.5);color:#fff;background:transparent;}
+  .cta.ghost:hover{background:rgba(255,255,255,.12);}
+  .scroll-ind{position:relative;z-index:2;margin-top:30px;font-size:11px;letter-spacing:2px;opacity:.7;animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+  /* 快捷入口卡 */
+  .qnav{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .qn{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 12px;text-align:center;cursor:pointer;
+    box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden;}
+  .qn::after{content:"";position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .3s;
+    background:radial-gradient(circle at 50% 0%,rgba(43,87,154,.10),transparent 72%);}
+  .qn:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(15,42,82,.14);border-color:var(--blue);}
+  .qn:hover::after{opacity:1;}
+  .qn .e{font-size:26px;margin-bottom:7px;transition:transform .25s;}
+  .qn:hover .e{transform:scale(1.15) rotate(-5deg);}
+  .qn .t{font-size:13px;font-weight:700;color:var(--navy);}
+  .qn.ai{background:linear-gradient(135deg,#fff,#f3f7fd);border-color:rgba(212,162,78,.35);}
+  .qn.ai .t{color:var(--gold);}
+
+  /* 音乐 / AI 按钮 */
+  .fab{position:fixed;bottom:22px;z-index:75;width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;
+    color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;}
+  .fab:active{transform:scale(.92);}
+  #music{right:18px;background:linear-gradient(135deg,var(--navy),var(--blue));box-shadow:0 8px 24px rgba(15,42,82,.35);}
+  #music.on{animation:pulse 2.4s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,162,78,.55);}70%{box-shadow:0 0 0 16px rgba(212,162,78,0);}100%{box-shadow:0 0 0 0 rgba(212,162,78,0);}}
+  #music .mtip{position:absolute;right:62px;white-space:nowrap;background:rgba(15,42,82,.88);color:#fff;font-size:11px;
+    padding:6px 11px;border-radius:9px;opacity:0;transform:translateX(8px);transition:.25s;pointer-events:none;}
+  #music:hover .mtip{opacity:1;transform:none;}
+  #bot{left:18px;display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+    border:none;border-radius:30px;padding:13px 22px;height:auto;width:auto;font-size:15px;font-weight:800;letter-spacing:.5px;
+    cursor:pointer;box-shadow:0 10px 30px rgba(43,87,154,.45);animation:botPulse 2s infinite;}
+  #bot .emo{font-size:20px;}
+  @keyframes botPulse{0%{box-shadow:0 0 0 0 rgba(43,87,154,.5);}70%{box-shadow:0 0 0 15px rgba(43,87,154,0);}100%{box-shadow:0 0 0 0 rgba(43,87,154,0);}}
+  #botHint{position:fixed;left:18px;bottom:82px;z-index:74;background:#fff;border:1px solid var(--line);color:var(--navy);
+    font-size:13px;font-weight:600;padding:11px 14px;border-radius:14px;box-shadow:0 8px 30px rgba(15,42,82,.18);
+    max-width:220px;line-height:1.55;opacity:0;transform:translateY(8px);transition:.4s;pointer-events:none;}
+  #botHint.show{opacity:1;transform:none;pointer-events:auto;cursor:pointer;}
+  #botHint::after{content:"";position:absolute;left:26px;bottom:-7px;width:14px;height:14px;background:#fff;
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);}
+
+  /* 聊天面板 */
+  #chat{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);z-index:72;width:100%;max-width:420px;height:72vh;max-height:640px;
+    background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 50px rgba(15,42,82,.2);display:flex;flex-direction:column;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);overflow:hidden;}
+  #chat.open{transform:translate(-50%,0);}
+  #chat .ch-head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  #chat .ch-head .av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:19px;}
+  #chat .ch-head .ti{font-size:15px;font-weight:700;}
+  #chat .ch-head .st{font-size:11px;opacity:.82;margin-top:1px;}
+  #chat .ch-close{margin-left:auto;font-size:22px;cursor:pointer;opacity:.85;line-height:1;}
+  #chat .ch-close:hover{opacity:1;}
+  #chat .ch-body{flex:1;overflow-y:auto;padding:16px 14px;background:#F5F7FB;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:82%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.65;word-break:break-word;}
+  .msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.me{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .msg .qchip{display:inline-block;margin:6px 6px 0 0;font-size:12px;color:var(--blue);background:#EEF4FB;border:1px solid #dbe6f3;
+    padding:5px 11px;border-radius:18px;cursor:pointer;}
+  .msg .qchip:active{transform:scale(.96);}
+  #chat .ch-quick{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px 4px;background:#F5F7FB;}
+  #chat .ch-quick span{font-size:12px;color:var(--blue);background:#EEF4FB;border:1px solid #dbe6f3;padding:6px 12px;border-radius:18px;cursor:pointer;}
+  #chat .ch-quick span:active{transform:scale(.96);}
+  #chat .ch-input{display:flex;gap:8px;padding:10px 14px 14px;background:#fff;border-top:1px solid var(--line);flex-shrink:0;}
+  #chat .ch-input input{flex:1;border:1px solid var(--line);border-radius:22px;padding:11px 15px;font-size:14px;font-family:inherit;outline:none;}
+  #chat .ch-input input:focus{border-color:var(--blue);}
+  #chat .ch-input button{border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:22px;
+    padding:0 18px;font-size:14px;font-weight:700;cursor:pointer;}
+  #chat .ch-input button:disabled{opacity:.6;}
+
+  /* 数据墙 */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .stat{background:linear-gradient(160deg,#fff,#f3f7fd);border:1px solid var(--line);border-radius:18px;padding:24px 16px;text-align:center;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--gold));}
+  .stat .num{font-size:42px;font-weight:900;color:var(--navy);line-height:1;font-variant-numeric:tabular-nums;}
+  .stat .num small{font-size:20px;color:var(--gold);}
+  .stat .label{font-size:12.5px;color:var(--sub);margin-top:8px;}
+
+  /* 加入理由 */
+  .benefits{display:flex;flex-direction:column;gap:14px;}
+  .benefit{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;}
+  .benefit:hover{transform:translateX(6px);box-shadow:0 14px 34px rgba(15,42,82,.12);}
+  .benefit .ic{width:48px;height:48px;flex-shrink:0;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;
+    background:linear-gradient(135deg,rgba(43,87,154,.12),rgba(212,162,78,.18));}
+  .benefit h4{font-size:15.5px;color:var(--navy);margin-bottom:3px;}
+  .benefit p{font-size:12.8px;color:var(--sub);line-height:1.65;}
+
+  /* 老师 */
+  .teacher{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px;
+    box-shadow:var(--shadow);transition:transform .25s;}
+  .teacher:hover{transform:translateY(-3px);}
+  .teacher .avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0;box-shadow:0 6px 16px rgba(43,87,154,.3);}
+  .teacher .info h3{font-size:17px;color:var(--navy);}
+  .teacher .info .role{font-size:12px;color:var(--gold);font-weight:700;margin:2px 0 7px;}
+  .teacher .info p{font-size:12.5px;color:var(--sub);line-height:1.7;}
+
+  /* 部门 */
+  .tip{font-size:12.5px;color:var(--gold);background:rgba(212,162,78,.1);border-radius:10px;padding:10px 14px;margin-bottom:24px;text-align:center;}
+  .group-block{margin-bottom:30px;--accent:var(--a-blue);--accent-soft:var(--a-blue-soft);}
+  .group-block.g-gold{--accent:var(--a-gold);--accent-soft:var(--a-gold-soft);}
+  .group-block.g-rose{--accent:var(--a-rose);--accent-soft:var(--a-rose-soft);}
+  .group-block h4{font-size:14.5px;color:var(--blue);margin-bottom:14px;font-weight:800;display:flex;align-items:center;gap:8px;}
+  .group-block h4::before{content:"";width:18px;height:3px;background:var(--accent);border-radius:2px;}
+  .group-block h4 span{font-size:11px;color:var(--sub);font-weight:400;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .dept{position:relative;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:16px;
+    padding:18px 16px 16px;text-align:left;box-shadow:0 3px 12px rgba(15,42,82,.05);cursor:pointer;overflow:hidden;
+    transition:transform .28s,box-shadow .28s,border-color .28s;}
+  .dept::after{content:"";position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .3s;pointer-events:none;
+    background:radial-gradient(circle at 50% 0%,var(--accent-soft),transparent 72%);}
+  .dept::before{content:"";position:absolute;left:16px;right:16px;bottom:0;height:3px;background:var(--accent);
+    transform:scaleX(0);transform-origin:center;transition:transform .32s ease;}
+  .dept:hover{transform:translateY(-5px);box-shadow:0 16px 38px rgba(15,42,82,.15);}
+  .dept:hover::after{opacity:1;} .dept:hover::before{transform:scaleX(1);}
+  .dept .cat{font-size:10px;letter-spacing:1.5px;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+  .dept .head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .dept .icon{font-size:26px;transition:transform .28s;line-height:1;}
+  .dept:hover .icon{transform:scale(1.16) rotate(-5deg);}
+  .dept .name{font-size:16px;font-weight:800;color:var(--navy);}
+  .dept .desc{font-size:11.8px;color:var(--sub);line-height:1.62;margin-bottom:11px;}
+  .dept .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;}
+  .dept .tags span{font-size:10.5px;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:20px;font-weight:600;}
+  .dept .join{font-size:11.5px;color:var(--accent);font-weight:800;opacity:.9;transition:opacity .25s,transform .25s;display:flex;align-items:center;gap:5px;}
+  .dept:hover .join{opacity:1;transform:translateX(3px);}
+
+  /* 倒计时 */
+  .band{color:#fff;background:radial-gradient(120% 140% at 50% 0%,#1b3a6b,#0F2A52 60%,#091C3A);position:relative;overflow:hidden;}
+  .band::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(212,162,78,.22),transparent 70%);bottom:-90px;right:-50px;}
+  .band .sec-head h2{color:#fff;} .band .sec-head .kicker{color:var(--gold-2);} .band .sec-head p{color:rgba(255,255,255,.8);}
+  .countdown{display:flex;justify-content:center;gap:12px;margin-top:6px;}
+  .cd-cell{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:16px 6px;min-width:74px;text-align:center;backdrop-filter:blur(4px);}
+  .cd-cell .v{font-size:38px;font-weight:900;color:var(--gold-2);line-height:1;font-variant-numeric:tabular-nums;}
+  .cd-cell .u{font-size:11px;color:rgba(255,255,255,.75);margin-top:6px;letter-spacing:1px;}
+
+  /* 时间线 */
+  .timeline{position:relative;padding-left:26px;}
+  .timeline::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--blue),var(--gold));}
+  .tl-item{position:relative;margin-bottom:24px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);}
+  .tl-item::before{content:"";position:absolute;left:-26px;top:20px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--blue);}
+  .tl-item.key::before{border-color:var(--gold);box-shadow:0 0 0 5px rgba(212,162,78,.22);}
+  .tl-item.key{border-color:rgba(212,162,78,.4);}
+  .tl-date{font-size:12.5px;font-weight:800;color:var(--blue);}
+  .tl-item.key .tl-date{color:var(--gold);}
+  .tl-title{font-size:15.5px;font-weight:800;margin:3px 0 5px;color:var(--navy);}
+  .tl-text{font-size:13px;color:var(--sub);line-height:1.65;}
+
+  /* 三步 */
+  .steps{display:flex;gap:14px;flex-wrap:wrap;}
+  .step{flex:1;min-width:170px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 18px;position:relative;box-shadow:var(--shadow);}
+  .step .n{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:12px;box-shadow:0 4px 12px rgba(43,87,154,.3);}
+  .step h4{font-size:15.5px;color:var(--navy);margin-bottom:5px;}
+  .step p{font-size:12.5px;color:var(--sub);line-height:1.65;}
+
+  /* 风采 */
+  .marquee{display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);}
+  .marquee .track{display:flex;gap:14px;animation:scrollx 28s linear infinite;flex-shrink:0;padding:4px 0;}
+  .marquee:hover .track{animation-play-state:paused;}
+  @keyframes scrollx{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .moment{flex:0 0 auto;width:158px;height:118px;border-radius:16px;background:#fff;box-shadow:var(--shadow);
+    border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .moment .e{font-size:34px;}
+  .moment .t{font-size:13px;color:var(--navy);font-weight:700;}
+
+  /* 寄语 */
+  .quotes{display:flex;flex-direction:column;gap:14px;}
+  .quote{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);position:relative;}
+  .quote .mark{font-size:42px;color:var(--gold);line-height:.6;opacity:.45;}
+  .quote p{font-size:13.5px;color:var(--ink);line-height:1.85;margin:8px 0 12px;}
+  .quote .who{font-size:12.5px;color:var(--sub);} .quote .who b{color:var(--navy);}
+
+  /* FAQ */
+  .faq{display:flex;flex-direction:column;gap:11px;}
+  .qa{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+  .qa .q{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-size:14.5px;font-weight:700;color:var(--navy);}
+  .qa .q .plus{font-size:22px;color:var(--gold);transition:transform .3s;flex-shrink:0;}
+  .qa.open .q .plus{transform:rotate(45deg);}
+  .qa .a{max-height:0;overflow:hidden;transition:max-height .4s ease;color:var(--sub);font-size:13px;line-height:1.7;}
+  .qa .a div{padding:0 18px 16px;} .qa.open .a{max-height:240px;}
+
+  /* CTA */
+  .signup{background:linear-gradient(150deg,var(--navy),var(--blue));border-radius:24px;padding:38px 26px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+  .signup::before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(212,162,78,.3),transparent 70%);top:-80px;right:-60px;}
+  .signup h2{position:relative;font-size:24px;margin-bottom:8px;}
+  .signup p{position:relative;font-size:13.5px;opacity:.9;margin-bottom:24px;}
+  .qr-box{position:relative;background:#fff;border-radius:16px;padding:16px;display:inline-block;}
+  .qr-placeholder{width:190px;height:190px;background:#F5F7FB;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--sub);font-size:12px;padding:10px;}
+  .qr-cap{font-size:11px;color:var(--sub);margin-top:8px;}
+
+  footer{text-align:center;font-size:11.5px;color:var(--sub);padding:40px 20px 90px;}
+  footer .line{width:44px;height:3px;background:linear-gradient(90deg,var(--blue),var(--gold));margin:0 auto 16px;border-radius:3px;}
+
+  /* 弹窗 */
+  .mask{position:fixed;inset:0;background:rgba(9,20,40,.6);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;
+    z-index:80;padding:24px 14px;overflow-y:auto;}
+  .mask.show{display:flex;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff;border-radius:20px;width:100%;max-width:560px;margin:auto;padding:24px 22px 28px;position:relative;
+    box-shadow:0 30px 70px rgba(0,0,0,.35);animation:pop .3s cubic-bezier(.2,.8,.2,1);}
+  @keyframes pop{from{transform:scale(.92) translateY(20px);opacity:.4}to{transform:scale(1) translateY(0);opacity:1}}
+  .modal h3{font-size:20px;color:var(--navy);} .modal .m-sub{font-size:12.5px;color:var(--sub);margin-bottom:18px;} .modal .m-sub b{color:var(--gold);}
+  .field{margin-bottom:14px;} .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;} .field label .req{color:#E0564B;}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-size:14px;
+    font-family:inherit;background:#FBFCFE;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,87,154,.12);background:#fff;}
+  .field textarea{resize:vertical;min-height:62px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .radio-grp{display:flex;gap:10px;flex-wrap:wrap;}
+  .radio-grp label{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;cursor:pointer;border:1px solid var(--line);
+    border-radius:11px;padding:10px 15px;background:#FBFCFE;transition:.2s;}
+  .radio-grp input{width:auto;accent-color:var(--blue);}
+  .radio-grp label.sel{border-color:var(--blue);background:#EEF4FB;color:var(--navy);font-weight:600;}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);cursor:pointer;}
+  .check input{width:auto;accent-color:var(--gold);}
+  .m-actions{display:flex;gap:12px;margin-top:20px;}
+  .btn-submit{flex:1;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:13px;padding:15px;
+    font-size:16px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn-submit:hover{box-shadow:0 10px 26px rgba(43,87,154,.4);}
+  .btn-submit:disabled{opacity:.65;cursor:not-allowed;}
+  .btn-cancel{flex:0 0 100px;background:#EDF1F6;color:var(--sub);border:none;border-radius:13px;padding:15px;font-size:15px;cursor:pointer;}
+  .m-close{position:absolute;top:14px;right:18px;font-size:26px;color:#b8c2d0;cursor:pointer;line-height:1;transition:.2s;}
+  .m-close:hover{color:var(--navy);transform:rotate(90deg);}
+  .spinner{width:17px;height:17px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .m-msg{font-size:12.5px;margin-top:10px;min-height:16px;} .m-msg.err{color:#E0564B;}.m-msg.ok{color:var(--ok);}
+  .success{text-align:center;padding:18px 0 6px;} .success .big{font-size:56px;animation:pop .5s ease;}
+  .success h3{margin:6px 0;font-size:21px;color:var(--navy);} .success p{font-size:13px;color:var(--sub);}
+  @media(max-width:380px){.stats{grid-template-columns:1fr 1fr;}.row2{grid-template-columns:1fr;}.grid{grid-template-columns:1fr;}.qnav{grid-template-columns:1fr 1fr;}.cd-cell{min-width:64px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav id="nav">
+  <div class="brand">星海<span>·</span>艺术团</div>
+  <button class="nav-btn" style="background:linear-gradient(135deg,var(--blue),var(--gold));" onclick="openChat()">🤖 AI答疑</button>
+  <button class="nav-btn" onclick="document.getElementById('depts').scrollIntoView()">立即报名</button>
+</nav>
+
+<header class="hero">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <span class="badge">SHANGHAI LIXIN · XINGHAI ART TROUPE</span>
+  <h1>星海艺术团</h1>
+  <div class="sub">上海立信会计金融学院 · 校团委直属</div>
+  <div class="welcome" data-bind="hero_welcome">
+    学校的舞台上，处处有我们的身影——迎新晚会、十佳歌手、毕业季草坪音乐会……<br>
+    校园里大大小小的活动，很大程度上都由<b>星海艺术团</b>统筹。<br><br>
+    2026级的你，要不要成为这束光的一部分？<b>我们，招新啦。</b>
+  </div>
+  <div class="hero-cta">
+    <a class="cta primary" onclick="document.getElementById('depts').scrollIntoView()">选择你想加入的方向 →</a>
+    <a class="cta ghost" onclick="document.getElementById('join').scrollIntoView()">了解我们</a>
+  </div>
+  <div class="eq" id="eq"></div>
+  <div class="scroll-ind">向下滑动 ↓</div>
+</header>
+
+<!-- 数据墙 -->
+<section class="sec-tint">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat reveal"><div class="num"><span data-count="40">0</span><small>+</small></div><div class="label">近五年国家级/市级奖项</div></div>
+      <div class="stat reveal d1"><div class="num"><span data-count="3">0</span><small>届</small></div><div class="label">连续斩获全国大艺展一等奖</div></div>
+      <div class="stat reveal d2"><div class="num"><span data-count="11">0</span></div><div class="label">行政部门 + 表演团队</div></div>
+      <div class="stat reveal d3"><div class="num"><span data-count="2">0</span><small>校区</small></div><div class="label">浦东 · 松江 同步招新</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 快捷入口 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Quick Access</div>
+      <h2>一键到达</h2>
+      <p>想看什么，点一下就到</p>
+    </div>
+    <div class="qnav reveal">
+      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e">🎭</div><div class="t">部门一览</div></div>
+      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e">📝</div><div class="t">在线报名</div></div>
+      <div class="qn" onclick="document.getElementById('cd').scrollIntoView()"><div class="e">⏰</div><div class="t">招新倒计时</div></div>
+      <div class="qn ai" onclick="openChat()"><div class="e">🤖</div><div class="t">智能答疑</div></div>
+      <div class="qn" onclick="document.getElementById('moments').scrollIntoView()"><div class="e">✨</div><div class="t">团队风采</div></div>
+      <div class="qn" onclick="document.getElementById('faq').scrollIntoView()"><div class="e">❓</div><div class="t">常见问题</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 为什么加入 -->
+<section id="join">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Why Join Us</div>
+      <h2>加入星海，你会收获</h2>
+      <p>不只是一张社团名片，而是一段会被记住的大学时光</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit reveal"><div class="ic">🎭</div><div><h4>站上更大的舞台</h4><p data-bind="b0">校迎新晚会、十佳歌手大赛、毕业季音乐会……核心活动由我们统筹，聚光灯为你而亮。</p></div></div>
+      <div class="benefit reveal d1"><div class="ic">🤝</div><div><h4>遇见同频的人</h4><p data-bind="b1">来自各学院、却同样热爱艺术的伙伴，会变成并肩作战、也一起玩闹的挚友。</p></div></div>
+      <div class="benefit reveal d2"><div class="ic">📈</div><div><h4>硬核能力进阶</h4><p data-bind="b2">策划、统筹、表达、审美——在一次次实战里，把「想做」变成「能做」。</p></div></div>
+      <div class="benefit reveal d3"><div class="ic">🏆</div><div><h4>国家级荣誉傍身</h4><p data-bind="b3">近五年 40+ 奖项、连续三届全国大学生艺术展演一等奖，这里有拿奖的土壤。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 指导老师 -->
+<section class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Mentors</div>
+      <h2>指导老师</h2>
+      <p>由校团委老师直接指导，专业护航你的热爱</p>
+    </div>
+    <div class="teacher reveal">
+      <div class="avatar">魏</div>
+      <div class="info">
+        <h3>魏启旦</h3>
+        <div class="role">团委艺术教育中心副主任 · 副教授</div>
+        <p data-bind="t_wei">华东师范大学音乐学硕士，中国声乐学会理事、上海市美学学会理事、上海音乐家协会会员。近五年带队斩获国家级、市级奖项 40 余项，连续三届全国大学生艺术展演一等奖。承担《戏剧鉴赏》《流行音乐文化》等课程。</p>
+      </div>
+    </div>
+    <div class="teacher reveal d1">
+      <div class="avatar">戴</div>
+      <div class="info">
+        <h3>戴旭彤</h3>
+        <div class="role">艺术教育中心老师</div>
+        <p data-bind="t_dai">协助魏老师处理艺术团日常事务，陪伴大家一起成长、一起登台。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 部门与团队 -->
+<section id="depts">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Join Us</div>
+      <h2>招新部门 &amp; 团队</h2>
+      <p>点击任意卡片，即可报名对应方向</p>
+    </div>
+    <div class="tip reveal">💡 每个方向都可单独报名；表单内也可勾选「服从调剂」</div>
+
+    <div class="group-block reveal">
+      <h4>行政部门 <span>· 组织统筹 · 幕后保障</span></h4>
+      <div class="grid">
+        <div class="dept" data-dept="办公室" onclick="openForm('办公室','行政部门')">
+          <div class="cat">ADMIN</div>
+          <div class="head"><div class="icon">📋</div><div class="name">办公室</div></div>
+          <div class="desc">艺术团运转的「中枢」：统筹排期、会议记录、文书归档与内外联络。适合细心靠谱、喜欢把事情理顺的你。</div>
+          <div class="tags"><span>统筹</span><span>文书</span><span>联络</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="资产管理部" onclick="openForm('资产管理部','行政部门')">
+          <div class="cat">ADMIN</div>
+          <div class="head"><div class="icon">📦</div><div class="name">资产管理部</div></div>
+          <div class="desc">器材服装、道具与舞台设备的登记、维护与调度，是每场演出背后的「后勤总管」。</div>
+          <div class="tags"><span>物资</span><span>装备</span><span>调度</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="外联部" onclick="openForm('外联部','行政部门')">
+          <div class="cat">ADMIN</div>
+          <div class="head"><div class="icon">🤝</div><div class="name">外联部</div></div>
+          <div class="desc">对外接洽赞助、联动兄弟社团与校外资源。能说会道、想锻炼谈判与商务沟通？这里最合适。</div>
+          <div class="tags"><span>赞助</span><span>对接</span><span>谈判</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="企宣部" onclick="openForm('企宣部','行政部门')">
+          <div class="cat">ADMIN</div>
+          <div class="head"><div class="icon">📣</div><div class="name">企宣部</div></div>
+          <div class="desc">公众号推文、海报视频、活动现场拍摄与品牌包装。审美在线、会点设计或剪辑的同学别错过。</div>
+          <div class="tags"><span>推文</span><span>海报</span><span>拍摄</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-block g-gold reveal">
+      <h4>声乐与器乐 <span>· 用声音与旋律表达</span></h4>
+      <div class="grid">
+        <div class="dept" data-dept="合唱团" onclick="openForm('合唱团','表演团队')">
+          <div class="cat">VOICE</div>
+          <div class="head"><div class="icon">🎤</div><div class="name">合唱团</div></div>
+          <div class="desc">天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径，把热爱唱成奖杯。</div>
+          <div class="tags"><span>和声</span><span>声乐</span><span>金奖</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="交响乐团" onclick="openForm('交响乐团','表演团队')">
+          <div class="cat">VOICE</div>
+          <div class="head"><div class="icon">🎻</div><div class="name">交响乐团</div></div>
+          <div class="desc">管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。</div>
+          <div class="tags"><span>管弦</span><span>器乐</span><span>编制</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="民乐团" onclick="openForm('民乐团','表演团队')">
+          <div class="cat">VOICE</div>
+          <div class="head"><div class="icon">🎵</div><div class="name">民乐团</div></div>
+          <div class="desc">国风雅韵，丝竹声声。民族乐器爱好者的主场，传统与现代编曲兼修，奏出东方气韵。</div>
+          <div class="tags"><span>民乐</span><span>国风</span><span>丝竹</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-block g-rose reveal">
+      <h4>舞蹈与戏剧 <span>· 用身体与角色讲述故事</span></h4>
+      <div class="grid">
+        <div class="dept" data-dept="舞蹈团" onclick="openForm('舞蹈团','表演团队')">
+          <div class="cat">STAGE</div>
+          <div class="head"><div class="icon">💃</div><div class="name">舞蹈团</div></div>
+          <div class="desc">翩若惊鸿，力与美并存。街舞、民族、现代多舞种并行，舞台表现力直接拉满。</div>
+          <div class="tags"><span>舞蹈</span><span>编排</span><span>舞台</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="话剧团" onclick="openForm('话剧团','表演团队')">
+          <div class="cat">STAGE</div>
+          <div class="head"><div class="icon">🎭</div><div class="name">话剧团</div></div>
+          <div class="desc">声台形表，戏梦人生。剧本、表演、舞美全能成长，年度大戏由你撑起台前幕后。</div>
+          <div class="tags"><span>表演</span><span>剧本</span><span>舞美</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-block reveal">
+      <h4>主持与礼仪 <span>· 用气质掌控全场</span></h4>
+      <div class="grid">
+        <div class="dept" data-dept="主持团" onclick="openForm('主持团','表演团队')">
+          <div class="cat">HOST</div>
+          <div class="head"><div class="icon">🎙️</div><div class="name">主持团</div></div>
+          <div class="desc">妙语连珠，控场担当。校级晚会、赛事主持系统训练，让你在镜头前从容不慌。</div>
+          <div class="tags"><span>主持</span><span>控场</span><span>表达</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+        <div class="dept" data-dept="礼仪队" onclick="openForm('礼仪队','表演团队')">
+          <div class="cat">HOST</div>
+          <div class="head"><div class="icon">🌸</div><div class="name">礼仪队</div></div>
+          <div class="desc">端庄优雅，形象先锋。大型活动接待、颁奖礼仪，气质与仪态双修，是门面的存在。</div>
+          <div class="tags"><span>礼仪</span><span>接待</span><span>仪态</span></div>
+          <div class="join">点击报名 →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 倒计时 -->
+<section class="band" id="cd">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Countdown</div>
+      <h2>距离线下招新还有</h2>
+      <p>2026年9月6日（周六）8:00 · 浦东 &amp; 松江 两校区同步</p>
+    </div>
+    <div class="countdown reveal">
+      <div class="cd-cell"><div class="v" id="cd-d">00</div><div class="u">DAYS 天</div></div>
+      <div class="cd-cell"><div class="v" id="cd-h">00</div><div class="u">HRS 时</div></div>
+      <div class="cd-cell"><div class="v" id="cd-m">00</div><div class="u">MIN 分</div></div>
+      <div class="cd-cell"><div class="v" id="cd-s">00</div><div class="u">SEC 秒</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 时间线 -->
+<section class="sec-tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Timeline</div>
+      <h2>招新时间线</h2>
+      <p>两校区同步进行 · 浦东 &amp; 松江</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal"><div class="tl-date">即日起</div><div class="tl-title">线上报名通道开启</div><div class="tl-text">本页面即可报名，也可扫码加入 2026 新生咨询群，各团队轮值答疑。</div></div>
+      <div class="tl-item reveal d1"><div class="tl-date">9月1日 — 5日</div><div class="tl-title">群内每日答疑</div><div class="tl-text">团秘排班，各团队轮流介绍特色，帮你找到最适合自己的方向。</div></div>
+      <div class="tl-item key reveal d2"><div class="tl-date">9月6日（周六）</div><div class="tl-title">线下正式招新 · 两校区同步</div><div class="tl-text">8:00—17:00，浦东校区 &amp; 松江校区设招新摊位，现场咨询、填表、面试一站式完成。</div></div>
+      <div class="tl-item reveal d3"><div class="tl-date">9月7日 — 16日</div><div class="tl-title">复试 · 公示 · 见面会</div><div class="tl-text">汇总报名、团队复试、名单公示，9月16日召开新成员见面会，正式欢迎你加入！</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 三步 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">How to Join</div>
+      <h2>三步，加入我们</h2>
+      <p>流程很简单，剩下的交给我们</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="n">1</div><h4>进群咨询</h4><p>扫码加入 2026 新生咨询群，先看各团队介绍、向学长学姐提问，找到心动方向。</p></div>
+      <div class="step reveal d1"><div class="n">2</div><h4>提交报名</h4><p>线上点开任意部门卡片填表，或 9月6日来线下摊位现场填表 + 简短面试。</p></div>
+      <div class="step reveal d2"><div class="n">3</div><h4>复试 &amp; 见面</h4><p>团队复试筛选，9月16日新成员见面会，你就是星海的一员了。</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 风采 -->
+<section class="sec-tint" id="moments">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Moments</div>
+      <h2>星海的高光时刻</h2>
+      <p>这些舞台，等你来点亮 ✨</p>
+    </div>
+    <div class="marquee reveal">
+      <div class="track" id="moments-track"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 寄语 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Voices</div>
+      <h2>学长学姐说</h2>
+      <p>他们也曾是刚入校、有点忐忑的新生</p>
+    </div>
+    <div class="quotes">
+      <div class="quote reveal"><div class="mark">“</div><p>大一零基础进合唱团，大三站上大艺展领奖台。星海给我的，是敢站在光里的底气。</p><div class="who">—— <b>林同学</b> · 合唱团 2023级</div></div>
+      <div class="quote reveal d1"><div class="mark">“</div><p>在企宣部从排版小白到独立做晚会主视觉，简历上最硬的一栏就是这样练出来的。</p><div class="who">—— <b>周同学</b> · 企宣部 2024级</div></div>
+      <div class="quote reveal d2"><div class="mark">“</div><p>最难忘的不是奖，是凌晨一起搭台、散场一起啃包子的那群人。这大概就是星海。</p><div class="who">—— <b>吴同学</b> · 舞蹈团 2022级</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="sec-tint" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">FAQ</div>
+      <h2>常见问题</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="qa"><div class="q">零基础可以报名吗？<span class="plus">+</span></div><div class="a"><div>完全可以！很多同学入学时零基础，热爱与坚持远比起点重要。表演团队重培养，行政部门看责任心。</div></div></div>
+      <div class="qa"><div class="q">可以同时报多个方向吗？<span class="plus">+</span></div><div class="a"><div>线上表单一次选一个主方向，可勾选「服从调剂」；线下招新现场也可向多个团队加报。</div></div></div>
+      <div class="qa"><div class="q">招新有门槛吗？<span class="plus">+</span></div><div class="a"><div>表演团队可能安排简短面试或才艺展示，行政部门更看重执行力与靠谱程度，整体友好开放。</div></div></div>
+      <div class="qa"><div class="q">报名后多久有通知？<span class="plus">+</span></div><div class="a"><div>提交后请留意招新咨询群与手机短信，线下招新后一周内完成复试与公示。</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="wrap">
+    <div class="signup reveal">
+      <h2>扫码加入招新咨询群</h2>
+      <p>先入群了解详情，线上报名同步进行中！</p>
+      <div class="qr-box">
+        <div class="qr-placeholder" id="consultSlot">在此放置<br>招新咨询群<br>二维码图片</div>
+      </div>
+      <div class="qr-cap">微信 / QQ 扫码进群</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="line"></div>
+  <span id="footerText" data-bind="footer">上海立信会计金融学院 · 星海艺术团主席团<br>
+  2026 年新生招新 · 期待与你相遇 ♪</span>
+</footer>
+
+<!-- 浮动按钮 -->
+<button id="bot" aria-label="AI智能答疑"><span class="emo">🤖</span><span>AI 答疑</span></button>
+<div id="botHint">👋 我是星海 AI 小星，招新问题随时问我</div>
+<button id="music" aria-label="背景配乐"><span class="ic">🎵</span><span class="mtip">开启配乐</span></button>
+
+<!-- 聊天面板 -->
+<div id="chat">
+  <div class="ch-head">
+    <div class="av">🤖</div>
+    <div><div class="ti">星海智能小助手</div><div class="st">关于招新 · 部门 · 报名，随时问我</div></div>
+    <div class="ch-close" onclick="closeChat()">×</div>
+  </div>
+  <div class="ch-body" id="chBody"></div>
+  <div class="ch-quick" id="chQuick"></div>
+  <div class="ch-input">
+    <input id="chInput" placeholder="输入你的问题…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button id="chSend" onclick="sendMsg()">发送</button>
+  </div>
+</div>
+
+<!-- 报名弹窗 -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <span class="m-close" onclick="closeForm()">×</span>
+    <div id="formView">
+      <h3>📝 新生报名表</h3>
+      <div class="m-sub">你正在报名：<b id="targetName">—</b>（<span id="targetType">—</span>）</div>
+      <form id="signupForm" onsubmit="return submitForm(event)">
+        <div class="field">
+          <label>意向方向 <span class="req">*</span></label>
+          <select id="f_target" required>
+            <optgroup label="行政部门"><option>办公室</option><option>资产管理部</option><option>外联部</option><option>企宣部</option></optgroup>
+            <optgroup label="表演团队"><option>合唱团</option><option>交响乐团</option><option>民乐团</option><option>舞蹈团</option><option>话剧团</option><option>主持团</option><option>礼仪队</option></optgroup>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field"><label>姓名 <span class="req">*</span></label><input id="f_name" required placeholder="你的姓名"></div>
+          <div class="field"><label>性别 <span class="req">*</span></label>
+            <div class="radio-grp" id="f_gender_grp"><label><input type="radio" name="gender" value="男" required>男</label><label><input type="radio" name="gender" value="女">女</label></div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>出生年月</label><input id="f_birth" placeholder="如 2008.03"></div>
+          <div class="field"><label>校区 <span class="req">*</span></label>
+            <div class="radio-grp" id="f_campus_grp"><label><input type="radio" name="campus" value="浦东" required>浦东</label><label><input type="radio" name="campus" value="松江">松江</label></div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>院系 <span class="req">*</span></label><input id="f_college" required placeholder="如 金融科技学院"></div>
+          <div class="field"><label>专业 / 班级 <span class="req">*</span></label><input id="f_major" required placeholder="如 金融科技 1班"></div>
+        </div>
+        <div class="field"><label>手机号 <span class="req">*</span></label><input id="f_phone" required pattern="[0-9]{11}" title="请输入11位手机号" placeholder="11位手机号"></div>
+        <div class="row2">
+          <div class="field"><label>微信号</label><input id="f_wechat" placeholder="选填"></div>
+          <div class="field"><label>邮箱</label><input id="f_email" type="email" placeholder="选填"></div>
+        </div>
+        <div class="field"><label>特长 / 才艺 / 相关经历</label><textarea id="f_skill" placeholder="如：钢琴十级、校运会主持、合唱经验等（选填）"></textarea></div>
+        <div class="field"><label>报名动机 / 自我介绍</label><textarea id="f_motive" placeholder="简单说说为什么想加入我们（选填）"></textarea></div>
+        <label class="check"><input type="checkbox" id="f_adjust"> 服从调剂（所报方向满员时可调配到其他方向）</label>
+        <div class="m-msg" id="formMsg"></div>
+        <div class="m-actions">
+          <button type="button" class="btn-cancel" onclick="closeForm()">取消</button>
+          <button type="submit" class="btn-submit" id="submitBtn">提交报名</button>
+        </div>
+      </form>
+    </div>
+    <div id="successView" class="success" style="display:none;">
+      <div class="big">🎉</div>
+      <h3>报名成功！</h3>
+      <p id="successText">我们已收到你的报名，请留意招新咨询群与短信通知。</p>
+      <div id="successQr"></div>
+      <div class="m-actions" style="justify-content:center;">
+        <button type="button" class="btn-submit" style="flex:0 0 auto;padding:13px 34px;" onclick="closeForm()">完成</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const nav=document.getElementById('nav'),prog=document.getElementById('progress');
+  function onScroll(){
+    const h=document.documentElement.scrollHeight-window.innerHeight;
+    prog.style.width=(h>0?(window.scrollY/h*100):0)+'%';
+    nav.classList.toggle('solid',window.scrollY>window.innerHeight*0.6);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting)return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(c=>{
+        const to=+c.dataset.count;let cur=0;const step=Math.max(1,Math.ceil(to/40));
+        const t=setInterval(()=>{cur+=step;if(cur>=to){cur=to;clearInterval(t);}c.textContent=cur;},24);
+      });
+      io.unobserve(e.target);
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  document.querySelectorAll('.qa .q').forEach(q=>{
+    q.addEventListener('click',()=>q.parentElement.classList.toggle('open'));
+  });
+
+  (function(){
+    const eq=document.getElementById('eq');
+    for(let i=0;i<34;i++){
+      const b=document.createElement('i');
+      b.style.setProperty('--h',(10+Math.random()*46)+'px');
+      b.style.animationDelay=(-Math.random()*1.1)+'s';
+      b.style.animationDuration=(0.8+Math.random()*0.8)+'s';
+      eq.appendChild(b);
+    }
+  })();
+
+  (function(){
+    const hero=document.querySelector('.hero');
+    const glyphs=['🎵','🎶','♪','♫'];
+    setInterval(()=>{
+      if(document.hidden)return;
+      const n=document.createElement('div');
+      n.className='note';
+      n.textContent=glyphs[Math.floor(Math.random()*glyphs.length)];
+      n.style.left=(Math.random()*100)+'%';
+      n.style.setProperty('--dx',(Math.random()*60-30)+'px');
+      n.style.fontSize=(15+Math.random()*15)+'px';
+      n.style.animationDuration=(6.5+Math.random()*4.5)+'s';
+      hero.appendChild(n);
+      setTimeout(()=>n.remove(),12000);
+    },850);
+  })();
+
+  /* 倒计时 */
+  (function(){
+    const target=new Date('2026-09-06T08:00:00').getTime();
+    const d=document.getElementById('cd-d'),h=document.getElementById('cd-h'),
+          m=document.getElementById('cd-m'),s=document.getElementById('cd-s');
+    function pad(n){return String(n).padStart(2,'0');}
+    function tick(){
+      let diff=Math.max(0,target-Date.now());
+      const dd=Math.floor(diff/864e5);diff%=864e5;
+      const hh=Math.floor(diff/36e5);diff%=36e5;
+      const mm=Math.floor(diff/6e4);diff%=6e4;
+      const ss=Math.floor(diff/1e3);
+      d.textContent=pad(dd);h.textContent=pad(hh);m.textContent=pad(mm);s.textContent=pad(ss);
+    }
+    tick();setInterval(tick,1000);
+  })();
+
+  /* 团队风采 滚播 */
+  (function(){
+    const data=[['🎤','十佳歌手'],['🎭','毕业大戏'],['🎻','新年音乐会'],['🏆','大艺展金奖'],
+                ['💃','舞蹈专场'],['🎙️','主持风采'],['🌸','礼仪接待'],['🎵','民乐雅韵']];
+    const track=document.getElementById('moments-track');
+    function build(){ data.forEach(([e,t])=>{
+      const el=document.createElement('div');el.className='moment';
+      el.innerHTML='<div class="e">'+e+'</div><div class="t">'+t+'</div>';track.appendChild(el);
+    });}
+    build();build();
+  })();
+
+  /* 配乐：温暖柔和的"音乐盒/竖琴"拨奏 */
+  const Music=(function(){
+    let ctx,master,playing=false,timer,step=0,next=0;
+    const prog=[
+      {pad:[130.81,164.81,196.00], arp:[523.25,659.25,783.99,987.77]},
+      {pad:[196.00,246.94,293.66], arp:[783.99,987.77,1174.66,1318.51]},
+      {pad:[110.00,130.81,164.81], arp:[440.00,523.25,659.25,783.99]},
+      {pad:[174.61,220.00,261.63], arp:[698.46,880.00,1046.50,1318.51]}
+    ];
+    function pluck(freq,t,peak){
+      const o1=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+      f.type='lowpass';f.frequency.value=1100;f.Q.value=0.6;
+      o1.type='triangle';o2.type='sine';
+      o1.frequency.value=freq;o2.frequency.value=freq;o2.detune.value=-5;
+      o1.connect(f);o2.connect(f);f.connect(g);g.connect(master);
+      const dur=1.5;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.linearRampToValueAtTime(peak,t+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o1.start(t);o2.start(t);o1.stop(t+dur+0.05);o2.stop(t+dur+0.05);
+    }
+    function pad(freq,t,dur){
+      const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+      f.type='lowpass';f.frequency.value=800;
+      o.type='sine';o.frequency.value=freq;
+      o.connect(f);f.connect(g);g.connect(master);
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.linearRampToValueAtTime(0.05,t+0.6);
+      g.gain.linearRampToValueAtTime(0.0001,t+dur);
+      o.start(t);o.stop(t+dur+0.05);
+    }
+    function schedule(){
+      const now=ctx.currentTime;
+      while(next<now+0.3){
+        const ch=prog[Math.floor(step/8)%4], idx=step%4;
+        if(step%8===0) ch.pad.forEach(f=>pad(f,next,3.6));
+        pluck(ch.arp[idx],next,0.16);
+        if(idx===2) pluck(ch.arp[0]/2,next,0.10);
+        next+=0.62;step++;
+      }
+    }
+    function start(){
+      if(playing)return;
+      ctx=new (window.AudioContext||window.webkitAudioContext)();
+      master=ctx.createGain();master.gain.value=0;
+      const f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=1600;
+      const d=ctx.createDelay();d.delayTime.value=0.23;
+      const fb=ctx.createGain();fb.gain.value=0.16;
+      master.connect(f);f.connect(ctx.destination);
+      master.connect(d);d.connect(fb);fb.connect(d);fb.connect(ctx.destination);
+      master.gain.linearRampToValueAtTime(0.32,ctx.currentTime+1.4);
+      playing=true;next=ctx.currentTime+0.1;timer=setInterval(schedule,25);
+    }
+    function stop(){
+      if(!playing)return;
+      master.gain.linearRampToValueAtTime(0,ctx.currentTime+0.6);
+      playing=false;clearInterval(timer);
+      setTimeout(()=>{if(ctx){ctx.close();ctx=null;}},900);
+    }
+    return { toggle(){ if(playing){stop();return false;} start(); return true; } };
+  })();
+
+  const mb=document.getElementById('music'),mic=mb.querySelector('.ic'),mtip=mb.querySelector('.mtip');
+  mb.addEventListener('click',()=>{
+    const on=Music.toggle();
+    mb.classList.toggle('on',on);
+    mic.textContent=on?'🔊':'🎵';
+    mtip.textContent=on?'配乐已开启':'开启配乐';
+  });
+
+  /* ===== AI 智能助手 ===== */
+  const KB=[
+    {k:['你好','您好','在吗','hi','hello','哈喽','嗨'],a:'你好呀～我是星海艺术团智能小助手 🤖 关于招新、部门、报名的任何问题都可以问我！'},
+    {k:['招新时间','什么时候','几号','哪天','9月6','线下','什么时候招新','招新是哪天'],a:'线下正式招新是 <b>2026年9月6日（周六）8:00–17:00</b>，浦东和松江两校区同步进行。线上报名通道现在就开了，扫码进咨询群也能随时问。'},
+    {k:['怎么报名','如何报名','报名方式','怎么填','填表','在哪里报名','线上报名'],a:'两种方式：① <b>线上</b>——在本页面点任意部门/团队卡片，直接填表提交；② <b>线下</b>——9月6日到两校区招新摊位现场填表+简短面试。提交后留意咨询群和短信通知。'},
+    {k:['零基础','没基础','不会','小白','没有经验','可以吗','能报吗'],a:'完全可以！很多同学入学时零基础，热爱和坚持比起点更重要。表演团队有系统培养路径，行政部门更看责任心与执行力，整体很友好～'},
+    {k:['魏老师','魏启旦','指导老师','老师','戴老师','戴旭彤'],a:'艺术团由校团委老师指导。魏启旦老师是团委艺术教育中心副主任、副教授，华东师大音乐学硕士，近五年带队拿了 <b>40 多项国家级/市级奖项</b>，连续三届全国大学生艺术展演一等奖。戴旭彤老师协助魏老师处理日常事务。'},
+    {k:['部门','有哪些部门','行政部门','行政','都有哪些部门'],a:'行政部门 4 个：办公室（统筹文书）、资产管理部（物资装备）、外联部（赞助对接）、企宣部（推文海报）。点「部门一览」卡或往下滑就能看每个部门的详细介绍～'},
+    {k:['团队','表演团队','有哪些团','有什么团','演出团队'],a:'表演团队 7 个：合唱团、交响乐团、民乐团、舞蹈团、话剧团、主持团、礼仪队。点「部门一览」卡可以逐个看介绍和报名入口。'},
+    {k:['合唱团'],a:'合唱团——天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径，把热爱唱成奖杯。'},
+    {k:['交响乐团','交响'],a:'交响乐团——管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。'},
+    {k:['民乐团','民乐'],a:'民乐团——国风雅韵，丝竹声声。民族乐器爱好者的主场，传统与现代编曲兼修，奏出东方气韵。'},
+    {k:['舞蹈团','舞蹈'],a:'舞蹈团——翩若惊鸿，力与美并存。街舞、民族、现代多舞种并行，舞台表现力直接拉满。'},
+    {k:['话剧团','话剧'],a:'话剧团——声台形表，戏梦人生。剧本、表演、舞美全能成长，年度大戏由你撑起台前幕后。'},
+    {k:['主持团','主持'],a:'主持团——妙语连珠，控场担当。校级晚会、赛事主持系统训练，让你在镜头前从容不慌。'},
+    {k:['礼仪队','礼仪'],a:'礼仪队——端庄优雅，形象先锋。大型活动接待、颁奖礼仪，气质与仪态双修，是门面的存在。'},
+    {k:['办公室'],a:'办公室——艺术团运转的「中枢」：统筹排期、会议记录、文书归档与内外联络。适合细心靠谱、喜欢把事情理顺的你。'},
+    {k:['资产管理部','资产'],a:'资产管理部——器材服装、道具与舞台设备的登记、维护与调度，是每场演出背后的「后勤总管」。'},
+    {k:['外联部','外联'],a:'外联部——对外接洽赞助、联动兄弟社团与校外资源。能说会道、想锻炼谈判与商务沟通的同学最合适。'},
+    {k:['企宣部','企宣'],a:'企宣部——公众号推文、海报视频、活动现场拍摄与品牌包装。审美在线、会点设计或剪辑的同学别错过。'},
+    {k:['校区','浦东','松江','两个校区'],a:'招新在浦东和松江两校区同步进行。报名时选你所在的校区即可，后续活动也按校区安排。'},
+    {k:['咨询群','二维码','加群','微信群','qq群','怎么进群'],a:'页面最下方「扫码加入招新咨询群」放有二维码，用微信/QQ 扫一下就能进群，各团队每天轮值答疑。'},
+    {k:['面试','复试','门槛','要求','严吗','难吗'],a:'表演团队可能安排简短面试或才艺展示，行政部门更看重执行力与靠谱程度，整体友好开放。复试在 9月7–16日，16日开新成员见面会。'},
+    {k:['收获','为什么加入','加入好处','能得到什么','意义'],a:'四件珍贵的事：站上更大的舞台、遇见同频的伙伴、硬核能力进阶、国家级荣誉傍身（近五年 40+ 奖项）。'},
+    {k:['服从调剂','调剂','调配'],a:'表单里可以勾选「服从调剂」，所报方向满员时可调配到其他方向，提高入选机会。'},
+    {k:['联系人','找谁','负责人','主席','副主席','陈嘉豪','郝博雅'],a:'招新由主席团统筹：副主席陈嘉豪（浦东）和郝博雅（松江）共同负责。具体事宜进咨询群问最方便～'},
+    {k:['谢谢','感谢','多谢','辛苦'],a:'不客气～期待在星海遇见你 🎉'}
+  ];
+  const QUICK=['招新是哪天？','怎么报名？','零基础能报吗？','有哪些部门？','魏老师是谁？'];
+  const chat=document.getElementById('chat'),body=document.getElementById('chBody'),
+        qk=document.getElementById('chQuick'),inp=document.getElementById('chInput'),
+        sendBtn=document.getElementById('chSend');
+  function scrollBody(){body.scrollTop=body.scrollHeight;}
+  function addMsg(text,who){
+    const d=document.createElement('div');
+    d.className='msg '+(who==='me'?'me':'bot');
+    d.innerHTML=text;
+    body.appendChild(d);scrollBody();
+  }
+  function answer(q){
+    const t=q.toLowerCase();
+    let best=0,bestA='';
+    KB.forEach(it=>{let s=0;it.k.forEach(k=>{if(t.indexOf(k.toLowerCase())>=0)s+=k.length;});if(s>best){best=s;bestA=it.a;}});
+    if(best===0){
+      return '这个问题我还在学习中 🤔 你可以试试问我：<br><span class="qchip" onclick="ask(\'招新是哪天？\')">招新时间</span>'+
+             '<span class="qchip" onclick="ask(\'怎么报名？\')">怎么报名</span>'+
+             '<span class="qchip" onclick="ask(\'有哪些部门？\')">有哪些部门</span>'+
+             '<span class="qchip" onclick="ask(\'零基础能报吗？\')">零基础能报吗</span>';
+    }
+    return bestA;
+  }
+  function ask(q){inp.value='';addMsg(q,'me');setTimeout(()=>addMsg(answer(q),'bot'),350);}
+  function sendMsg(){
+    const q=inp.value.trim();if(!q)return;
+    addMsg(q,'me');inp.value='';
+    sendBtn.disabled=true;
+    setTimeout(()=>{addMsg(answer(q),'bot');sendBtn.disabled=false;},400);
+  }
+  function renderQuick(){QUICK.forEach(q=>{const s=document.createElement('span');s.textContent=q;s.onclick=()=>ask(q);qk.appendChild(s);});}
+  function openChat(){
+    chat.classList.add('open');
+    const h=document.getElementById('botHint');if(h)h.classList.remove('show');
+    if(!body.childElementCount){
+      addMsg('嗨～我是星海艺术团智能小助手 🤖<br>招新时间、各部门介绍、怎么报名……都可以问我！','bot');
+      renderQuick();
+    }
+  }
+  function closeChat(){chat.classList.remove('open');}
+  window.openChat=openChat;window.closeChat=closeChat;window.ask=ask;
+  document.getElementById('bot').addEventListener('click',openChat);
+  /* AI 引导气泡：加载后自动弹出一次 */
+  (function(){
+    const hint=document.getElementById('botHint');if(!hint)return;
+    hint.addEventListener('click',()=>{hint.classList.remove('show');openChat();});
+    setTimeout(()=>hint.classList.add('show'),1500);
+    setTimeout(()=>hint.classList.remove('show'),10000);
+  })();
+
+  /* 报名弹窗 */
+  const mask=document.getElementById('mask');
+  function openForm(name,type){
+    document.getElementById('targetName').textContent=name;
+    document.getElementById('targetType').textContent=type;
+    document.getElementById('f_target').value=name;
+    document.getElementById('formView').style.display='block';
+    document.getElementById('successView').style.display='none';
+    document.getElementById('formMsg').textContent='';
+    mask.classList.add('show');document.body.style.overflow='hidden';
+  }
+  function closeForm(){mask.classList.remove('show');document.body.style.overflow='';}
+  mask.addEventListener('click',e=>{if(e.target===mask)closeForm();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeForm();closeChat();}});
+
+  document.querySelectorAll('.radio-grp').forEach(g=>{
+    g.addEventListener('change',()=>{
+      g.querySelectorAll('label').forEach(l=>l.classList.remove('sel'));
+      const c=g.querySelector('input:checked');
+      if(c)c.closest('label').classList.add('sel');
+    });
+  });
+
+  async function submitForm(e){
+    e.preventDefault();
+    const btn=document.getElementById('submitBtn'),msg=document.getElementById('formMsg');
+    const fd={
+      target:document.getElementById('f_target').value,
+      name:document.getElementById('f_name').value.trim(),
+      gender:(document.querySelector('input[name=gender]:checked')||{}).value||'',
+      birth:document.getElementById('f_birth').value.trim(),
+      campus:(document.querySelector('input[name=campus]:checked')||{}).value||'',
+      college:document.getElementById('f_college').value.trim(),
+      major:document.getElementById('f_major').value.trim(),
+      phone:document.getElementById('f_phone').value.trim(),
+      wechat:document.getElementById('f_wechat').value.trim(),
+      email:document.getElementById('f_email').value.trim(),
+      skill:document.getElementById('f_skill').value.trim(),
+      motive:document.getElementById('f_motive').value.trim(),
+      adjust:document.getElementById('f_adjust').checked
+    };
+    if(!fd.name||!fd.gender||!fd.campus||!fd.college||!fd.major||!fd.phone){
+      msg.className='m-msg err';msg.textContent='请完整填写带 * 的必填项';return false;
+    }
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span> 提交中…';
+    try{
+      const r=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(fd)});
+      const data=await r.json();
+      if(r.ok&&data.ok){
+        document.getElementById('formView').style.display='none';
+        document.getElementById('successView').style.display='block';
+        document.getElementById('successText').textContent='我们已收到「'+fd.name+'」报名 '+fd.target+' 的信息，请留意招新咨询群与短信通知。';
+        const sq=document.getElementById('successQr');
+        if(window.__C&&window.__C.team_qr&&window.__C.team_qr[fd.target]){
+          sq.innerHTML='<div class="qr-box" style="margin-top:14px"><img src="'+window.__C.team_qr[fd.target]+'" alt="群二维码" style="width:168px;height:168px;border-radius:12px"><div class="qr-cap">扫码加入【'+fd.target+'】招新群</div></div>';
+        }else{
+          const cq=(window.__C&&window.__C.consult_qr)?window.__C.consult_qr:'';
+          sq.innerHTML='<div class="qr-cap" style="margin-top:10px">【'+fd.target+'】招新群码待发布，请先加入招新咨询群：</div>'+
+            (cq?'<div class="qr-box" style="margin-top:8px"><img src="'+cq+'" style="width:150px;height:150px;border-radius:12px"><div class="qr-cap">招新咨询群</div></div>':'')+
+            '<div class="qr-cap" style="margin-top:6px">提交信息已收到，后续由团秘拉你入群 📨</div>';
+        }
+        document.getElementById('signupForm').reset();
+      }else{msg.className='m-msg err';msg.textContent=(data.error||'提交失败，请稍后重试');}
+    }catch(err){msg.className='m-msg err';msg.textContent='网络异常，请稍后重试';}
+    btn.disabled=false;btn.textContent='提交报名';
+    return false;
+  }
+
+  /* ===== 内容覆盖（来自 CMS /api/content） ===== */
+  window.__C={};
+  fetch('/api/content').then(r=>r.json()).then(C=>{
+    window.__C=C||{};
+    const set=(sel,v)=>{const el=document.querySelector(sel);if(el&&v)el.innerHTML=v;};
+    if(C.hero_welcome) set('[data-bind="hero_welcome"]', C.hero_welcome);
+    ['b0','b1','b2','b3'].forEach(k=>{if(C[k])set('[data-bind="'+k+'"]',C[k]);});
+    if(C.t_wei) set('[data-bind="t_wei"]', C.t_wei);
+    if(C.t_dai) set('[data-bind="t_dai"]', C.t_dai);
+    if(C.footer) set('[data-bind="footer"]', C.footer);
+    const slot=document.getElementById('consultSlot');
+    if(C.consult_qr&&slot){
+      slot.classList.remove('qr-placeholder');slot.classList.add('qr-img');
+      slot.innerHTML='<img src="'+C.consult_qr+'" alt="招新咨询群二维码" style="width:190px;height:190px;border-radius:12px">';
+    }
+    document.querySelectorAll('.dept[data-dept]').forEach(d=>{
+      const n=d.getAttribute('data-dept');
+      if(C.dept_desc&&C.dept_desc[n]){const p=d.querySelector('.desc');if(p)p.textContent=C.dept_desc[n];}
+    });
+  }).catch(()=>{});
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>活动通报 · 星海工作端</title>
+<style>
+  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;--ok:#2E9E5B;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+  header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:13px 20px;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .brand{font-weight:800;font-size:16px;color:var(--navy);letter-spacing:1px;}
+  .brand span{color:var(--gold);}
+  .crumb{font-size:12.5px;color:var(--sub);} .crumb a{color:var(--blue);text-decoration:none;}
+  .user{margin-left:auto;font-size:13px;color:var(--sub);} .user b{color:var(--navy);} .user a{margin-left:12px;color:var(--blue);text-decoration:none;font-weight:600;}
+  .wrap{max-width:860px;margin:22px auto;padding:0 18px;}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,var(--navy),var(--blue));transition:transform .15s,opacity .15s;}
+  .btn:active{transform:scale(.97);} .btn.gold{background:linear-gradient(135deg,var(--gold),#E9C07A);color:#3a2a08;}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--line);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .count{font-size:12.5px;color:var(--sub);margin-left:auto;}
+  .form{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 8px 30px rgba(15,42,82,.05);display:none;}
+  .form.open{display:block;}
+  .fld{display:flex;flex-direction:column;margin-bottom:12px;}
+  .fld label{font-size:12px;color:var(--navy);font-weight:700;margin-bottom:5px;}
+  .fld input,.fld select,.fld textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;background:#FBFCFE;outline:none;}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue);background:#fff;}
+  .fld textarea{resize:vertical;min-height:90px;}
+  .row2{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink);cursor:pointer;}
+  .chk input{width:16px;height:16px;accent-color:var(--gold);}
+  .err{color:#E0564B;font-size:12px;margin:8px 0 0;min-height:14px;}
+  .mfoot{display:flex;gap:10px;margin-top:6px;} .mfoot .btn{flex:1;}
+  .list{display:flex;flex-direction:column;gap:12px;}
+  .post{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 17px;box-shadow:0 6px 22px rgba(15,42,82,.05);position:relative;}
+  .post.pin{border-color:var(--gold);box-shadow:0 6px 22px rgba(212,162,78,.16);}
+  .post .top{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex-wrap:wrap;}
+  .post .tt{font-weight:800;font-size:15.5px;color:var(--navy);}
+  .post .pinbadge{font-size:11px;font-weight:800;color:#3a2a08;background:linear-gradient(135deg,var(--gold),#E9C07A);padding:2px 9px;border-radius:20px;}
+  .post .lv{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;}
+  .post .lv.urg{background:#FDECEB;color:#C0392B;} .post .lv.imp{background:#FBF1DC;color:#B5860B;} .post .lv.nor{background:#EEF4FB;color:var(--blue);}
+  .post .body{font-size:13.5px;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-word;}
+  .post .meta{font-size:12px;color:var(--sub);margin-top:9px;display:flex;gap:10px;align-items:center;}
+  .post .op{color:#C0392B;cursor:pointer;text-decoration:underline;font-weight:600;}
+  .empty{text-align:center;color:#9aa3b0;padding:36px;font-size:13px;}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;
+    padding:11px 20px;border-radius:30px;font-size:13.5px;opacity:0;transition:.3s;z-index:90;pointer-events:none;box-shadow:0 10px 30px rgba(15,42,82,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">星海<span>·</span>工作端</div>
+  <div class="crumb"><a href="/work">总览</a> / 活动通报</div>
+  <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
+</header>
+
+<div class="wrap">
+  <div class="bar">
+    <button class="btn" onclick="document.getElementById('form').classList.toggle('open')">＋ 发布通报</button>
+    <span class="count" id="count">—</span>
+  </div>
+
+  <div class="form" id="form">
+    <div class="fld"><label>标题 <span style="color:#C0392B">*</span></label><input id="f_title" placeholder="如 9月迎新晚会彩排通知"></div>
+    <div class="fld"><label>内容 <span style="color:#C0392B">*</span></label><textarea id="f_body" placeholder="时间、地点、注意事项…"></textarea></div>
+    <div class="row2">
+      <div class="fld" style="margin:0;"><label>级别</label>
+        <select id="f_level"><option>普通</option><option>重要</option><option>紧急</option></select></div>
+      <label class="chk"><input type="checkbox" id="f_pinned"> 📌 置顶</label>
+    </div>
+    <div class="err" id="fErr"></div>
+    <div class="mfoot"><button class="btn ghost" onclick="document.getElementById('form').classList.remove('open')">取消</button>
+      <button class="btn" id="saveBtn" onclick="save()">发布</button></div>
+  </div>
+
+  <div class="list" id="list"><div class="empty">加载中…</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+let uid='',role='';
+const $=id=>document.getElementById(id);
+fetch('/api/me').then(r=>r.json()).then(d=>{
+  if(!d.ok){location.href='/login';return;}
+  $('uname').textContent=d.name;$('urole').textContent=d.role;uid=d.uid;role=d.role;load();
+});
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function lvTag(l){return l==='紧急'?'<span class="lv urg">紧急</span>':l==='重要'?'<span class="lv imp">重要</span>':'<span class="lv nor">普通</span>';}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+function load(){
+  fetch('/api/bulletin').then(r=>r.json()).then(rows=>{
+    $('count').textContent='共 '+rows.length+' 条';
+    const list=$('list');
+    if(!rows.length){list.innerHTML='<div class="empty">暂无通报，点「发布通报」发布第一条</div>';return;}
+    list.innerHTML=rows.map(r=>{
+      const isOwner=(r.author_xh===uid);
+      const isAppr=(role==='主席'||role==='副主席');
+      let op = (isOwner||isAppr) ? '<span class="op" onclick="del('+r.id+')">删除</span>' : '';
+      return '<div class="post'+(r.pinned?' pin':'')+'">'+
+        '<div class="top"><span class="tt">'+esc(r.title)+'</span>'+
+        (r.pinned?'<span class="pinbadge">置顶</span>':'')+lvTag(r.level)+'</div>'+
+        '<div class="body">'+esc(r.body)+'</div>'+
+        '<div class="meta"><span>📝 '+esc(r.author)+'</span><span>🕒 '+(esc(r.created)||'—')+'</span>'+(op?'<span style="margin-left:auto">'+op+'</span>':'')+'</div>'+
+      '</div>';
+    }).join('');
+  });
+}
+function save(){
+  const d={title:$('f_title').value.trim(),body:$('f_body').value.trim(),level:$('f_level').value,
+    pinned:document.getElementById('f_pinned').checked};
+  if(!d.title||!d.body){$('fErr').textContent='请填写标题与内容';return;}
+  $('fErr').textContent='';const b=$('saveBtn');b.disabled=true;b.textContent='发布中…';
+  fetch('/api/bulletin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+    .then(r=>r.json()).then(res=>{b.disabled=false;b.textContent='发布';
+      if(res.ok){toast('已发布');$('form').classList.remove('open');
+        ['f_title','f_body'].forEach(i=>$(i).value='');$('f_pinned').checked=false;load();}
+      else{$('fErr').textContent=res.error||'发布失败';}})
+    .catch(()=>{b.disabled=false;b.textContent='发布';$('fErr').textContent='网络异常';});
+}
+function del(id){if(!confirm('确认删除该通报？'))return;
+  fetch('/api/bulletin/'+id,{method:'DELETE'}).then(r=>r.json()).then(res=>{if(res.ok){toast('已删除');load();}else alert('删除失败');});}
+</script>
+</body>
+</html>

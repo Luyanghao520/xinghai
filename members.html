@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成员信息 · 星海工作端</title>
+<style>
+  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;--ok:#2E9E5B;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+  header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:13px 20px;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .brand{font-weight:800;font-size:16px;color:var(--navy);letter-spacing:1px;}
+  .brand span{color:var(--gold);}
+  .crumb{font-size:12.5px;color:var(--sub);}
+  .crumb a{color:var(--blue);text-decoration:none;}
+  .user{margin-left:auto;font-size:13px;color:var(--sub);}
+  .user b{color:var(--navy);} .user a{margin-left:12px;color:var(--blue);text-decoration:none;font-weight:600;}
+  .wrap{max-width:1080px;margin:22px auto;padding:0 18px;}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .bar input,.bar select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;font-family:inherit;background:#fff;outline:none;}
+  .bar input:focus,.bar select:focus{border-color:var(--blue);}
+  .bar .grow{flex:1;min-width:180px;}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,var(--navy),var(--blue));transition:transform .15s,opacity .15s;}
+  .btn:active{transform:scale(.97);}
+  .btn.gold{background:linear-gradient(135deg,var(--gold),#E9C07A);color:#3a2a08;}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--line);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .count{font-size:12.5px;color:var(--sub);margin-left:auto;}
+  .tablewrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(15,42,82,.05);}
+  .scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:880px;}
+  th,td{border-bottom:1px solid #eef2f7;padding:10px 11px;text-align:left;vertical-align:top;white-space:nowrap;}
+  th{background:var(--navy);color:#fff;font-weight:700;position:sticky;top:0;}
+  tbody tr:hover{background:#f7faff;}
+  td.name{font-weight:800;color:var(--navy);}
+  .xh{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--blue);font-weight:700;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#EEF4FB;color:var(--blue);font-weight:700;}
+  .tag.act{background:#E7F6EC;color:var(--ok);} .tag.left{background:#FDECEB;color:#C0392B;}
+  .op{color:var(--blue);cursor:pointer;text-decoration:underline;margin-right:8px;font-weight:600;}
+  .op.del{color:#C0392B;}
+  .empty{text-align:center;color:#9aa3b0;padding:36px;font-size:13px;}
+  /* 抽屉表单 */
+  .mask{position:fixed;inset:0;background:rgba(15,42,82,.42);z-index:80;display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;}
+  .mask.open{display:flex;}
+  .modal{background:#fff;border-radius:18px;width:560px;max-width:100%;padding:24px 24px 22px;box-shadow:0 30px 80px rgba(8,22,46,.35);}
+  .modal h3{color:var(--navy);font-size:18px;margin-bottom:4px;}
+  .modal .ms{font-size:12.5px;color:var(--sub);margin-bottom:16px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;}
+  .fld{display:flex;flex-direction:column;}
+  .fld.full{grid-column:1/-1;}
+  .fld label{font-size:12px;color:var(--navy);font-weight:700;margin-bottom:5px;}
+  .fld label .req{color:#C0392B;}
+  .fld input,.fld select,.fld textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;background:#FBFCFE;outline:none;}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue);background:#fff;}
+  .fld textarea{resize:vertical;min-height:54px;}
+  .err{color:#E0564B;font-size:12px;margin:10px 0 0;min-height:14px;}
+  .mfoot{display:flex;gap:10px;margin-top:18px;}
+  .mfoot .btn{flex:1;}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;
+    padding:11px 20px;border-radius:30px;font-size:13.5px;opacity:0;transition:.3s;z-index:90;pointer-events:none;box-shadow:0 10px 30px rgba(15,42,82,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">星海<span>·</span>工作端</div>
+  <div class="crumb"><a href="/work">总览</a> / 成员信息</div>
+  <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
+</header>
+
+<div class="wrap">
+  <div class="bar">
+    <input class="grow" id="q" placeholder="搜学号 / 姓名 / 部门 / 院系 / 专业…" oninput="debLoad()">
+    <select id="fCampus" onchange="load()">
+      <option value="">全部校区</option>
+      <option value="浦东">浦东</option>
+      <option value="松江">松江</option>
+    </select>
+    <select id="fRole" onchange="load()">
+      <option value="">全部角色</option>
+      <option>主席</option><option>副主席</option><option>团长</option>
+      <option>团秘</option><option>部长</option><option>副部长</option>
+      <option>干事</option><option>队员</option>
+    </select>
+    <button class="btn" onclick="openForm()">＋ 录入成员</button>
+    <button class="btn gold" onclick="importCSV()">⬆ 导入</button>
+    <button class="btn ghost" onclick="exportCSV()">⬇ 导出</button>
+    <input type="file" id="file" accept=".csv" style="display:none" onchange="doImport(this)">
+    <span class="count" id="count">—</span>
+  </div>
+
+  <div class="tablewrap">
+    <div class="scroll">
+      <table>
+        <thead><tr>
+          <th>学号</th><th>姓名</th><th>性别</th><th>校区</th><th>院系</th><th>专业/班级</th>
+          <th>手机</th><th>角色</th><th>部门/团队</th><th>届别</th><th>状态</th><th>操作</th>
+        </tr></thead>
+        <tbody id="tbody"><tr><td colspan="12" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 录入/编辑抽屉 -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3 id="mTitle">＋ 录入成员</h3>
+    <div class="ms">学号为唯一主键（9 位数字，如 251400143）。重复学号将自动更新。</div>
+    <div class="grid2">
+      <div class="fld"><label>学号 <span class="req">*</span></label><input id="f_xh" placeholder="9 位数字" maxlength="9"></div>
+      <div class="fld"><label>姓名 <span class="req">*</span></label><input id="f_name" placeholder="姓名"></div>
+      <div class="fld"><label>性别</label><select id="f_gender"><option></option><option>男</option><option>女</option></select></div>
+      <div class="fld"><label>校区</label><select id="f_campus"><option></option><option>浦东</option><option>松江</option></select></div>
+      <div class="fld"><label>学院</label><input id="f_college" placeholder="如 国际商务学院"></div>
+      <div class="fld"><label>专业/班级</label><input id="f_major" placeholder="如 国际商务 2401"></div>
+      <div class="fld"><label>手机号</label><input id="f_phone" placeholder="11 位手机号"></div>
+      <div class="fld"><label>微信</label><input id="f_wechat" placeholder="微信号"></div>
+      <div class="fld"><label>邮箱</label><input id="f_email" placeholder="邮箱"></div>
+      <div class="fld"><label>角色</label><select id="f_role">
+        <option></option><option>主席</option><option>副主席</option><option>团长</option>
+        <option>团秘</option><option>部长</option><option>副部长</option><option>干事</option><option>队员</option>
+      </select></div>
+      <div class="fld"><label>所属部门/团队</label><input id="f_dept" placeholder="如 合唱团 / 办公室"></div>
+      <div class="fld"><label>入团时间</label><input id="f_join_date" placeholder="如 2024-09"></div>
+      <div class="fld"><label>届别</label><input id="f_grade" placeholder="如 2024 级"></div>
+      <div class="fld"><label>状态</label><select id="f_status"><option></option><option>在团</option><option>休团</option><option>退团</option></select></div>
+      <div class="fld full"><label>特长/经历</label><textarea id="f_skill" placeholder="获奖、擅长的领域等"></textarea></div>
+      <div class="fld full"><label>备注</label><textarea id="f_note" placeholder="备注信息"></textarea></div>
+    </div>
+    <div class="err" id="fErr"></div>
+    <div class="mfoot">
+      <button class="btn ghost" onclick="closeForm()">取消</button>
+      <button class="btn" id="saveBtn" onclick="save()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLS=["xh","name","gender","campus","college","major","phone","wechat","email","role","dept","join_date","grade","status","skill","note"];
+const $ = id => document.getElementById(id);
+let editing=null, timer=null;
+
+fetch('/api/me').then(r=>r.json()).then(d=>{
+  if(!d.ok){location.href='/login';return;}
+  $('uname').textContent=d.name;$('urole').textContent=d.role;
+  load();
+});
+
+function statusTag(s){
+  if(s==='在团') return '<span class="tag act">在团</span>';
+  if(s==='退团') return '<span class="tag left">退团</span>';
+  if(s==='休团') return '<span class="tag">休团</span>';
+  return s?('<span class="tag">'+esc(s)+'</span>'):'';
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function debLoad(){clearTimeout(timer);timer=setTimeout(load,250);}
+function load(){
+  const q=$('q').value.trim(), cam=$('fCampus').value, role=$('fRole').value;
+  const p=new URLSearchParams();
+  if(q)p.set('q',q); if(cam)p.set('campus',cam); if(role)p.set('role',role);
+  fetch('/api/members?'+p.toString()).then(r=>r.json()).then(rows=>{
+    const tb=$('tbody');
+    $('count').textContent='共 '+rows.length+' 条';
+    if(!rows.length){tb.innerHTML='<tr><td colspan="12" class="empty">暂无成员，点「＋ 录入成员」开始录入</td></tr>';return;}
+    tb.innerHTML=rows.map(r=>{
+      const op=editing;
+      return '<tr>'+
+        '<td class="xh">'+esc(r.xh)+'</td>'+
+        '<td class="name">'+esc(r.name)+'</td>'+
+        '<td>'+(esc(r.gender)||'—')+'</td>'+
+        '<td>'+(esc(r.campus)||'—')+'</td>'+
+        '<td>'+(esc(r.college)||'—')+'</td>'+
+        '<td>'+(esc(r.major)||'—')+'</td>'+
+        '<td>'+(esc(r.phone)||'—')+'</td>'+
+        '<td>'+(esc(r.role)?'<span class="tag">'+esc(r.role)+'</span>':'—')+'</td>'+
+        '<td>'+(esc(r.dept)||'—')+'</td>'+
+        '<td>'+(esc(r.grade)||'—')+'</td>'+
+        '<td>'+statusTag(r.status)+'</td>'+
+        '<td><span class="op" onclick="openForm(\''+esc(r.xh)+'\')">编辑</span>'+
+        '<span class="op del" onclick="del(\''+esc(r.xh)+'\')">删除</span></td>'+
+      '</tr>';
+    }).join('');
+  });
+}
+
+function openForm(xh){
+  editing=null;
+  $('mTitle').textContent='＋ 录入成员';
+  $('fErr').textContent='';
+  COLS.forEach(c=>{const el=$('f_'+c);if(el)el.value='';});
+  $('f_status').value='在团';
+  if(xh){
+    const row=[...document.querySelectorAll('#tbody tr')].find(tr=>tr.querySelector('.xh')&&tr.querySelector('.xh').textContent===xh);
+    fetch('/api/members?q='+encodeURIComponent(xh)).then(r=>r.json()).then(rows=>{
+      const r=rows.find(x=>x.xh===xh);if(!r)return;
+      editing=xh;$('mTitle').textContent='✎ 编辑 '+r.name;
+      COLS.forEach(c=>{const el=$('f_'+c);if(el)el.value=r[c]||'';});
+    });
+  }
+  $('mask').classList.add('open');
+}
+function closeForm(){$('mask').classList.remove('open');editing=null;}
+$('mask').addEventListener('click',e=>{if(e.target===$('mask'))closeForm();});
+
+function save(){
+  const d={};
+  COLS.forEach(c=>{const el=$('f_'+c);if(el)d[c]=el.value.trim();});
+  if(!d.xh||!d.name){$('fErr').textContent='学号和姓名为必填';return;}
+  if(!/^\d{9}$/.test(d.xh)){$('fErr').textContent='学号须为 9 位数字（如 251400143）';return;}
+  const btn=$('saveBtn');btn.disabled=true;btn.textContent='保存中…';
+  fetch('/api/members',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+    .then(r=>r.json()).then(res=>{
+      btn.disabled=false;btn.textContent='保存';
+      if(res.ok){toast(editing?'已更新 '+d.name:'已录入 '+d.name);closeForm();load();}
+      else{$('fErr').textContent=res.error||'保存失败';}
+    }).catch(()=>{btn.disabled=false;btn.textContent='保存';$('fErr').textContent='网络异常';});
+}
+
+function del(xh){
+  if(!confirm('确认删除学号 '+xh+' 的成员记录？此操作不可撤销。'))return;
+  fetch('/api/members/'+xh,{method:'DELETE'}).then(r=>r.json()).then(res=>{
+    if(res.ok){toast('已删除');load();}else alert('删除失败');
+  });
+}
+
+function exportCSV(){window.open('/api/members/export','_blank');}
+function importCSV(){$('file').click();}
+function doImport(input){
+  const f=input.files[0];if(!f)return;
+  const fd=new FormData();fd.append('file',f);
+  toast('导入中…');
+  fetch('/api/members/import',{method:'POST',body:fd}).then(r=>r.json()).then(res=>{
+    if(res.ok){toast('成功导入 '+res.imported+' 条');load();}
+    else alert(res.error||'导入失败');
+    input.value='';
+  }).catch(()=>{alert('导入异常');input.value='';});
+}
+
+let toastTimer=null;
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>

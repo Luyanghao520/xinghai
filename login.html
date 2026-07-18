@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星海工作端 · 登录</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,#0F2A52,#2B579A);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#1A2233;}
+  .card{background:#fff;border-radius:22px;padding:38px 34px;width:340px;max-width:92vw;box-shadow:0 24px 70px rgba(8,22,46,.35);}
+  .logo{text-align:center;font-weight:900;font-size:24px;color:#0F2A52;letter-spacing:1px;}
+  .logo span{color:#D4A24E;}
+  .sub{text-align:center;color:#6B7280;font-size:13px;margin:6px 0 24px;}
+  label{display:block;font-size:13px;color:#0F2A52;font-weight:600;margin:14px 0 6px;}
+  input{width:100%;border:1px solid #dbe6f3;border-radius:11px;padding:12px 14px;font-size:14px;outline:none;background:#FBFCFE;}
+  input:focus{border-color:#2B579A;background:#fff;}
+  .btn{width:100%;margin-top:22px;border:none;background:linear-gradient(135deg,#0F2A52,#2B579A);color:#fff;
+    padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+  .btn:disabled{opacity:.6;}
+  .err{color:#E0564B;font-size:12.5px;text-align:center;margin-top:12px;min-height:16px;}
+  .back{display:block;text-align:center;margin-top:16px;color:#2B579A;font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">星海<span>·</span>工作端</div>
+    <div class="sub">成员 / 干部统一登录</div>
+    <label>学号 / 工号</label>
+    <input id="xh" placeholder="如 251400143" autocomplete="off">
+    <label>密码</label>
+    <input id="pwd" type="password" placeholder="请输入密码">
+    <button class="btn" id="loginBtn" onclick="doLogin()">登 录</button>
+    <div class="err" id="err"></div>
+    <a class="back" href="/">← 返回星海官网</a>
+  </div>
+<script>
+  function doLogin(){
+    const xh=document.getElementById('xh').value.trim();
+    const pwd=document.getElementById('pwd').value;
+    const err=document.getElementById('err');const btn=document.getElementById('loginBtn');
+    if(!xh||!pwd){err.textContent='请输入学号/工号和密码';return;}
+    btn.disabled=true;btn.textContent='登录中…';err.textContent='';
+    fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({xh:xh,pwd:pwd})})
+      .then(r=>r.json()).then(d=>{
+        if(d.ok){location.href='/work';}
+        else{err.textContent=d.error||'登录失败';btn.disabled=false;btn.textContent='登 录';}
+      }).catch(()=>{err.textContent='网络异常';btn.disabled=false;btn.textContent='登 录';});
+  }
+  document.getElementById('pwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
