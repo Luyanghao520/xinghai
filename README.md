@@ -108,3 +108,38 @@ SECRET     = "xinghai-art-troupe-2026"  # Flask session 密钥 + 密码加盐哈
 - 纯 Flask + SQLite，零外部服务依赖，适合轻量云主机 / 校内服务器。
 - 生产环境建议在 `app.py` 前加 Gunicorn/Nginx，并将 `registrations.db` 等做定期备份。
 - 静态资源经 `/static` 暴露；演出照、Logo 直接放 `static/uploads/` 即可。
+
+## 🚀 部署到 PythonAnywhere（支持 Flask，免费）
+
+> ⚠️ **GitHub Pages 不行**（它只托管静态文件，跑不了 Python）。PythonAnywhere 原生支持 Flask。
+
+1. 注册 https://www.pythonanywhere.com （免费版即可），记下你的**用户名**（假设为 `yourname`）。
+2. 打开 **Dashboard → Consoles → Bash**，把代码拉到站点目录：
+   ```bash
+   cd ~
+   git clone https://github.com/Luyanghao520/xinghai.git mysite
+   # 或者直接把源码文件上传到 /home/yourname/mysite/
+   ```
+3. 安装依赖（Bash 里）：
+   ```bash
+   cd ~/mysite
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+4. 打开 **Dashboard → Web** → **Add a new web app** → 选 **Flask** → 选 Python 版本（3.10+）→ 框架默认即可。
+5. 编辑 **WSGI configuration file**（路径如 `/var/www/yourname_pythonanywhere_com_wsgi.py`），
+   把内容替换为仓库里的 `wsgi.py`（**记得把 `你的用户名` 改成你的实际用户名**）。
+6. 在 Web 标签底部 **Static files** 添加一条映射：
+   - URL：`/static/`
+   - Directory：`/home/yourname/mysite/static`
+7. 点页面上方绿色 **Reload** 按钮。
+8. 打开 `https://yourname.pythonanywhere.com` 即可访问。
+
+> 默认账号见上文；免费版每月有 CPU 配额，足够社团官网日常使用。
+> 数据库（`.db`）首次运行自动创建在 `mysite/` 下，记得定期备份。
+
+## 🔧 其他平台（备选）
+
+- **Render / Railway**：直接用本仓库 + `requirements.txt` + `Procfile`（`web: python app.py`）即可自动部署。
+- **自己的云服务器**：`pip install -r requirements.txt && python app.py`，前置 Nginx 反代 8000 端口。
