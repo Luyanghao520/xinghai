@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>注册申请 · 星海艺术团</title>
+<style>
+        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;;background:linear-gradient(135deg,#F5F0FA 0%,#F0F4FF 25%,#FFF5F8 50%,#F8FFF0 75%,#FFF9F0 100%);position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%);}
+  .card{width:380px;max-width:92vw;background:#fff;border:1.5px solid #DDE2EC;border-radius:18px;padding:26px 24px;box-shadow:0 10px 40px rgba(15,42,82,.08);}
+  .brand{text-align:center;font-weight:800;font-size:20px;color:var(--navy);letter-spacing:1px;margin-bottom:4px;}
+  .brand span{color:var(--gold);}
+  .sub{text-align:center;color:var(--sub);font-size:13px;margin-bottom:18px;}
+  .fld{display:flex;flex-direction:column;margin-bottom:13px;}
+  .fld label{font-size:12px;color:var(--navy);font-weight:700;margin-bottom:5px;}
+  .fld input,.fld select{padding:10px 12px;border:1.5px solid #DDE2EC;border-radius:9px;font-size:14px;background:#FBFCFE;outline:none;}
+  .fld input:focus,.fld select:focus{border-color:var(--blue);background:#fff;}
+  .hint{font-size:11.5px;color:var(--sub);margin-top:4px;}
+  .btn{border:none;border-radius:10px;padding:12px;width:100%;font-size:14px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--navy),var(--blue));margin-top:6px;}
+  .btn:disabled{opacity:.6;cursor:not-allowed;}
+  .err{color:#E0564B;font-size:12.5px;min-height:16px;margin:8px 0;text-align:center;}
+  .link{text-align:center;margin-top:14px;font-size:13px;color:var(--sub);}
+  .link a{color:var(--blue);text-decoration:none;font-weight:600;}
+  .back{display:block;text-align:center;margin-top:8px;color:#2B579A;font-size:12.5px;text-decoration:none;}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);color:#fff;padding:11px 20px;border-radius:30px;font-size:13.5px;opacity:0;transition:.3s;z-index:90;pointer-events:none;box-shadow:0 10px 30px rgba(15,42,82,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .empty{color:var(--sub);font-size:12.5px;min-height:16px;}
+  @media(max-width:420px){body{align-items:flex-start;padding-top:24px;}.card{border-radius:14px;padding:20px 16px;}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">星海艺术团</div>
+  <div class="sub">成员注册申请（提交后需管理员审批）</div>
+  <div class="fld"><label>学号</label><input id="xh" placeholder="9 位数字学号" maxlength="9" inputmode="numeric"></div>
+  <div class="fld"><label>密码</label><input id="pwd" type="password" placeholder="至少8位，含大小写+数字">
+    <div class="hint">须至少 8 位，且同时包含大写字母、小写字母、数字</div></div>
+  <div class="fld"><label>姓名</label><input id="name" placeholder="真实姓名"></div>
+  <div class="fld"><label>校区</label>
+    <select id="campus"><option value="">请选择</option><option>浦东</option><option>松江</option></select></div>
+  <div class="err" id="err"></div>
+  <button class="btn" id="btn" onclick="reg()">提交申请</button>
+  <div class="link">已有账号？<a href="/login">去登录</a></div>
+  <a class="back" href="#" onclick="history.back();return false">← 返回</a>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+function toast(m,ok){const t=$('toast');t.textContent=m;t.style.background=ok?'#2E9E5B':'#0F2A52';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function reg(){
+  const pwd=document.getElementById('pwd').value;
+  if(pwd.length<8||!/[a-z]/.test(pwd)||!/[A-Z]/.test(pwd)||!/\d/.test(pwd)){document.getElementById('err').textContent='密码须≥8位，包含大小写字母和数字';return;}
+  const d={xh:document.getElementById('xh').value.trim(),pwd:pwd,name:document.getElementById('name').value.trim(),campus:document.getElementById('campus').value};
+  if(!d.xh||!d.pwd||!d.name||!d.campus){$('err').textContent='请填写完整信息';return;}
+  $('err').textContent='';const b=$('btn');b.disabled=true;b.textContent='提交中…';
+  fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+    .then(r=>r.json()).then(res=>{b.disabled=false;b.textContent='提交申请';
+      if(res.ok){toast(res.msg||'已提交，等待审批',true);
+        ['xh','pwd','name'].forEach(i=>$(i).value='');$('campus').value='';}
+      else{$('err').textContent=res.error||'提交失败';}})
+    .catch(()=>{b.disabled=false;b.textContent='提交申请';$('err').textContent='网络异常';});
+}
+</script>
+</body>
+</html>

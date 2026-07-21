@@ -5,26 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星海工作端 · 登录</title>
 <style>
+        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-    background:linear-gradient(160deg,#0F2A52,#2B579A);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#1A2233;}
-  .card{background:#fff;border-radius:22px;padding:38px 34px;width:340px;max-width:92vw;box-shadow:0 24px 70px rgba(8,22,46,.35);}
-  .logo{text-align:center;font-weight:900;font-size:24px;color:#0F2A52;letter-spacing:1px;}
-  .logo span{color:#D4A24E;}
-  .sub{text-align:center;color:#6B7280;font-size:13px;margin:6px 0 24px;}
-  label{display:block;font-size:13px;color:#0F2A52;font-weight:600;margin:14px 0 6px;}
-  input{width:100%;border:1px solid #dbe6f3;border-radius:11px;padding:12px 14px;font-size:14px;outline:none;background:#FBFCFE;}
-  input:focus{border-color:#2B579A;background:#fff;}
-  .btn{width:100%;margin-top:22px;border:none;background:linear-gradient(135deg,#0F2A52,#2B579A);color:#fff;
-    padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
-  .btn:disabled{opacity:.6;}
-  .err{color:#E0564B;font-size:12.5px;text-align:center;margin-top:12px;min-height:16px;}
-  .back{display:block;text-align:center;margin-top:16px;color:#2B579A;font-size:12.5px;text-decoration:none;}
+
+  /* ── 星空背景 + 光斑 ── */
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg, #0b1a3a, #1a1a4e, #2d1b4e, #1a0a2e);
+    position:relative;overflow:hidden;color:#1A2233;
+  }
+  /* 装饰光斑 */
+  body::before,body::after{
+    content:'';position:absolute;border-radius:50%;filter:blur(80px);opacity:.45;pointer-events:none;
+  }
+  body::before{
+    width:420px;height:420px;
+    background:radial-gradient(circle, rgba(212,162,78,.35), transparent 70%);
+    top:-80px;right:-100px;
+  }
+  body::after{
+    width:360px;height:360px;
+    background:radial-gradient(circle, rgba(43,87,154,.3), transparent 70%);
+    bottom:-60px;left:-100px;
+  }
+
+  /* ── 玻璃态卡片 ── */
+  .card{
+    position:relative;z-index:1;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(28px);
+    -webkit-backdrop-filter:blur(28px);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:20px;
+    padding:40px 34px 34px;
+    width:360px;max-width:92vw;
+    box-shadow:0 8px 40px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.08) inset;
+  }
+
+  /* ── Logo ── */
+  .logo{text-align:center;font-weight:900;font-size:26px;color:#fff;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.3);}
+  .logo span{color:var(--gold);}
+  .sub{text-align:center;color:rgba(255,255,255,.65);font-size:13px;margin:6px 0 28px;letter-spacing:1px;}
+
+  /* ── 标签 ── */
+  label{
+    display:block;font-size:13px;color:rgba(255,255,255,.85);font-weight:600;
+    margin:16px 0 6px 2px;letter-spacing:.5px;
+  }
+
+  /* ── 输入框 ── */
+  .input-wrap{position:relative;}
+  input{
+    width:100%;
+    border:1.5px solid rgba(255,255,255,.18);
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:14px;outline:none;
+    background:rgba(255,255,255,.10);
+    color:#fff;
+    transition:all .25s ease;
+  }
+  input::placeholder{color:rgba(255,255,255,.35);}
+  input:focus{
+    border-color:var(--gold);
+    background:rgba(255,255,255,.18);
+    box-shadow:0 0 18px rgba(212,162,78,.35), 0 0 0 1px rgba(212,162,78,.12);
+  }
+
+  /* ── 登录按钮 ── */
+  .btn{
+    width:100%;margin-top:26px;border:none;
+    background:linear-gradient(135deg, #C8922E, #D4A24E, #E0B860);
+    color:#1a0a0a;
+    padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
+    letter-spacing:2px;
+    transition:all .3s ease;
+    box-shadow:0 4px 16px rgba(212,162,78,.35);
+  }
+  .btn:hover{
+    box-shadow:0 6px 28px rgba(212,162,78,.55);
+    transform:translateY(-1px);
+  }
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+
+  /* ── 错误提示 ── */
+  .err{color:#FF8A80;font-size:12.5px;text-align:center;margin-top:12px;min-height:18px;}
+
+  /* ── 底部链接 ── */
+  .back{display:block;text-align:center;margin-top:18px;color:rgba(255,255,255,.55);font-size:12.5px;text-decoration:none;
+    transition:color .2s;}
+  .back:hover{color:rgba(255,255,255,.9);}
+
+  /* ── 注册链接突出 ── */
+  .back-reg{
+    display:block;text-align:center;margin-top:12px;
+    padding:10px 0;
+    border:1px solid var(--gold);
+    border-radius:10px;
+    color:var(--gold);
+    font-size:13px;font-weight:600;
+    text-decoration:none;
+    letter-spacing:1px;
+    transition:all .25s ease;
+    background:rgba(212,162,78,.06);
+  }
+  .back-reg:hover{
+    background:rgba(212,162,78,.18);
+    box-shadow:0 0 14px rgba(212,162,78,.25);
+    color:#fff;
+  }
+  @media(max-width:420px){body{align-items:flex-start;padding-top:24px;}.card{padding:28px 20px 24px;}}
 </style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">星海<span>·</span>工作端</div>
+    <div class="logo">星海艺术团工作端</div>
     <div class="sub">成员 / 干部统一登录</div>
     <label>学号 / 工号</label>
     <input id="xh" placeholder="如 251400143" autocomplete="off">
@@ -32,7 +130,8 @@
     <input id="pwd" type="password" placeholder="请输入密码">
     <button class="btn" id="loginBtn" onclick="doLogin()">登 录</button>
     <div class="err" id="err"></div>
-    <a class="back" href="/">← 返回星海官网</a>
+    <a class="back" href="#" onclick="if(window.history.length>1){history.back();}else{location.href='/';}return false">← 返回</a>
+    <a class="back-reg" href="/register">📝 新成员注册申请</a>
   </div>
 <script>
   function doLogin(){

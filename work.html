@@ -5,109 +5,402 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星海工作端</title>
 <style>
-  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;}
+        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;}
-  header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:14px 22px;
-    background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
-  .brand{font-weight:800;font-size:17px;color:var(--navy);letter-spacing:1px;}
-  .brand span{color:var(--gold);}
-  .user{margin-left:auto;font-size:13px;color:var(--sub);}
-  .user b{color:var(--navy);}
-  .user a{margin-left:14px;color:var(--blue);text-decoration:none;font-weight:600;}
-  .wrap{max-width:960px;margin:28px auto;padding:0 20px;}
-  .hi{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px;}
-  .hi+p{color:var(--sub);font-size:13.5px;margin-bottom:22px;}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .mod{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 30px rgba(15,42,82,.05);
-    text-decoration:none;color:inherit;display:block;transition:.2s;position:relative;overflow:hidden;}
-  .mod::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--blue),var(--gold));}
-  .mod:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(15,42,82,.1);}
-  .mod .ic{font-size:26px;}
-  .mod .t{font-weight:800;color:var(--navy);font-size:16px;margin:8px 0 4px;}
-  .mod .d{font-size:12.5px;color:var(--sub);}
-  .done{border-color:#cfe6d8;} .done .badge{background:#E7F6EC;color:#2E9E5B;}
-  .wip .badge{background:#FBF1DC;color:#B5860B;}
-  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;margin-top:8px;}
-  .note{margin-top:18px;font-size:12.5px;color:var(--sub);background:#fff;border:1px dashed var(--line);border-radius:12px;padding:12px 14px;}
-  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+
+  /* ===== Body 背景装饰 ===== */
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(135deg,#F5F0FA 0%,#F0F4FF 25%,#FFF5F8 50%,#F8FFF0 75%,#FFF9F0 100%);position:relative;
+    color:var(--ink); line-height:1.7; min-height:100vh;
+    position:relative; overflow-x:hidden;
+  }
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),
+               radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),
+               radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%),
+               radial-gradient(circle at 30% 70%,var(--iride-4),transparent 40%),
+               radial-gradient(circle at 75% 25%,var(--iride-5),transparent 40%);}
+  /* 背景装饰光斑 */
+  body::before{
+    content:""; position:fixed; top:-120px; right:-100px; width:420px; height:420px;
+    border-radius:50%; background:radial-gradient(circle,rgba(212,162,78,.12) 0%,transparent 70%);
+    pointer-events:none; z-index:0;
+  }
+  body::after{
+    content:""; position:fixed; bottom:-80px; left:-60px; width:360px; height:360px;
+    border-radius:50%; background:radial-gradient(circle,rgba(43,87,154,.08) 0%,transparent 70%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* ===== 顶部导航 ===== */
+  header{
+    position:sticky; top:0; z-index:60;
+    display:flex; align-items:center; gap:16px;
+    padding:10px 28px; height:52px;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border-bottom:2px solid #DDE2EC;box-shadow:0 4px 16px rgba(15,42,82,.08);
+  }
+  .brand{
+    font-weight:800; font-size:17px; color:var(--navy); letter-spacing:.5px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .brand span{color:var(--gold); font-weight:700;}
+  .nav-back{
+    color:var(--blue); font-size:12.5px; text-decoration:none; font-weight:600;
+    padding:4px 10px; border-radius:6px;
+    transition:background .2s;
+  }
+  .nav-back:hover{background:rgba(43,87,154,.07);}
+  .user{
+    margin-left:auto; font-size:13px; color:var(--sub);
+    display:flex; align-items:center; gap:4px;
+  }
+  .user b{color:var(--navy); font-weight:700;}
+  .user a{
+    margin-left:12px; color:var(--blue); text-decoration:none; font-weight:600;
+    padding:3px 10px; border-radius:6px; font-size:12.5px;
+    transition:background .2s;
+  }
+  .user a:hover{background:rgba(43,87,154,.07);}
+
+  /* ===== 主容器 ===== */
+  .wrap{max-width:1024px; margin:0 auto; padding:32px 24px 48px; position:relative; z-index:1;}
+
+  /* ===== 欢迎区 ===== */
+  .hi{
+    font-size:26px; font-weight:800; color:var(--navy); margin-bottom:4px;
+    letter-spacing:-.3px;
+  }
+  .hi + p{
+    color:var(--sub); font-size:13.5px; margin-bottom:22px;
+  }
+
+  /* 数据统计条 */
+  .stats-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:120px;background:linear-gradient(135deg,rgba(255,255,255,.65),rgba(245,248,255,.5));backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1.5px solid rgba(255,255,255,.5);border-radius:14px;padding:16px 14px;text-align:center;box-shadow:0 6px 20px rgba(120,120,180,.1);box-shadow:0 4px 16px rgba(15,42,82,.05);transition:transform .2s,box-shadow .2s;}
+  .stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,42,82,.08);}
+  .stat-card .num{font-size:26px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .stat-card .label{font-size:11.5px;color:var(--sub);margin-top:4px;letter-spacing:.5px;}
+
+  /* ===== 卡片网格 ===== */
+  .grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  }
+
+  /* ===== 模块卡片 — 玻璃态 ===== */
+  .mod{
+    background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(245,248,255,.5));backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(255,255,255,.6);border-radius:18px;padding:22px 20px;box-shadow:0 8px 28px rgba(120,120,180,.15),0 2px 6px rgba(120,120,180,.06),inset 0 1px 0 rgba(255,255,255,.6);
+    text-decoration:none; color:inherit; display:block;
+    transition:transform .25s cubic-bezier(.25,.46,.45,.94),
+               box-shadow .25s cubic-bezier(.25,.46,.45,.94),
+               border-color .25s,
+               background .25s;
+    position:relative; overflow:hidden; cursor:pointer;
+  }
+  /* 卡片顶部色条 */
+  .mod::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+    border-radius:3px 3px 0 0;
+    background:linear-gradient(90deg,var(--blue),var(--gold));
+    opacity:.6; transition:opacity .25s, transform .25s; transform:scaleX(.94);
+    transform-origin:center;
+  }
+  .mod:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 40px rgba(15,42,82,.1), 0 4px 12px rgba(15,42,82,.06);
+    border-color:rgba(212,162,78,.25);
+    background:rgba(255,255,255,.72);
+  }
+  .mod:hover::before{opacity:1; transform:scaleX(1);}
+  .mod:active{transform:translateY(-2px);}
+
+  /* 卡片内部布局 — 图标区 */
+  .mod .ic-row{
+    display:flex; align-items:flex-start; gap:14px; position:relative; z-index:1;
+  }
+  .mod .ic-circle{
+    flex-shrink:0; width:42px; height:42px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    background:rgba(15,42,82,.04);
+    border:1px solid rgba(15,42,82,.06);
+    transition:transform .25s, box-shadow .25s;
+  }
+  .mod:hover .ic-circle{
+    transform:scale(1.08);
+    box-shadow:0 4px 14px rgba(15,42,82,.08);
+  }
+  .done .ic-circle{background:rgba(46,158,91,.07); border-color:rgba(46,158,91,.12);}
+  .wip  .ic-circle{background:rgba(181,134,11,.07);  border-color:rgba(181,134,11,.12);}
+
+  .mod .body-text{flex:1; min-width:0;}
+  .mod .t{
+    font-weight:700; color:var(--navy); font-size:15px;
+    margin-bottom:3px; line-height:1.3;
+  }
+  .mod .d{
+    font-size:12.5px; color:var(--sub); line-height:1.55;
+  }
+
+  /* 徽章 */
+  .badge{
+    display:inline-block; font-size:10.5px; font-weight:700;
+    padding:3px 10px; border-radius:20px; margin-top:10px;
+    letter-spacing:.3px; position:relative; z-index:1;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border:1px solid transparent;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .done .badge{
+    background:rgba(46,158,91,.1); color:var(--done);
+    border-color:rgba(46,158,91,.15);
+  }
+  .wip .badge{
+    background:rgba(181,134,11,.1); color:var(--wip);
+    border-color:rgba(181,134,11,.15);
+  }
+
+  /* wip 卡片微调 */
+  .wip{
+    opacity:.82;
+  }
+  .wip:hover{opacity:1;}
+  .wip::before{opacity:.3;}
+
+  /* ===== 说明卡片 ===== */
+  .note{
+    margin-top:22px; font-size:12.5px; color:var(--sub); line-height:1.7;
+    background:rgba(255,255,255,.5);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(15,42,82,.06);
+    border-radius:14px; padding:14px 18px;
+  }
+  .note b{color:var(--navy); font-weight:700;}
+
+  /* ===== 响应式 ===== */
+  @media(max-width:700px){
+    .grid{grid-template-columns:1fr;}
+    .wrap{padding:20px 16px 36px;}
+    .hi{font-size:22px;}
+    header{padding:10px 16px; gap:10px;}
+    .nav-back{display:none;}
+  }
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">星海<span>·</span>工作端</div>
+  <a href="#" onclick="history.back();return false" class="nav-back">← 返回</a><div class="brand">星海艺术团工作端</div>
+  <a href="/" class="nav-back">← 返回官网</a>
   <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
 </header>
 <div class="wrap">
   <div class="hi">工作端 · 总览</div>
   <p>按角色使用各子系统。成员信息已可用，其余模块本期陆续接入。</p>
-  <div class="grid">
-    <a class="mod done" href="/work/members">
-      <div class="ic">🧑‍💼</div><div class="t">成员信息（员工式录入）</div>
-      <div class="d">学号唯一主键，录入 / 检索 / 编辑 / 导入 / 导出</div>
-      <span class="badge">已可用</span>
-    </a>
-    <a class="mod done" href="/work/reimburse">
-      <div class="ic">💰</div><div class="t">报销申请</div>
-      <div class="d">提交经费 / 器材采购报销，主席副主席可审批流转</div>
-      <span class="badge">已可用</span>
-    </a>
-    <a class="mod done" href="/work/reserve">
-      <div class="ic">📅</div><div class="t">预约排期</div>
-      <div class="d">排练厅 / 器材 / 服装预约，状态待确认→已通过</div>
-      <span class="badge">已可用</span>
-    </a>
-    <a class="mod done" href="/work/bulletin">
-      <div class="ic">📢</div><div class="t">活动通报</div>
-      <div class="d">发布活动 / 会议通知，支持置顶与重要级别</div>
-      <span class="badge">已可用</span>
-    </a>
-    <a class="mod wip" href="#" onclick="return false">
-      <div class="ic">🤝</div><div class="t">工作交接</div>
-      <div class="d">副主席→主席、团秘→下一任、团长→下一任 交接清单</div>
-      <span class="badge">建设中</span>
-    </a>
-    <a class="mod wip" href="#" onclick="return false">
-      <div class="ic">📚</div><div class="t">资料库</div>
-      <div class="d">章程 / 策划模板 / 资产清单，按角色可见</div>
-      <span class="badge">建设中</span>
-    </a>
-    <a class="mod wip" href="#" onclick="return false">
-      <div class="ic">🗓️</div><div class="t">任务日程</div>
-      <div class="d">活动排期、例会、截止提醒与负责人</div>
-      <span class="badge">建设中</span>
-    </a>
-    <a class="mod wip" href="#" onclick="return false">
-      <div class="ic">🎛️</div><div class="t">资产管理</div>
-      <div class="d">器材 / 服装 / 道具 登记借用归还</div>
-      <span class="badge">建设中</span>
-    </a>
-    <a class="mod wip" href="#" onclick="return false">
-      <div class="ic">📇</div><div class="t">通讯录</div>
-      <div class="d">由成员库联系视图生成，按角色 / 校区筛选</div>
-      <span class="badge">建设中</span>
-    </a>
-    <a class="mod done" href="/admin?key=xinghai2026" target="_blank">
-      <div class="ic">📝</div><div class="t">招新管理</div>
-      <div class="d">报名数据查看 / 检索 / 导出 / 删除（招新子系统）</</div>
-      <span class="badge">已可用</span>
-    </a>
-    <a class="mod done" href="/cms" target="_blank">
-      <div class="ic">🛠️</div><div class="t">内容管理</div>
-      <div class="d">官网 / 招新 文案与群码（招新子系统 CMS）</div>
-      <span class="badge">已可用</span>
-    </a>
+
+  <!-- 实时数据统计 -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="num" id="sMembers">—</div><div class="label">在团成员</div></div>
+    <div class="stat-card"><div class="num" id="sAssets">—</div><div class="label">资产登记</div></div>
+    <div class="stat-card"><div class="num" id="sReimb">—</div><div class="label">待审报销</div></div>
+    <div class="stat-card"><div class="num" id="sApply">—</div><div class="label">待审注册</div></div>
+    <div class="stat-card"><div class="num" id="sProc">—</div><div class="label">待审采购</div></div>
   </div>
-  <div class="note">本期已交付：成员信息、<b>报销申请</b>、<b>预约排期</b>、<b>活动通报</b> 四个员工式模块，数据各自独立存储
-  （members.db / reimburse.db / reserve.db / bulletins.db），与招新库（registrations.db）不混库。<br>
-  工作交接 / 资料库 / 任务日程 / 资产管理 / 通讯录 将在下一阶段接入，数据同样独立保存。</div>
+
+  <div class="grid">
+
+    <!-- 成员信息 -->
+    <a class="mod done" href="/work/members">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">🧑‍💼</div>
+        <div class="body-text">
+          <div class="t">成员信息（员工式录入）</div>
+          <div class="d">学号唯一主键，录入 / 检索 / 编辑 / 导入 / 导出</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 报销申请 -->
+    <a class="mod done" href="/work/reimburse">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">💰</div>
+        <div class="body-text">
+          <div class="t">报销申请</div>
+          <div class="d">提交经费 / 器材采购报销，主席副主席可审批流转</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 预约排期 -->
+    <a class="mod done" href="/work/reserve">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📅</div>
+        <div class="body-text">
+          <div class="t">预约排期</div>
+          <div class="d">排练厅 / 器材 / 服装预约，状态待确认→已通过</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 活动通报 -->
+    <a class="mod done" href="/work/bulletin">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📢</div>
+        <div class="body-text">
+          <div class="t">活动通报</div>
+          <div class="d">发布活动 / 会议通知，支持置顶与重要级别</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 资产管理 -->
+    <a class="mod done" href="/work/assets">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📦</div>
+        <div class="body-text">
+          <div class="t">资产管理</div>
+          <div class="d">器材 / 服装 / 道具 登记、借出归还、采购审批、报修报废</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 内容管理 & 知识库 -->
+    <a class="mod done" href="/cms">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">✏️</div>
+        <div class="body-text">
+          <div class="t">内容管理 · 知识库</div>
+          <div class="d">首页文案 / 轮播图 / 团队介绍 / 小星知识库 —— 一站式后台</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 工作交接（建设中） -->
+    <a class="mod wip" href="#" onclick="return false">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">🤝</div>
+        <div class="body-text">
+          <div class="t">工作交接</div>
+          <div class="d">副主席→主席、团秘→下一任、团长→下一任 交接清单</div>
+          <span class="badge">建设中</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 资料库（建设中） -->
+    <a class="mod wip" href="#" onclick="return false">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📚</div>
+        <div class="body-text">
+          <div class="t">资料库</div>
+          <div class="d">章程 / 策划模板 / 资产清单，按角色可见</div>
+          <span class="badge">建设中</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 任务日程（建设中） -->
+    <a class="mod wip" href="#" onclick="return false">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">🗓️</div>
+        <div class="body-text">
+          <div class="t">任务日程</div>
+          <div class="d">活动排期、例会、截止提醒与负责人</div>
+          <span class="badge">建设中</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 资产管理2（建设中） -->
+    <a class="mod wip" href="#" onclick="return false">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">🎛️</div>
+        <div class="body-text">
+          <div class="t">资产管理</div>
+          <div class="d">器材 / 服装 / 道具 登记借用归还</div>
+          <span class="badge">建设中</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 通讯录（建设中） -->
+    <a class="mod wip" href="#" onclick="return false">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📇</div>
+        <div class="body-text">
+          <div class="t">通讯录</div>
+          <div class="d">由成员库联系视图生成，按角色 / 校区筛选</div>
+          <span class="badge">建设中</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 招新管理 -->
+    <a class="mod done" href="/admin" target="_blank">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">📝</div>
+        <div class="body-text">
+          <div class="t">招新管理</div>
+          <div class="d">报名数据查看 / 检索 / 导出 / 删除（招新子系统）</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 内容管理 -->
+    <a class="mod done" href="/cms" target="_blank">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">🛠️</div>
+        <div class="body-text">
+          <div class="t">内容管理</div>
+          <div class="d">官网 / 招新 文案与群码（招新子系统 CMS）</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 注册审批（仅主席/副主席可见） -->
+    <a class="mod done" id="approvalMod" href="/work/approval" style="display:none">
+      <div class="ic-row">
+        <div class="ic-circle" aria-hidden="true">✅</div>
+        <div class="body-text">
+          <div class="t">注册审批</div>
+          <div class="d">审批新成员注册申请，通过后账号生效</div>
+          <span class="badge">已可用</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+  <div class="note">
+    本期已交付：成员信息、<b>报销申请</b>、<b>预约排期</b>、<b>活动通报</b> 四个员工式模块，数据各自独立存储
+    （members.db / reimburse.db / reserve.db / bulletins.db），与招新库（registrations.db）不混库。<br>
+    工作交接 / 资料库 / 任务日程 / 资产管理 / 通讯录 将在下一阶段接入，数据同样独立保存。
+  </div>
 </div>
 <script>
   fetch('/api/me').then(r=>r.json()).then(d=>{
-    if(d.ok){document.getElementById('uname').textContent=d.name;document.getElementById('urole').textContent=d.role;}
+    if(d.ok){document.getElementById('uname').textContent=d.name;document.getElementById('urole').textContent=d.role;
+      if(d.role==='主席'||d.role==='副主席')document.getElementById('approvalMod').style.display='block';}
     else{location.href='/login';}
   });
+  // 加载实时统计
+  fetch('/api/stats').then(r=>r.json()).then(d=>{
+    if(d.ok){
+      document.getElementById('sMembers').textContent=d.members;
+      document.getElementById('sAssets').textContent=d.assets;
+      document.getElementById('sReimb').textContent=d.reimburse;
+      document.getElementById('sApply').textContent=d.apply;
+      document.getElementById('sProc').textContent=d.procure;
+    }
+  }).catch(()=>{});
 </script>
 </body>
 </html>

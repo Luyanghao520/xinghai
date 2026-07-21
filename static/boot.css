@@ -1,0 +1,174 @@
+/* =============== 开场加载动画（立体 logo + 粒子星空）=============== */
+/* 去白色：body 初始深色背景 */
+body{
+  opacity:0;transition:opacity .7s cubic-bezier(.25,.8,.25,1);
+  background:#050d1f !important;
+}
+body.boot-done{opacity:1;background:var(--bg) !important;}
+
+#boot-screen{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:radial-gradient(ellipse at center,#0a1a3a 0%,#03070f 70%,#000 100%);
+  perspective:1600px;
+  animation:bootFade 3.4s cubic-bezier(.7,0,.3,1) forwards;
+  pointer-events:all;
+  overflow:hidden;
+}
+
+/* ===== 星海新元素：银河 / 星云 / 海浪 / Canvas 星空 ===== */
+#boot-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+
+/* 斜贯银河光带 */
+.boot-galaxy{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+.boot-galaxy::before{
+  content:"";position:absolute;top:50%;left:-30%;width:160%;height:260px;
+  transform:translateY(-50%) rotate(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(120,150,255,.04) 18%,rgba(212,162,78,.16) 44%,rgba(150,180,255,.10) 64%,transparent);
+  filter:blur(26px);
+}
+.boot-galaxy::after{
+  content:"";position:absolute;top:56%;left:50%;width:150%;height:320px;
+  transform:translate(-50%,-50%) rotate(-18deg);
+  background:radial-gradient(ellipse 50% 45% at 50% 50%,rgba(130,160,255,.12),rgba(212,162,78,.05) 45%,transparent 72%);
+  filter:blur(22px);
+}
+
+/* 四角星云光晕（呼吸） */
+.boot-nebula{position:absolute;z-index:1;pointer-events:none;filter:blur(45px);mix-blend-mode:screen;}
+.boot-nebula.n1{top:-18%;left:-12%;width:55%;height:55%;background:radial-gradient(circle,rgba(43,87,154,.34),transparent 70%);animation:nebulaBreathe 9s ease-in-out infinite;}
+.boot-nebula.n2{bottom:-12%;right:-12%;width:60%;height:60%;background:radial-gradient(circle,rgba(212,162,78,.20),transparent 70%);animation:nebulaBreathe 12s ease-in-out infinite reverse;}
+@keyframes nebulaBreathe{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:1;transform:scale(1.08);}}
+
+/* 底部海浪波纹（呼应"星海"的"海"） */
+.boot-wave{position:absolute;left:0;right:0;bottom:-2px;height:42%;z-index:2;pointer-events:none;overflow:hidden;}
+.boot-wave::before,.boot-wave::after{content:"";position:absolute;bottom:0;left:-50%;width:200%;}
+.boot-wave::before{
+  height:160px;
+  background:linear-gradient(180deg,rgba(43,87,154,.16),rgba(43,87,154,.02));
+  border-radius:46% 54% 0 0 / 100% 100% 0 0;
+  animation:waveMove 16s linear infinite;
+}
+.boot-wave::after{
+  height:128px;
+  background:linear-gradient(180deg,rgba(212,162,78,.14),transparent);
+  border-radius:54% 46% 0 0 / 100% 100% 0 0;
+  filter:blur(2px);
+  animation:waveMove 22s linear infinite reverse;
+}
+@keyframes waveMove{0%{transform:translateX(0);}50%{transform:translateX(20%);}100%{transform:translateX(0);}}
+
+/* 星空粒子背景（前景闪烁星） */
+#boot-stars{
+  position:absolute;inset:0;
+  pointer-events:none;
+}
+.star{
+  position:absolute;
+  background:radial-gradient(circle,#fff 0%,rgba(212,162,78,.6) 40%,transparent 70%);
+  border-radius:50%;
+  animation:starTwinkle var(--dur) ease-in-out infinite var(--del);
+}
+
+@keyframes starTwinkle{
+  0%,100%{opacity:.15;transform:scale(1);}
+  50%{opacity:.9;transform:scale(2.5);}
+}
+
+.boot-logo{
+  position:relative;width:240px;height:240px;
+  transform-style:preserve-3d;
+  animation:bootSpin 2.8s cubic-bezier(.34,1.56,.64,1) both;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+
+/* 多层立体光晕 */
+.boot-logo::before,.boot-logo::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;
+}
+.boot-logo::before{
+  inset:-70px;
+  background:radial-gradient(circle,rgba(212,162,78,.5) 0%,rgba(212,162,78,.15) 35%,transparent 65%);
+  animation:auroPulse 2.2s ease-in-out infinite alternate;
+  filter:blur(30px);
+  z-index:0;
+}
+.boot-logo::after{
+  inset:-50px;
+  background:radial-gradient(circle,rgba(43,87,154,.6) 0%,rgba(43,87,154,.1) 40%,transparent 70%);
+  animation:auroPulse 2.2s ease-in-out infinite alternate;
+  animation-delay:.6s;
+  filter:blur(22px);
+  z-index:0;
+}
+
+.boot-logo img{
+  width:100%;height:100%;border-radius:50%;
+  filter:drop-shadow(0 40px 70px rgba(0,0,0,.6)) drop-shadow(0 0 100px rgba(212,162,78,.45)) drop-shadow(0 0 40px rgba(43,87,154,.3));
+  position:relative;z-index:10;
+  -webkit-user-drag:none;user-select:none;
+  animation:logoShine 2.8s ease-in-out infinite;
+}
+
+@keyframes logoShine{
+  0%,100%{filter:drop-shadow(0 40px 70px rgba(0,0,0,.6)) drop-shadow(0 0 80px rgba(212,162,78,.35)) drop-shadow(0 0 40px rgba(43,87,154,.2));}
+  50%{filter:drop-shadow(0 40px 70px rgba(0,0,0,.6)) drop-shadow(0 0 120px rgba(212,162,78,.6)) drop-shadow(0 0 60px rgba(43,87,154,.4));}
+}
+
+.boot-title{
+  margin-top:36px;color:#D4A24E;font-size:22px;letter-spacing:8px;
+  font-weight:700;opacity:0;
+  animation:titleIn 1.8s .9s cubic-bezier(.2,.8,.2,1) forwards;
+  text-shadow:0 3px 30px rgba(212,162,78,.5),0 0 60px rgba(212,162,78,.2);
+  position:relative;z-index:2;
+}
+.boot-sub{
+  margin-top:12px;color:rgba(255,255,255,.7);font-size:13px;letter-spacing:3px;
+  opacity:0;
+  animation:titleIn 1.8s 1.3s cubic-bezier(.2,.8,.2,1) forwards;
+  position:relative;z-index:10;
+}
+
+/* ===== 关键帧 ===== */
+@keyframes bootSpin{
+  0%{transform:rotateY(-210deg) rotateX(40deg) scale(.15);opacity:0;filter:blur(40px) brightness(.3);}
+  30%{opacity:.6;filter:blur(20px) brightness(.5);}
+  55%{transform:rotateY(0deg) rotateX(0) scale(1.22);opacity:1;filter:blur(0) brightness(1);}
+  80%{transform:rotateY(390deg) scale(1);}
+  100%{transform:rotateY(390deg) scale(1);}
+}
+
+@keyframes auroPulse{
+  from{transform:scale(.85);opacity:.3;}
+  to{transform:scale(1.2);opacity:.9;}
+}
+
+@keyframes titleIn{
+  from{opacity:0;transform:translateY(22px);letter-spacing:12px;filter:blur(8px);}
+  to{opacity:1;transform:translateY(0);letter-spacing:8px;filter:blur(0);}
+}
+
+@keyframes bootFade{
+  0%,72%{opacity:1;visibility:visible;}
+  100%{opacity:0;visibility:hidden;pointer-events:none;}
+}
+
+/* =============== 滚动入场（丝滑）=============== */
+.reveal{opacity:0;transform:translateY(56px);transition:opacity .85s cubic-bezier(.25,.8,.25,1), transform .85s cubic-bezier(.25,.8,.25,1);}
+.reveal.in{opacity:1;transform:translateY(0);}
+.reveal.d2{transition-delay:.1s;}
+.reveal.d3{transition-delay:.2s;}
+.reveal.d4{transition-delay:.3s;}
+
+/* =============== 微交互 =============== */
+section .wrap > *, .mod, .sc-cap, button.btn, nav a, .honor-card{
+  will-change:transform;backface-visibility:hidden;
+}
+.mod:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 50px rgba(15,42,82,.18);}
+.sc-cap:hover{transform:translateY(-5px) scale(1.03);box-shadow:0 18px 50px rgba(0,0,0,.25);}
+button.btn:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(15,42,82,.3);filter:brightness(1.08);}
+button.btn:active{transform:translateY(0);filter:brightness(.92);}
+nav a::after{content:"";position:absolute;left:50%;bottom:-4px;width:0;height:2px;background:var(--gold);transition:all .35s cubic-bezier(.25,.8,.25,1);transform:translateX(-50%);}
+nav a:hover::after{width:85%;}
+html{scroll-behavior:smooth;}

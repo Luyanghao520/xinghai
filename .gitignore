@@ -16,6 +16,8 @@ registrations.csv
 .env
 .flaskenv
 .secret
+# 存放后台密码/密钥的"小本子"，切勿上传 GitHub
+config.json
 
 # ===== 系统/编辑器 =====
 .DS_Store
@@ -23,3 +25,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# 知识库数据（CMS填充，运行时生成）
+kb.json

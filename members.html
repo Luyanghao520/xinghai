@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>成员信息 · 星海工作端</title>
 <style>
-  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;--ok:#2E9E5B;}
+        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#E6EBF4;color:var(--ink);line-height:1.6;;background:linear-gradient(135deg,#F5F0FA 0%,#F0F4FF 25%,#FFF5F8 50%,#F8FFF0 75%,#FFF9F0 100%);position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%);}
   header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:13px 20px;
     background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
   .brand{font-weight:800;font-size:16px;color:var(--navy);letter-spacing:1px;}
@@ -18,7 +18,7 @@
   .user b{color:var(--navy);} .user a{margin-left:12px;color:var(--blue);text-decoration:none;font-weight:600;}
   .wrap{max-width:1080px;margin:22px auto;padding:0 18px;}
   .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
-  .bar input,.bar select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;font-family:inherit;background:#fff;outline:none;}
+  .bar input,.bar select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;font-family:inherit;background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(245,248,255,.5));backdrop-filter:blur(15px) saturate(180%);-webkit-backdrop-filter:blur(15px) saturate(180%);border:1.5px solid rgba(255,255,255,.6);outline:none;}
   .bar input:focus,.bar select:focus{border-color:var(--blue);}
   .bar .grow{flex:1;min-width:180px;}
   .btn{border:none;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;color:#fff;
@@ -66,8 +66,8 @@
 </head>
 <body>
 <header>
-  <div class="brand">星海<span>·</span>工作端</div>
-  <div class="crumb"><a href="/work">总览</a> / 成员信息</div>
+  <div class="brand">星海艺术团工作端</div>
+  <a href="#" onclick="history.back();return false" style="color:var(--blue);font-size:12.5px;text-decoration:none;font-weight:600;padding:4px 10px;border-radius:8px;border:1.5px solid #DDE2EC">← 返回</a><div class="crumb"><a href="/work">总览</a> / 成员信息</div>
   <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
 </header>
 
@@ -85,6 +85,12 @@
       <option>团秘</option><option>部长</option><option>副部长</option>
       <option>干事</option><option>队员</option>
     </select>
+    <select id="fDept" onchange="load()">
+      <option value="">全部部门/团队</option>
+      <option>办公室</option><option>资产管理部</option><option>外联部</option><option>企宣部</option>
+      <option>合唱团</option><option>交响乐团</option><option>民乐团</option><option>舞蹈团</option>
+      <option>话剧团</option><option>主持团</option><option>礼仪队</option>
+    </select>
     <button class="btn" onclick="openForm()">＋ 录入成员</button>
     <button class="btn gold" onclick="importCSV()">⬆ 导入</button>
     <button class="btn ghost" onclick="exportCSV()">⬇ 导出</button>
@@ -97,9 +103,9 @@
       <table>
         <thead><tr>
           <th>学号</th><th>姓名</th><th>性别</th><th>校区</th><th>院系</th><th>专业/班级</th>
-          <th>手机</th><th>角色</th><th>部门/团队</th><th>届别</th><th>状态</th><th>操作</th>
+          <th>手机</th><th>角色</th><th>部门/团队</th><th>职务</th><th>届别</th><th>状态</th><th>操作</th>
         </tr></thead>
-        <tbody id="tbody"><tr><td colspan="12" class="empty">加载中…</td></tr></tbody>
+        <tbody id="tbody"><tr><td colspan="13" class="empty">加载中…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -124,6 +130,11 @@
         <option></option><option>主席</option><option>副主席</option><option>团长</option>
         <option>团秘</option><option>部长</option><option>副部长</option><option>干事</option><option>队员</option>
       </select></div>
+      <div class="fld"><label>职务</label><select id="f_position">
+        <option></option><option>教师</option><option>主席</option><option>副主席</option><option>团秘</option>
+        <option>部长</option><option>副部长</option><option>组长</option>
+        <option>团长</option><option>副团长</option><option>团干</option><option>成员</option>
+      </select></div>
       <div class="fld"><label>所属部门/团队</label><input id="f_dept" placeholder="如 合唱团 / 办公室"></div>
       <div class="fld"><label>入团时间</label><input id="f_join_date" placeholder="如 2024-09"></div>
       <div class="fld"><label>届别</label><input id="f_grade" placeholder="如 2024 级"></div>
@@ -142,13 +153,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const COLS=["xh","name","gender","campus","college","major","phone","wechat","email","role","dept","join_date","grade","status","skill","note"];
+const COLS=["xh","name","gender","campus","college","major","phone","wechat","email","role","dept","position","join_date","grade","status","skill","note"];
 const $ = id => document.getElementById(id);
 let editing=null, timer=null;
 
 fetch('/api/me').then(r=>r.json()).then(d=>{
   if(!d.ok){location.href='/login';return;}
   $('uname').textContent=d.name;$('urole').textContent=d.role;
+  window._canLeave=(d.role==='主席'||d.role==='副主席');
   load();
 });
 
@@ -162,13 +174,13 @@ function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>'
 
 function debLoad(){clearTimeout(timer);timer=setTimeout(load,250);}
 function load(){
-  const q=$('q').value.trim(), cam=$('fCampus').value, role=$('fRole').value;
+  const q=$('q').value.trim(), cam=$('fCampus').value, role=$('fRole').value, dept=$('fDept').value;
   const p=new URLSearchParams();
-  if(q)p.set('q',q); if(cam)p.set('campus',cam); if(role)p.set('role',role);
+  if(q)p.set('q',q); if(cam)p.set('campus',cam); if(role)p.set('role',role); if(dept)p.set('dept',dept);
   fetch('/api/members?'+p.toString()).then(r=>r.json()).then(rows=>{
     const tb=$('tbody');
     $('count').textContent='共 '+rows.length+' 条';
-    if(!rows.length){tb.innerHTML='<tr><td colspan="12" class="empty">暂无成员，点「＋ 录入成员」开始录入</td></tr>';return;}
+    if(!rows.length){tb.innerHTML='<tr><td colspan="13" class="empty">暂无成员，点「＋ 录入成员」开始录入</td></tr>';return;}
     tb.innerHTML=rows.map(r=>{
       const op=editing;
       return '<tr>'+
@@ -181,10 +193,12 @@ function load(){
         '<td>'+(esc(r.phone)||'—')+'</td>'+
         '<td>'+(esc(r.role)?'<span class="tag">'+esc(r.role)+'</span>':'—')+'</td>'+
         '<td>'+(esc(r.dept)||'—')+'</td>'+
+        '<td>'+(esc(r.position)||'—')+'</td>'+
         '<td>'+(esc(r.grade)||'—')+'</td>'+
         '<td>'+statusTag(r.status)+'</td>'+
         '<td><span class="op" onclick="openForm(\''+esc(r.xh)+'\')">编辑</span>'+
-        '<span class="op del" onclick="del(\''+esc(r.xh)+'\')">删除</span></td>'+
+        '<span class="op del" onclick="del(\''+esc(r.xh)+'\')">删除</span>'+
+        (window._canLeave?'<span class="op" style="color:#B5860B" onclick="leave(\''+esc(r.xh)+'\',\''+esc(r.name)+'\')">离团</span>':'')+'</td>'+
       '</tr>';
     }).join('');
   });
@@ -226,7 +240,7 @@ function save(){
 function del(xh){
   if(!confirm('确认删除学号 '+xh+' 的成员记录？此操作不可撤销。'))return;
   fetch('/api/members/'+xh,{method:'DELETE'}).then(r=>r.json()).then(res=>{
-    if(res.ok){toast('已删除');load();}else alert('删除失败');
+    if(res.ok){toast('已删除');load();}else toast('删除失败');
   });
 }
 
@@ -238,9 +252,9 @@ function doImport(input){
   toast('导入中…');
   fetch('/api/members/import',{method:'POST',body:fd}).then(r=>r.json()).then(res=>{
     if(res.ok){toast('成功导入 '+res.imported+' 条');load();}
-    else alert(res.error||'导入失败');
+    else toast(res.error||'导入失败');
     input.value='';
-  }).catch(()=>{alert('导入异常');input.value='';});
+  }).catch(()=>{toast('导入异常');input.value='';});
 }
 
 let toastTimer=null;
@@ -248,6 +262,30 @@ function toast(msg){
   const t=$('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
+function leave(xh,name){
+  const reason=prompt('离团原因（选填）：');if(reason===null)return;
+  fetch('/api/members/'+xh+'/leave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:reason||''})})
+    .then(r=>r.json()).then(res=>{if(res.ok){toast(name+' 已标记离团');load();}else toast(res.error);});
+}
+function showAlumni(){
+  const w=document.getElementById('alumniWrap');
+  if(w.style.display==='block'){w.style.display='none';return;}
+  w.style.display='block';
+  fetch('/api/alumni').then(r=>r.json()).then(rows=>{
+    const tb=document.getElementById('alumniBody');
+    if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="empty">暂无离团记录</td></tr>';return;}
+    tb.innerHTML=rows.map(r=>'<tr><td>'+esc(r.xh)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.dept||'—')+'</td><td>'+esc(r.grade||'—')+'</td><td>'+esc(r.leave_date||'—')+'</td><td>'+esc(r.leave_reason||'—')+'</td></tr>').join('');
+  });
+}
 </script>
+  <div style="max-width:1080px;margin:0 auto;padding:0 18px 30px">
+    <button class="btn ghost" onclick="showAlumni()" style="margin-bottom:12px">📋 离团记录</button>
+    <div id="alumniWrap" style="display:none;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden">
+      <div class="scroll"><table>
+        <thead><tr><th>学号</th><th>姓名</th><th>部门/团队</th><th>届别</th><th>离团日期</th><th>离团原因</th></tr></thead>
+        <tbody id="alumniBody"><tr><td colspan="6" class="empty">点击上方按钮加载</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
 </body>
 </html>

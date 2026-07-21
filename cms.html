@@ -5,35 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星海艺术团 · 内容管理</title>
 <style>
-  :root{--navy:#0F2A52;--blue:#2B579A;--gold:#D4A24E;--ink:#1A2233;--sub:#6B7280;--line:#E7ECF3;--bg:#F5F7FB;}
+        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:40px;}
-  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:40px;;background:linear-gradient(135deg,#F5F0FA 0%,#F0F4FF 25%,#FFF5F8 50%,#F8FFF0 75%,#FFF9F0 100%);position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%);}
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.97);border-bottom:2px solid #DDE2EC;box-shadow:0 4px 16px rgba(15,42,82,.08);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
   header .logo{font-weight:800;color:var(--navy);letter-spacing:1px;font-size:16px;}
   header .logo span{color:var(--gold);}
   header .key{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);}
-  header .key input{padding:8px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;width:150px;outline:none;}
+  header .key input{padding:8px 11px;border:1.5px solid #DDE2EC;border-radius:9px;font-size:13px;width:150px;outline:none;}
   header .key input:focus{border-color:var(--blue);}
   .save-btn{margin-left:auto;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:11px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;}
   .save-btn:disabled{opacity:.6;}
   .status{font-size:12.5px;width:100%;min-height:16px;}
   .status.ok{color:#2E9E5B;} .status.err{color:#E0564B;}
   .wrap{max-width:860px;margin:0 auto;padding:0 20px;}
-  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:20px;box-shadow:0 8px 30px rgba(15,42,82,.05);}
+  .card{background:#fff;border:1.5px solid #DDE2EC;border-radius:16px;padding:20px 22px;margin-top:20px;box-shadow:0 8px 28px rgba(15,42,82,.08),0 2px 6px rgba(15,42,82,.04);}
   .card h2{font-size:17px;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
   .card h2::before{content:"";width:5px;height:18px;background:linear-gradient(var(--blue),var(--gold));border-radius:3px;}
   .card .hint{font-size:12px;color:var(--sub);margin-bottom:16px;}
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
-  .field textarea,.field input[type=text]{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#FBFCFE;outline:none;resize:vertical;}
+  .field textarea,.field input[type=text]{width:100%;border:1.5px solid #DDE2EC;border-radius:11px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#FFF;outline:none;resize:vertical;}
   .field textarea:focus,.field input:focus{border-color:var(--blue);background:#fff;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .up-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-  .up-card{background:#FBFCFE;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
+  .up-card{background:#FFF;border:1.5px solid #DDE2EC;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
   .up-card .up-name{font-size:14px;font-weight:700;color:var(--navy);}
   .up-btn{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;border-radius:9px;padding:8px 14px;font-size:12.5px;cursor:pointer;user-select:none;}
   .up-prev{min-height:96px;display:flex;align-items:center;justify-content:center;}
-  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1px solid var(--line);}
+  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1.5px solid #DDE2EC;}
   .up-del{background:none;border:1px solid #f0c9c4;color:#c0392b;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;}
   .consult-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
   .consult-box .up-prev{min-height:160px;min-width:160px;}
@@ -43,8 +43,8 @@
 </head>
 <body>
 <header>
-  <div class="logo">星海<span>·</span>内容管理</div>
-  <div class="key">管理密码 <input id="keyInput" type="text" value="xinghai2026"></div>
+  <div class="logo">星海艺术团内容管理</div>
+  <div class="key">管理密码 <input id="keyInput" type="text" value="xinghai2026"> <a href="#" onclick="history.back();return false" style="color:#2B579A;font-size:12.5px;text-decoration:none;font-weight:600;margin-right:8px">← 返回</a></div>
   <button class="save-btn" id="saveBtn" onclick="save()">💾 保存全部修改</button>
   <div class="status" id="status"></div>
 </header>
@@ -100,6 +100,22 @@
     <div class="grid2" id="descGrid"></div>
   </div>
 
+  <!-- 首页轮播 -->
+  <div class="card">
+    <h2>首页轮播图</h2>
+    <div class="hint">管理首页「精彩活动」轮播（不限数量）。图片建议尺寸一致。保存后刷新官网首页即可生效。</div>
+    <div id="scItems"></div>
+    <button class="up-btn" onclick="addSC()" style="margin-top:10px">＋ 添加轮播项</button>
+  </div>
+
+  <!-- 小星知识库 -->
+  <div class="card">
+    <h2>小星知识库（AI 答疑素材）</h2>
+    <div class="hint">小星回答访客时从这里<b>智能匹配</b>。可随时添加 / 修改 / 删除条目：<b>关键词</b>用逗号分隔，命中任一即回复对应答案（支持同义词）。</div>
+    <div id="kbList"></div>
+    <button class="up-btn" onclick="addKB()" style="margin-top:14px">＋ 添加一条</button>
+  </div>
+
   <footer>修改保存到内容库后，刷新招新网页即可看到效果。</footer>
 </div>
 
@@ -127,7 +143,7 @@
     t_dai:'协助魏老师处理艺术团日常事务，陪伴大家一起成长、一起登台。',
     footer:'上海立信会计金融学院 · 星海艺术团主席团<br>2026 年新生招新 · 期待与你相遇 ♪'
   };
-  const state={hero_welcome:'',b0:'',b1:'',b2:'',b3:'',t_wei:'',t_dai:'',footer:'',consult_qr:'',team_qr:{},dept_desc:{}};
+  const state={hero_welcome:'',b0:'',b1:'',b2:'',b3:'',t_wei:'',t_dai:'',footer:'',consult_qr:'',team_qr:{},dept_desc:{},carousel:[]};
   const KEY=document.getElementById('keyInput');
   const teamWrap=document.getElementById('teamQrGrid');
   const descWrap=document.getElementById('descGrid');
@@ -158,7 +174,7 @@
     inp.addEventListener('change',async()=>{
       if(!inp.files[0])return;inp.disabled=true;
       try{const url=await uploadFile(inp.files[0]);state.team_qr[name]=url;preview(url,prev);}
-      catch(e){alert('上传失败：'+e.message);}finally{inp.disabled=false;inp.value='';}
+      catch(e){status('❌ 上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
     });
     del.addEventListener('click',()=>{delete state.team_qr[name];preview('',prev);});
 
@@ -172,7 +188,7 @@
   consultInp.addEventListener('change',async()=>{
     if(!consultInp.files[0])return;consultInp.disabled=true;
     try{const url=await uploadFile(consultInp.files[0]);state.consult_qr=url;preview(url,consultPrev);}
-    catch(e){alert('上传失败：'+e.message);}finally{consultInp.disabled=false;consultInp.value='';}
+    catch(e){status('❌ 上传失败：'+e.message,'err');}finally{consultInp.disabled=false;consultInp.value='';}
   });
   function delConsult(){state.consult_qr='';preview('',consultPrev);}
 
@@ -184,6 +200,7 @@
     state.team_qr=C.team_qr||{};
     teamWrap.querySelectorAll('.up-card').forEach((card,i)=>{preview(state.team_qr[TEAMS[i][0]]||'',card.querySelector('.up-prev'));});
     state.dept_desc=C.dept_desc||{};
+    state.carousel=C.carousel||[];renderSC();
     descWrap.querySelectorAll('.field').forEach(f=>{
       const name=f._name;
       f.querySelector('.desc').value=(state.dept_desc[name]!=null)?state.dept_desc[name]:TEAMS.find(t=>t[0]===name)[1];
@@ -197,7 +214,7 @@
       b2:document.getElementById('b2').value,b3:document.getElementById('b3').value,
       t_wei:document.getElementById('t_wei').value,t_dai:document.getElementById('t_dai').value,
       footer:document.getElementById('footer').value,
-      consult_qr:state.consult_qr,team_qr:state.team_qr,dept_desc:{}
+      consult_qr:state.consult_qr,team_qr:state.team_qr,dept_desc:{},carousel:state.carousel
     };
     descWrap.querySelectorAll('.field').forEach(f=>{payload.dept_desc[f._name]=f.querySelector('.desc').value;});
     const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
@@ -209,6 +226,88 @@
     }catch(e){status('❌ 网络异常','err');}
     btn.disabled=false;btn.textContent='💾 保存全部修改';
   }
+  function renderSC(){
+    const w=document.getElementById('scItems');
+    w.innerHTML=state.carousel.map((s,i)=>`<div style="background:#FFF;border:1.5px solid #DDE2EC;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:0 0 100px;text-align:center">
+        <div class="up-prev" style="min-height:70px">${s.img?'<img src="'+s.img+'" style="max-width:100px;max-height:70px;border-radius:6px">':'<span style="color:#9aa3b0;font-size:11px">未上传</span>'}</div>
+        <input type="file" accept="image/*" style="display:none" onchange="upSCImg(${i},this)">
+        <button class="up-del" onclick="this.previousElementSibling.click()" style="margin-top:4px;font-size:10px">上传图片</button>
+      </div>
+      <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:4px">
+        <input value="${(s.tag||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].tag=this.value" placeholder="标签（如 舞蹈专场）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+        <input value="${(s.title||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].title=this.value" placeholder="标题" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+        <input value="${(s.desc||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].desc=this.value" placeholder="描述" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+        <input value="${(s.link||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].link=this.value" placeholder="链接（#honor 或 /recruit）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+        <input value="${(s.linkText||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].linkText=this.value" placeholder="链接文字（查看荣誉）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+      </div>
+      <button class="up-del" onclick="state.carousel.splice(${i},1);renderSC()">✕</button>
+    </div>`).join('');
+  }
+  async function upSCImg(i,inp){
+    if(!inp.files[0])return;inp.disabled=true;
+    try{const url=await uploadFile(inp.files[0]);state.carousel[i].img=url;renderSC();}
+    catch(e){status('❌ 上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
+  }
+  function addSC(){state.carousel.push({img:'',tag:'',title:'',desc:'',link:'',linkText:''});renderSC();}
+
+  // ===== 小星知识库管理 =====
+  const kbList=document.getElementById('kbList');
+  let kbData=[];
+  async function loadKB(){
+    try{const r=await fetch('/api/kb');kbData=await r.json();renderKB();}
+    catch(e){kbList.innerHTML='<div style="color:#E0564B;font-size:12px">加载失败</div>';}
+  }
+  function renderKB(){
+    if(!kbData.length){kbList.innerHTML='<div style="color:#9aa3b0;font-size:12px;padding:6px 0">暂无条目</div>';return;}
+    kbList.innerHTML=kbData.map(k=>{
+      const isNew=k.id==='new';
+      const kw=isNew?'':(k.keywords||[]).join(',');
+      const ans=isNew?'':(k.answer||'');
+      return `<div style="background:#FFF;border:1.5px solid #DDE2EC;border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--blue)">#${isNew?'新':k.id}</span>
+          <input value="${kw.replace(/"/g,'&quot;')}" onchange="k._kw=this.value" placeholder="关键词，逗号分隔" style="flex:1;min-width:140px;padding:6px 8px;border:1.5px solid #DDE2EC;border-radius:8px;font-size:12px">
+          <button class="up-btn" onclick="${isNew?'addKBsave()':'saveKB('+k.id+')'}">${isNew?'添加':'保存'}</button>
+          ${isNew?'':'<button class="up-del" onclick="delKB('+k.id+')">删除</button>'}
+        </div>
+        <textarea onchange="k._ans=this.value" rows="3" placeholder="答案（可用 &lt;b&gt; 加粗、&lt;br&gt; 换行）" style="width:100%;padding:8px;border:1.5px solid #DDE2EC;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical">${ans.replace(/</g,'&lt;')}</textarea>
+      </div>`;
+    }).join('');
+  }
+  async function saveKB(id){
+    const k=kbData.find(x=>x.id===id);if(!k)return;
+    const kw=(k._kw!=null?k._kw:(k.keywords||[]).join(','));
+    const ans=(k._ans!=null?k._ans:k.answer);
+    try{
+      const r=await fetch('/api/kb/'+id+'?key='+encodeURIComponent(KEY.value),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:kw,answer:ans})});
+      const d=await r.json();
+      if(r.ok&&d.ok){status('✅ 已保存该条目','ok');loadKB();}
+      else status('❌ '+(d.error||'保存失败（密码错误？）'),'err');
+    }catch(e){status('❌ 网络异常','err');}
+  }
+  async function delKB(id){
+    if(!confirm('确定删除这条知识库条目？'))return;
+    try{
+      const r=await fetch('/api/kb/'+id+'?key='+encodeURIComponent(KEY.value),{method:'DELETE'});
+      const d=await r.json();
+      if(r.ok&&d.ok){status('✅ 已删除','ok');loadKB();}
+      else status('❌ '+(d.error||'删除失败'),'err');
+    }catch(e){status('❌ 网络异常','err');}
+  }
+  function addKB(){kbData.unshift({id:'new',keywords:[],answer:''});renderKB();const f=kbList.querySelector('input');if(f)f.focus();}
+  async function addKBsave(){
+    const k=kbData.find(x=>x.id==='new');if(!k)return;
+    const kw=k._kw||'';const ans=k._ans||'';
+    if(!kw.trim()||!ans.trim()){status('❌ 请填写关键词和答案','err');return;}
+    try{
+      const r=await fetch('/api/kb?key='+encodeURIComponent(KEY.value),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:kw,answer:ans})});
+      const d=await r.json();
+      if(r.ok&&d.ok){status('✅ 已添加','ok');loadKB();}
+      else status('❌ '+(d.error||'失败'),'err');
+    }catch(e){status('❌ 网络异常','err');}
+  }
+  loadKB();
 </script>
 </body>
 </html>
