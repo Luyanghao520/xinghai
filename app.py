@@ -1163,4 +1163,5 @@ def api_alumni():
 init_reg(); init_mem(); init_usr(); init_rei(); init_res(); init_bul(); export_csv()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)
