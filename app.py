@@ -651,6 +651,8 @@ def api_reserve_save():
     end = (d.get("end_time") or "").strip()
     if not (item and type_ and start and end):
         return jsonify({"ok": False, "error": "请填写对象、名称与起止时间"}), 400
+    if start >= end:
+        return jsonify({"ok": False, "error": "结束时间必须晚于开始时间"}), 400
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cx = db(DB_RES)
     cols = ["xh", "name", "item", "type", "start_time", "end_time", "purpose", "status", "created", "updated"]

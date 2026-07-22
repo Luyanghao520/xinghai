@@ -132,7 +132,7 @@ function load(){
 function save(){
   const d={item:$('f_item').value.trim(),type:$('f_type').value.trim(),
     start_time:$('f_start').value,end_time:$('f_end').value,purpose:$('f_purpose').value.trim()};
-  if(!d.item||!d.type||!d.start_time||!d.end_time){$('fErr').textContent='请填写对象、名称与起止时间';return;}
+  if(!d.item||!d.type||!d.start_time||!d.end_time){$('fErr').textContent='请填写对象、名称与起止时间';return;}if(d.start_time>=d.end_time){$('fErr').textContent='结束时间必须晚于开始时间';return;}
   $('fErr').textContent='';const b=$('saveBtn');b.disabled=true;b.textContent='提交中…';
   fetch('/api/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
     .then(r=>r.json()).then(res=>{b.disabled=false;b.textContent='提交预约';
