@@ -91,7 +91,7 @@ fetch('/api/me').then(r=>r.json()).then(d=>{
   }
   load();
 });
-function statusTag(s){return s==='通过'?'<span class="tag ok">通过</span>':s==='驳回'?'<span class="tag no">驳回</span>':'<span class="tag wait">待审</span>';}
+function statusTag(s){return s==='已通过'||s==='通过'?'<span class="tag ok">通过</span>':s==='已驳回'||s==='驳回'?'<span class="tag no">驳回</span>':'<span class="tag wait">待审</span>';}
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 function load(){
   fetch('/api/register').then(r=>r.json()).then(rows=>{
