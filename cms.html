@@ -108,6 +108,14 @@
     <button class="up-btn" onclick="addSC()" style="margin-top:10px">＋ 添加轮播项</button>
   </div>
 
+  <!-- 组织架构（CMS 可编辑） -->
+  <div class="card">
+    <h2>组织架构 · 人事信息</h2>
+    <div class="hint">编辑主席团 / 表演团队 / 行政部门的信息。使用 <b>JSON 格式</b>，修改后点右上角保存全部即可。</div>
+    <textarea id="orgEditor" rows="12" style="width:100%;border:1.5px solid #DDE2EC;border-radius:11px;padding:11px 13px;font-size:12.5px;font-family:monospace;background:#FBFCFE;outline:none;resize:vertical"></textarea>
+    <div style="font-size:11px;color:var(--sub);margin-top:6px">字段结构：chairman、vice_pudong、vice_songjiang、perform_teams、admin_teams。每条含 ico/name(title)/desc。</div>
+  </div>
+
   <!-- 小星知识库 -->
   <div class="card">
     <h2>小星知识库（AI 答疑素材）</h2>
@@ -200,12 +208,14 @@
     state.team_qr=C.team_qr||{};
     teamWrap.querySelectorAll('.up-card').forEach((card,i)=>{preview(state.team_qr[TEAMS[i][0]]||'',card.querySelector('.up-prev'));});
     state.dept_desc=C.dept_desc||{};
-    state.carousel=C.carousel||[];renderSC();
+    state.carousel=C.carousel||[];renderSC();state.org=C.org||null;document.getElementById('orgEditor').value=C.org?JSON.stringify(C.org,null,2):'';
     descWrap.querySelectorAll('.field').forEach(f=>{
       const name=f._name;
       f.querySelector('.desc').value=(state.dept_desc[name]!=null)?state.dept_desc[name]:TEAMS.find(t=>t[0]===name)[1];
     });
   }).catch(()=>{});
+
+  function parseOrg(){try{const v=document.getElementById('orgEditor').value;return v?JSON.parse(v):null;}catch(e){status('❌ 组织架构JSON格式错误：'+e.message,'err');throw e;}}
 
   async function save(){
     const payload={
@@ -214,10 +224,10 @@
       b2:document.getElementById('b2').value,b3:document.getElementById('b3').value,
       t_wei:document.getElementById('t_wei').value,t_dai:document.getElementById('t_dai').value,
       footer:document.getElementById('footer').value,
-      consult_qr:state.consult_qr,team_qr:state.team_qr,dept_desc:{},carousel:state.carousel
+      consult_qr:state.consult_qr,team_qr:state.team_qr,dept_desc:{},carousel:state.carousel,org:state.org
     };
     descWrap.querySelectorAll('.field').forEach(f=>{payload.dept_desc[f._name]=f.querySelector('.desc').value;});
-    const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
+    const btn=document.getElementById('saveBtn');state.org=parseOrg();btn.disabled=true;btn.textContent='保存中…';
     try{
       const r=await fetch('/api/content?key='+encodeURIComponent(KEY.value),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();
