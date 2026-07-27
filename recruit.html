@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+ content="width=device-width, initial-scale=1.0">
 <title>星海艺术团 · 2026新生招新</title>
 <style>
         :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
@@ -343,6 +344,47 @@
     .m-actions{gap:8px;}
     .btn-cancel{flex:0 0 80px;font-size:14px;}
   }
+
+  /* iOS 安全区 + 三端触控优化 */
+  *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+  body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
+  button,a,.clickable{min-height:44px;}
+  input,select,textarea{font-size:16px !important;}
+  @media(max-width:768px){
+    .grouptitle{font-size:13px;}
+  }
+  @media(max-width:480px){
+    body{font-size:14px;line-height:1.6;}
+    .wrap{padding:0 14px;}
+    section{padding:40px 0;}
+    .sec-head h2{font-size:21px;}
+    .sec-head .kicker{font-size:10.5px;letter-spacing:3px;}
+  }
+
+  @media(max-width:480px){
+    .grid2{grid-template-columns:1fr!important;}
+    .grid.g2{grid-template-columns:1fr!important;}
+    .grid.g3{grid-template-columns:1fr!important;}
+    .grid.g4{grid-template-columns:1fr 1fr!important;}
+    .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    table{font-size:11px;min-width:560px;}
+    th,td{padding:6px 7px;}
+    header{padding:10px 14px;gap:8px;flex-wrap:wrap;}
+    .brand{font-size:14px;}
+    .bar{flex-direction:column;gap:8px;}
+    .bar .grow{width:100%;}
+    .btn{width:100%;text-align:center;}
+    .fld input,.fld select,.fld textarea{font-size:16px!important;padding:10px 10px;}
+    .fld label{font-size:11.5px;}
+    .form{padding:16px 14px!important;}
+    .modal{width:95%!important;max-width:none!important;padding:20px 16px!important;margin:10px auto!important;border-radius:14px!important;}
+    .card{padding:16px!important;}
+    .err{font-size:11.5px;}
+    .toggle{width:100%;justify-content:center;}
+    .toggle button{padding:8px 12px;font-size:12px;}
+    .empty{padding:24px!important;font-size:12px;}
+  }
+
 </style>
 <link rel="stylesheet" href="/static/boot.css">
 </head>
