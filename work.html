@@ -203,8 +203,7 @@
   <div class="stats-row" id="statsRow">
     <div class="stat-card"><div class="num" id="sMembers">—</div><div class="label">在团成员</div></div>
     <div class="stat-card"><div class="num" id="sAssets">—</div><div class="label">资产登记</div></div>
-    <div class="stat-card"><div class="num" id="sReimb">—</div><div class="label">待审报销</div></div>
-    <div class="stat-card"><div class="num" id="sApply">—</div><div class="label">待审注册</div></div>
+        <div class="stat-card"><div class="num" id="sApply">—</div><div class="label">待审注册</div></div>
     <div class="stat-card"><div class="num" id="sProc">—</div><div class="label">待审采购</div></div>
   </div>
 
@@ -217,18 +216,6 @@
         <div class="body-text">
           <div class="t">成员信息（员工式录入）</div>
           <div class="d">学号唯一主键，录入 / 检索 / 编辑 / 导入 / 导出</div>
-          <span class="badge">已可用</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 报销申请 -->
-    <a class="mod done" href="/work/reimburse">
-      <div class="ic-row">
-        <div class="ic-circle" aria-hidden="true">💰</div>
-        <div class="body-text">
-          <div class="t">报销申请</div>
-          <div class="d">提交经费 / 器材采购报销，主席副主席可审批流转</div>
           <span class="badge">已可用</span>
         </div>
       </div>
@@ -380,8 +367,8 @@
 
   </div>
   <div class="note">
-    本期已交付：成员信息、<b>报销申请</b>、<b>预约排期</b>、<b>活动通报</b> 四个员工式模块，数据各自独立存储
-    （members.db / reimburse.db / reserve.db / bulletins.db），与招新库（registrations.db）不混库。<br>
+    本期已交付：成员信息、<b>预约排期</b>、<b>活动通报</b> 四个员工式模块，数据各自独立存储
+    （members.db / reserve.db / bulletins.db），与招新库（registrations.db）不混库。<br>
     工作交接 / 资料库 / 任务日程 / 资产管理 / 通讯录 将在下一阶段接入，数据同样独立保存。
   </div>
 </div>
@@ -396,8 +383,7 @@
     if(d.ok){
       document.getElementById('sMembers').textContent=d.members;
       document.getElementById('sAssets').textContent=d.assets;
-      document.getElementById('sReimb').textContent=d.reimburse;
-      document.getElementById('sApply').textContent=d.apply;
+            document.getElementById('sApply').textContent=d.apply;
       document.getElementById('sProc').textContent=d.procure;
     }
   }).catch(()=>{});
