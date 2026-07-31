@@ -734,6 +734,11 @@ def api_bulletin_del(bid):
 def index():
     return send_file(os.path.join(BASE, "index.html"))
 
+@app.route("/preview")
+def preview_page():
+    # 🧪 独立预览页：React Bits 效果移植验证，不影响线上 index.html
+    return send_file(os.path.join(BASE, "index_preview.html"))
+
 # ============ 注册申请 ============
 def pwd_strong(pwd):
     return len(pwd) >= 6 and any(c.isdigit() for c in pwd) and any(c.isalpha() for c in pwd)
