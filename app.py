@@ -734,6 +734,12 @@ def api_bulletin_del(bid):
 def index():
     return send_file(os.path.join(BASE, "index.html"))
 
+
+@app.route("/preview")
+def preview_page():
+    # 🧪 独立预览页 v2：React Bits 移植（Ballpit/Tilt/渐进模糊/Split Text），不影响线上 index.html
+    return send_file(os.path.join(BASE, "index_preview.html"))
+
 # ============ 注册申请 ============
 def pwd_strong(pwd):
     return len(pwd) >= 6 and any(c.isdigit() for c in pwd) and any(c.isalpha() for c in pwd)
