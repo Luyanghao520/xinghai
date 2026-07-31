@@ -380,7 +380,7 @@
   }
 
 
-/* ===== 🧪 React Bits 移植预览 v2：Ballpit + Tilt + 渐进模糊 + Split Text ===== */
+/* ===== 🧪 React Bits 移植预览 v2：Galaxy + Tilt + 渐进模糊 + Split Text ===== */
 #ballpit{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 #ballpit canvas{display:block;}
 
@@ -388,7 +388,7 @@
 .tilt,.blur-in{transition:transform .25s ease, filter .9s ease, opacity .9s ease; will-change:transform,filter,opacity;}
 .tilt{transform-style:preserve-3d;}
 
-/* 渐进模糊 Progressive Blur（仅 filter+opacity，不与 tilt 的 transform 冲突） */
+/* 渐进模糊 Progressive Blur */
 .blur-in{filter:blur(14px);opacity:0;}
 .blur-in.in{filter:blur(0);opacity:1;}
 
@@ -769,77 +769,72 @@ if(scStage){
 </script>
 <script src="/static/boot.js" defer></script>
 
-<!-- 🧪 React Bits 移植预览 v2 -->
-<script src="/static/three.min.js"></script>
+<!-- 🧪 React Bits 移植预览 v2（背景：银河系 Galaxy） -->
 <script>
 (function(){
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isDesktop = innerWidth > 768;
 
-  /* ===== 1) 3D Ballpit 背景（three.js，WebGL） ===== */
-  function initBallpit(){
-    if(reduce || !window.THREE) return;
+  /* ===== 1) 银河系 Galaxy 背景（canvas 2D，纯原生无依赖） ===== */
+  function initGalaxy(){
+    if(reduce) return;
     var container = document.getElementById('ballpit');
     if(!container) return;
-    var THREE = window.THREE;
-    try{
-      var mobile = innerWidth < 768;
-      var W = container.clientWidth, H = container.clientHeight;
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera(60, W/H, 0.1, 100);
-      camera.position.z = 13;
-      var renderer = new THREE.WebGLRenderer({alpha:true, antialias:!mobile});
-      renderer.setPixelRatio(Math.min(devicePixelRatio||1, mobile?1.5:2));
-      renderer.setSize(W, H);
-      renderer.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
-      container.appendChild(renderer.domElement);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-      var dl = new THREE.DirectionalLight(0xffffff, 0.5); dl.position.set(4,6,8); scene.add(dl);
-      var palette = [0x4A8AD2,0x6366F1,0xA855F7,0xFBCF5A,0x7FB0E8,0xffffff];
-      var COUNT = mobile ? 26 : 88;
-      var geo = new THREE.SphereGeometry(1, mobile?14:22, mobile?14:22);
-      var B = {x:7.5, y:4.8, z:3.2};
-      var balls = [];
-      for(var i=0;i<COUNT;i++){
-        var c = palette[i%palette.length];
-        var mat = new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:0.4, roughness:0.45, metalness:0.1, transparent:true, opacity:0.92});
-        var m = new THREE.Mesh(geo, mat);
-        var s = 0.22 + Math.random()*0.5; m.scale.setScalar(s);
-        m.position.set((Math.random()*2-1)*B.x,(Math.random()*2-1)*B.y,(Math.random()*2-1)*B.z);
-        m.userData.v = new THREE.Vector3((Math.random()*2-1)*0.05,(Math.random()*2-1)*0.05,(Math.random()*2-1)*0.025);
-        scene.add(m); balls.push(m);
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+    container.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var mobile = innerWidth < 768;
+    var W,H,cx,cy,dpr,maxR;
+    function resize(){
+      W=container.clientWidth; H=container.clientHeight;
+      dpr=Math.min(devicePixelRatio||1, mobile?1.5:2);
+      canvas.width=W*dpr; canvas.height=H*dpr;
+      canvas.style.width=W+'px'; canvas.style.height=H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      cx=W/2; cy=H/2; maxR=Math.min(W,H)*0.46;
+    }
+    resize();
+    var ARMS=3, COUNT=mobile?420:900, stars=[];
+    for(var i=0;i<COUNT;i++){
+      var t=Math.random();
+      var arm=i%ARMS;
+      var angle=arm*(Math.PI*2/ARMS)+t*Math.PI*2.2;
+      var r=Math.sqrt(t)*maxR*(0.85+Math.random()*0.3);
+      var scatter=(Math.random()-0.5)*(0.5-t*0.35);
+      var a=angle+scatter;
+      var x=Math.cos(a)*r, y=Math.sin(a)*r*0.62;
+      var hue=Math.random();
+      var col = hue<0.72 ? 'rgba(255,255,255,' : (hue<0.9 ? 'rgba(150,190,255,' : 'rgba(255,220,150,');
+      stars.push({x:x,y:y,r:Math.random()*1.4+0.3, base:0.4+Math.random()*0.6, tw:Math.random()*6.28, tws:0.5+Math.random()*1.5, col:col});
+    }
+    var rot=0, mx=0,my=0, tmx=0,tmy=0, raf=null;
+    if(!mobile){ window.addEventListener('mousemove', function(e){ var rc=container.getBoundingClientRect(); tmx=((e.clientX-rc.left)/rc.width-0.5); tmy=((e.clientY-rc.top)/rc.height-0.5); }); }
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*1.35);
+      g.addColorStop(0,'rgba(80,110,200,0.18)'); g.addColorStop(0.4,'rgba(120,80,200,0.10)'); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      var cg=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*0.30);
+      cg.addColorStop(0,'rgba(255,245,210,0.9)'); cg.addColorStop(0.3,'rgba(255,210,140,0.5)'); cg.addColorStop(1,'rgba(255,180,90,0)');
+      ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(cx,cy,maxR*0.30,0,7); ctx.fill();
+      rot+=0.0009; mx+=(tmx-mx)*0.05; my+=(tmy-my)*0.05;
+      var px=mx*22, py=my*22;
+      for(var i=0;i<stars.length;i++){
+        var s=stars[i]; s.tw+=0.02*s.tws;
+        var ang=rot+Math.atan2(s.y,s.x); var rad=Math.sqrt(s.x*s.x+s.y*s.y);
+        var x=cx+Math.cos(ang)*rad+px, y=cy+Math.sin(ang)*rad+py;
+        var tw=0.55+Math.sin(s.tw)*0.45;
+        ctx.beginPath(); ctx.fillStyle=s.col+(s.base*tw).toFixed(3)+')';
+        ctx.arc(x,y,s.r,0,7); ctx.fill();
       }
-      var mouse = new THREE.Vector2(999,999), m3 = new THREE.Vector3(999,999,0), hasMouse=false;
-      if(!mobile){
-        window.addEventListener('mousemove', function(e){
-          var r = container.getBoundingClientRect();
-          var x = ((e.clientX-r.left)/r.width)*2-1, y = -((e.clientY-r.top)/r.height)*2+1;
-          mouse.set(x,y); m3.set(x*B.x, y*B.y, 0); hasMouse=true;
-        });
-      }
-      var GRAV=0.0011, FR=0.993, BOUNCE=0.9, raf=null;
-      function tick(){
-        for(var k=0;k<balls.length;k++){
-          var b=balls[k], v=b.userData.v;
-          v.y -= GRAV;
-          if(hasMouse){ v.x += (m3.x-b.position.x)*0.00009; v.y += (m3.y-b.position.y)*0.00009; }
-          v.multiplyScalar(FR); b.position.add(v);
-          if(b.position.x> B.x){b.position.x= B.x; v.x*=-BOUNCE;}
-          if(b.position.x<-B.x){b.position.x=-B.x; v.x*=-BOUNCE;}
-          if(b.position.y> B.y){b.position.y= B.y; v.y*=-BOUNCE;}
-          if(b.position.y<-B.y){b.position.y=-B.y; v.y*=-BOUNCE;}
-          if(b.position.z> B.z){b.position.z= B.z; v.z*=-BOUNCE;}
-          if(b.position.z<-B.z){b.position.z=-B.z; v.z*=-BOUNCE;}
-        }
-        scene.rotation.y += 0.0006;
-        renderer.render(scene,camera);
-        raf = requestAnimationFrame(tick);
-      }
-      tick();
-      addEventListener('resize', function(){ W=container.clientWidth; H=container.clientHeight; camera.aspect=W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H); });
-      var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ if(!raf) tick(); } else { cancelAnimationFrame(raf); raf=null; } }); },{threshold:0});
-      io.observe(container);
-    }catch(err){ if(container) container.style.display='none'; }
+      raf=requestAnimationFrame(draw);
+    }
+    function start(){ if(!raf) draw(); }
+    start();
+    addEventListener('resize', resize);
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ if(!raf){raf=null; start();} } else { cancelAnimationFrame(raf); raf=null; } }); },{threshold:0});
+    io.observe(container);
   }
 
   /* ===== 2) Tilt Card 3D 倾斜 ===== */
@@ -864,7 +859,7 @@ if(scStage){
       var text=h.textContent; h.textContent=''; h.setAttribute('aria-label',text);
       Array.from(text).forEach(function(ch,i){
         var sp=document.createElement('span'); sp.className='split-char';
-        sp.textContent = (ch===' ') ? ' ' : ch;
+        sp.textContent = (ch===' ') ? ' ' : ch;
         sp.style.transitionDelay=(i*0.045)+'s';
         h.appendChild(sp);
       });
@@ -888,10 +883,9 @@ if(scStage){
     }, 1200);
   }
 
-  // 兜底：3.5s 后强制显示，防 observer 异常导致内容隐藏
   setTimeout(function(){ document.querySelectorAll('.blur-in:not(.in)').forEach(function(el){ el.classList.add('in'); }); }, 3500);
 
-  try{ initBallpit(); }catch(e){}
+  try{ initGalaxy(); }catch(e){}
   try{ initSplit(); }catch(e){}
   try{ markAndObserve(); }catch(e){ document.querySelectorAll('.blur-in').forEach(function(el){ el.classList.add('in'); }); }
 })();
