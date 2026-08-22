@@ -32,8 +32,18 @@ CONTENT = os.path.join(BASE, "content.json")
 STATIC = os.path.join(BASE, "static")
 os.makedirs(os.path.join(STATIC, "uploads"), exist_ok=True)
 
-ADMIN_KEY = "xinghai2026"          # 招新后台 / CMS 密码
-SECRET = "xinghai-art-troupe-2026"  # Flask session 密钥
+# ===== 密钥配置（优先级：环境变量 > config.json > 内置默认）=====
+_cfg = {}
+_cfg_path = os.path.join(BASE, "config.json")
+if os.path.exists(_cfg_path):
+    try:
+        with open(_cfg_path, encoding="utf-8") as _f:
+            _cfg = json.load(_f)
+    except Exception:
+        _cfg = {}
+
+ADMIN_KEY = os.environ.get("XINGHAI_ADMIN_KEY", _cfg.get("ADMIN_KEY", "xinghai2026"))  # 招新后台 / CMS 密码
+SECRET = os.environ.get("XINGHAI_SECRET", _cfg.get("SECRET", "xinghai-art-troupe-2026"))  # Flask session 密钥
 
 app = Flask(__name__, static_folder=STATIC, static_url_path="/static")
 app.secret_key = SECRET
