@@ -740,9 +740,29 @@ def api_bulletin_del(bid):
     cx.close()
     return jsonify({"ok": True})
 
+# ===== 星海艺术团 · 暗色落地页（React 构建产物，替换旧首页）=====
+LANDING = os.path.join(BASE, "portfolio-landing", "landing")
+
 @app.route("/")
 def index():
+    # 优先返回新的 React 落地页；不存在则回退旧首页（安全兜底）
+    landing_html = os.path.join(LANDING, "index.html")
+    if os.path.isfile(landing_html):
+        return send_file(landing_html)
     return send_file(os.path.join(BASE, "index.html"))
+
+@app.route("/assets/<path:filename>")
+def landing_assets(filename):
+    return send_file(os.path.join(LANDING, "assets", filename))
+
+# 图片复用线上已有的 static/uploads（不重复存储）
+@app.route("/showcase/<path:filename>")
+def landing_showcase(filename):
+    return send_file(os.path.join(STATIC, "uploads", "showcase", filename))
+
+@app.route("/u20260717171010_f7be1541.png")
+def landing_qr():
+    return send_file(os.path.join(STATIC, "uploads", "u20260717171010_f7be1541.png"))
 
 
 # ============ 注册申请 ============
