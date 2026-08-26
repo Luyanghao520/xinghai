@@ -97,52 +97,124 @@ section{padding:96px 0;position:relative;}
   letter-spacing:.01em;line-height:1.12;color:var(--text);margin-top:14px;}
 .sec-head p{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.9;}
 
-/* ---------- HERO ---------- */
+/* ---------- 开场加载（模板式计数器） ---------- */
+.ld-label{position:absolute;top:28px;left:32px;font-size:11px;letter-spacing:.3em;color:var(--muted);
+  text-transform:uppercase;font-weight:600;animation:ldIn .8s cubic-bezier(.22,1,.36,1) both .1s;}
+.ld-word-wrap{height:1.25em;display:flex;align-items:center;overflow:hidden;}
+.ld-word{font-family:var(--font-display);font-style:italic;font-size:clamp(34px,6vw,64px);
+  color:rgba(245,245,245,.82);animation:ldWord .45s cubic-bezier(.22,1,.36,1) both;}
+.ld-count{position:absolute;bottom:30px;right:32px;font-family:var(--font-display);
+  font-size:clamp(56px,10vw,120px);line-height:1;color:var(--text);font-variant-numeric:tabular-nums;}
+.ld-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(31,31,31,.6);}
+.ld-bar-fill{height:100%;width:100%;background-image:var(--accent);transform-origin:left;
+  transform:scaleX(0);box-shadow:0 0 8px rgba(137,170,204,.35);}
+@keyframes ldIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:none;}}
+@keyframes ldWord{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+
+/* ---------- HERO（HLS 视频背景） ---------- */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;color:#fff;overflow:hidden;padding:120px 24px 140px;
   background:radial-gradient(110% 90% at 50% -10%,#15202E 0%,#0C0F14 52%,#070708 100%);}
-.hero::after{content:"";position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);
-  width:130%;height:220px;pointer-events:none;
-  background:radial-gradient(ellipse 62% 100% at 50% 100%,rgba(78,133,191,.30),transparent 70%);}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.4;animation:float 16s ease-in-out infinite;}
-.blob.b1{width:360px;height:360px;background:rgba(78,133,191,.5);top:-80px;left:-60px;}
-.blob.b2{width:300px;height:300px;background:rgba(137,170,204,.34);bottom:-90px;right:-40px;animation-delay:-6s;}
-.blob.b3{width:230px;height:230px;background:rgba(64,104,148,.42);top:42%;left:56%;animation-delay:-10s;}
-@keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-44px) scale(1.08);}66%{transform:translate(-26px,26px) scale(.95);}}
-.hero .badge{position:relative;z-index:2;display:inline-flex;align-items:center;gap:10px;
-  font-size:11px;letter-spacing:.32em;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:28px;
-  animation:heroIn .9s cubic-bezier(.22,1,.36,1) both .1s;}
-.hero .badge::before,.hero .badge::after{content:"";width:28px;height:1px;background:var(--stroke2);}
-.hero h1{position:relative;z-index:2;font-family:var(--font-display);font-weight:600;
-  font-size:clamp(46px,11vw,104px);letter-spacing:.02em;line-height:1.04;color:var(--text);
-  text-shadow:0 8px 46px rgba(137,170,204,.30),0 2px 18px rgba(0,0,0,.65);
-  animation:heroIn 1s cubic-bezier(.22,1,.36,1) both .2s;}
-.hero .sub{position:relative;z-index:2;font-size:14px;letter-spacing:.24em;color:var(--muted);margin-top:18px;text-transform:uppercase;
-  animation:heroIn 1s cubic-bezier(.22,1,.36,1) both .32s;}
-.hero .welcome{position:relative;z-index:2;margin-top:34px;max-width:600px;background:rgba(20,20,20,.55);
-  backdrop-filter:blur(12px);border:1px solid var(--stroke2);border-radius:20px;padding:22px 26px;font-size:13.5px;
-  line-height:2.1;text-align:left;color:var(--muted);overflow:hidden;}
-.hero .welcome::before{content:"";position:absolute;top:0;left:14%;right:14%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(137,170,204,.6),transparent);
-  animation:heroIn 1s cubic-bezier(.22,1,.36,1) both .44s;}
-.hero .welcome b{color:var(--text);font-weight:600;}
-@keyframes heroIn{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
-.hero-cta{position:relative;z-index:2;margin-top:36px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
-  animation:heroIn 1s cubic-bezier(.22,1,.36,1) both .56s;}
+.hero-video{position:absolute;left:50%;top:50%;min-width:100%;min-height:100%;width:auto;height:auto;
+  transform:translate(-50%,-50%);object-fit:cover;z-index:0;}
+.hero-ov{position:absolute;inset:0;background:rgba(0,0,0,.2);z-index:1;}
+.hero-fade{position:absolute;left:0;right:0;bottom:0;height:192px;
+  background:linear-gradient(180deg,transparent,var(--bg));z-index:1;}
+.hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;}
+.hero .eyebrow{font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:32px;}
+.hero h1{font-family:var(--font-display);font-style:italic;font-weight:600;
+  font-size:clamp(46px,11vw,104px);letter-spacing:.01em;line-height:.95;color:var(--text);
+  text-shadow:0 8px 46px rgba(0,0,0,.55);margin-bottom:28px;}
+.hero .role-line{font-size:15px;color:var(--muted);margin-bottom:22px;}
+.role-word{display:inline-block;font-family:var(--font-display);font-style:italic;color:var(--text);
+  animation:roleFadeIn .4s ease-out both;}
+@keyframes roleFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.hero .hero-desc{font-size:13.5px;color:var(--muted);max-width:460px;line-height:2;margin-bottom:44px;}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
 .cta{position:relative;font-size:14px;font-weight:600;padding:15px 32px;border-radius:999px;cursor:pointer;
   text-decoration:none;transition:transform .25s,background .25s,color .25s,box-shadow .25s;border:none;isolation:isolate;}
 .cta.primary{background:var(--text);color:var(--bg);}
 .cta.primary:hover{transform:translateY(-2px);background:var(--bg);color:var(--text);box-shadow:inset 0 0 0 1px var(--stroke2),var(--glow);}
 .cta.ghost{border:1px solid var(--stroke2);color:var(--text);background:rgba(255,255,255,.02);}
 .cta.ghost:hover{transform:translateY(-2px);border-color:var(--a1);color:var(--a1);}
-.scroll-ind{position:relative;z-index:2;margin-top:56px;font-size:10px;letter-spacing:.3em;color:var(--muted);
-  text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:10px;
-  animation:heroIn 1s cubic-bezier(.22,1,.36,1) both .7s;}
-.scroll-ind::after{content:"";width:1px;height:44px;background:var(--stroke2);position:relative;overflow:hidden;display:block;}
-.scroll-ind{animation-name:heroIn;}
-.scroll-ind::after{background:linear-gradient(180deg,var(--a1),var(--stroke2));background-size:100% 300%;
-  animation:scrollHint 2.2s ease-in-out infinite;}
-@keyframes scrollHint{0%{background-position:0 100%;}55%,100%{background-position:0 -80%;}}
+.name-reveal,.blur-in{opacity:0;will-change:transform,opacity,filter;}
+.scroll-ind{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
+.si-line{position:relative;display:block;width:1px;height:40px;background:var(--stroke);overflow:hidden;}
+.si-line i{position:absolute;left:0;top:0;width:100%;height:100%;background:var(--a1);
+  animation:scrollDown 1.5s ease-in-out infinite;}
+@keyframes scrollDown{0%{transform:translateY(-100%);}100%{transform:translateY(200%);}}
+
+/* ---------- 精彩活动 · Bento ---------- */
+.works{padding:40px 0 96px;}
+.works .wrap-wide{max-width:1200px;margin:0 auto;padding:0 22px;}
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;}
+.b-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid var(--stroke);
+  background:var(--surface) center/cover no-repeat;min-height:240px;}
+.b-card.sp7{grid-column:span 7;} .b-card.sp5{grid-column:span 5;}
+.b-card.a1610{aspect-ratio:16/10;} .b-card.a43{aspect-ratio:4/3;}
+.b-half{position:absolute;inset:0;background-image:radial-gradient(circle,#000 1px,transparent 1px);
+  background-size:4px 4px;opacity:.2;mix-blend-mode:multiply;}
+.b-cap{position:absolute;left:18px;bottom:16px;right:18px;z-index:2;text-align:left;}
+.b-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:#0A0F14;background-image:var(--accent);padding:4px 12px;border-radius:999px;margin-bottom:10px;}
+.b-cap h3{font-family:var(--font-display);font-weight:600;font-size:clamp(18px,2.4vw,26px);
+  color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.55);}
+.b-hover{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;
+  background:rgba(10,10,10,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;transition:opacity .45s ease;}
+.b-card:hover .b-hover{opacity:1;}
+.b-view{position:relative;isolation:isolate;background:#fff;color:#111;border-radius:999px;
+  padding:10px 20px;font-size:13px;white-space:nowrap;}
+.b-view::before{content:"";position:absolute;inset:-2px;border-radius:999px;
+  background-image:var(--accent);z-index:-1;}
+.b-view em{font-family:var(--font-display);font-style:italic;}
+
+/* ---------- 舞台掠影 · 视差画廊 ---------- */
+.explorations{position:relative;padding:96px 0;}
+.exp-pin{display:flex;align-items:center;justify-content:center;padding:0 22px;}
+.exp-center-head{text-align:center;max-width:560px;margin:0 auto 64px;}
+.exp-grid{max-width:1200px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:1fr 1fr;gap:60px;}
+.exp-col{display:flex;flex-direction:column;gap:60px;}
+.exp-col.c2{padding-top:120px;}
+.exp-card{position:relative;width:100%;max-width:340px;margin:0 auto;aspect-ratio:1/1;border-radius:24px;
+  overflow:hidden;border:1px solid var(--stroke);cursor:pointer;background:var(--surface);
+  transition:transform .4s ease;padding:0;}
+.exp-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.exp-card:hover{transform:scale(1.03);}
+.exp-card .cap{position:absolute;left:0;right:0;bottom:0;padding:14px;text-align:center;font-size:10.5px;
+  letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.92);
+  background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .3s;}
+.exp-card:hover .cap{opacity:1;}
+.r1{transform:rotate(-2deg);} .r2{transform:rotate(2deg);}
+.explorations.parallax-on{min-height:300vh;}
+.explorations.parallax-on .exp-pin{position:absolute;top:0;left:0;right:0;height:100vh;z-index:1;padding:0;}
+.explorations.parallax-on .exp-center-head{margin:0;}
+.explorations.parallax-on .exp-grid{position:absolute;inset:0;z-index:2;max-width:1400px;
+  gap:12vw;padding:16vh 22px;}
+.explorations.parallax-on .exp-col.c2{padding-top:0;}
+
+/* ---------- 灯箱 ---------- */
+.lightbox{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
+  background:rgba(10,10,10,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:24px;}
+.lightbox.open{display:flex;}
+.lightbox figure{max-width:520px;width:100%;margin:0;transform:scale(.94);opacity:0;
+  transition:.3s cubic-bezier(.22,1,.36,1);}
+.lightbox.open figure{transform:none;opacity:1;}
+.lightbox img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:24px;border:1px solid var(--stroke2);}
+.lightbox figcaption{margin-top:14px;text-align:center;font-size:10.5px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--muted);}
+.lb-close{position:absolute;top:20px;right:24px;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--stroke2);background:var(--surface);color:var(--text);font-size:15px;cursor:pointer;}
+
+/* ---------- 页脚视频背景 ---------- */
+footer{position:relative;overflow:hidden;}
+.ft-video{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.ft-video video{position:absolute;left:50%;top:50%;min-width:100%;min-height:100%;width:auto;height:auto;
+  transform:translate(-50%,-50%) scaleY(-1);object-fit:cover;}
+.ft-ov{position:absolute;inset:0;background:rgba(0,0,0,.6);}
+.ft-inner{position:relative;z-index:1;}
 
 /* ---------- 卡片体系 ---------- */
 .grid{display:grid;gap:18px;}
@@ -450,8 +522,12 @@ html.noanim .split-char{opacity:1!important;transform:none!important;}
 html.noanim #boot-screen{display:none!important;}
 html.noanim body{opacity:1!important;}
 html.noanim .hero{min-height:min(100svh,920px)!important;}
-html.noanim .hero .badge,html.noanim .hero h1,html.noanim .hero .sub,html.noanim .hero .welcome,
-html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1!important;transform:none!important;}
+html.noanim .name-reveal,html.noanim .blur-in{opacity:1!important;transform:none!important;filter:none!important;}
+html.noanim .role-word,html.noanim .ld-word{animation:none!important;opacity:1!important;transform:none!important;}
+html.noanim .hero .eyebrow,html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1!important;transform:none!important;}
+html.noanim .explorations{min-height:auto!important;padding:96px 0;}
+html.noanim .explorations .exp-pin{position:static!important;height:auto!important;}
+html.noanim .explorations .exp-grid{position:static!important;inset:auto!important;padding:0 22px!important;}
 
 /* ========== XINGHAI FX（镜面高光改蓝）========== */
 .spec-fx{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;overflow:hidden;}
@@ -478,17 +554,12 @@ html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1
 </head>
 <body>
 
-<!-- 开场加载动画（星海主题） -->
+<!-- 开场加载（模板式：轮换词 + 000→100 计数 + 渐变进度条） -->
 <div id="boot-screen">
-  <canvas id="boot-canvas"></canvas>
-  <div class="boot-galaxy"></div>
-  <div class="boot-nebula n1"></div>
-  <div class="boot-nebula n2"></div>
-  <div id="boot-stars"></div>
-  <div class="boot-wave"></div>
-  <div class="boot-logo"><img src="/static/uploads/logo.png" alt="星海艺术团"></div>
-  <div class="boot-title">星海艺术团</div>
-  <div class="boot-sub">上海立信会计金融学院 · XINGHAI ART TROUPE</div>
+  <span class="ld-label">Xinghai Art Troupe</span>
+  <div class="ld-word-wrap"><span class="ld-word" id="ldWord">热爱</span></div>
+  <span class="ld-count" id="ldCount">000</span>
+  <div class="ld-bar"><div class="ld-bar-fill" id="ldBar"></div></div>
 </div>
 
 <!-- 顶部导航 -->
@@ -510,37 +581,34 @@ html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1
   </div>
 </div>
 
-<!-- HERO -->
+<!-- HERO · HLS 视频背景 -->
 <section class="hero">
-  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-  <div class="badge">SHANGHAI LIXIN · XINGHAI ART TROUPE</div>
-  <h1>星海艺术团</h1>
-  <div class="sub">上海立信会计金融学院 · 校级学生艺术团体</div>
-  <div class="welcome">
-    这里汇聚 <b>合唱、交响、民乐、舞蹈、话剧、主持、礼仪</b> 七支表演团队，与
-    <b>办公室、资产管理部、企宣部</b> 四个行政部门。<br>
-    21 年累计斩获 <b>304 项</b>各级奖项，<b>51 个一等奖 / 特等奖</b>，连续七届全国艺术展演获奖。<br>
-    因为热爱，所以闪耀。期待在星海，遇见发光的你。
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline></video>
+  <div class="hero-ov"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-inner">
+    <p class="eyebrow blur-in">Shanghai Lixin · Xinghai Art Troupe · 2026</p>
+    <h1 class="name-reveal">星海艺术团</h1>
+    <p class="role-line blur-in">一支<span class="role-word" id="roleWord">热爱舞台</span>的校级学生艺术团</p>
+    <p class="hero-desc blur-in">汇聚合唱、交响、民乐、舞蹈、话剧、主持、礼仪七支表演团队——21 年累计 304 项奖项，51 个一等奖 / 特等奖，因为热爱，所以闪耀。</p>
+    <div class="hero-cta blur-in">
+      <a class="cta primary" href="#showcase">查看演出风采</a>
+      <a class="cta ghost" href="/recruit">加入我们 ↗</a>
+    </div>
   </div>
-  <div class="hero-cta">
-    <a class="cta primary" href="/recruit">🎯 2026 新生招新</a>
-    <a class="cta ghost" href="#about">了解星海</a>
-  </div>
-  <div class="scroll-ind">向下滚动 ↓</div>
+  <div class="scroll-ind blur-in"><span>Scroll</span><span class="si-line"><i></i></span></div>
 </section>
 
-<!-- 精彩活动 · 轮播展示 -->
-<section id="showcase" class="showcase">
-  <div class="sc-head">
-    <div class="kicker">ACTIVITIES · 星海现场</div>
-    <h2>精彩活动</h2>
+<!-- 精彩活动 · Bento 网格 -->
+<section id="showcase" class="works">
+  <div class="wrap-wide">
+    <div class="sec-head">
+      <div class="kicker">Selected · 星海现场</div>
+      <h2>精彩<em style="font-family:var(--font-display);font-style:italic;font-weight:600;">活动</em></h2>
+      <p>从校园晚会到全国赛场，每一幕都是热爱的高光时刻。</p>
+    </div>
+    <div class="bento" id="bentoGrid"></div>
   </div>
-  <div class="sc-stage" id="scStage">
-    <div class="sc-loading">活动加载中…</div>
-  </div>
-  <button class="sc-arrow left" aria-label="上一项" onclick="scMove(-1)">‹</button>
-  <button class="sc-arrow right" aria-label="下一项" onclick="scMove(1)">›</button>
-  <div class="sc-dots" id="scDots"></div>
 </section>
 
 <!-- 关于星海 -->
@@ -599,6 +667,28 @@ html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1
     </div>
   </div>
 </section>
+
+<!-- 舞台掠影 · 视差画廊 -->
+<section id="moments" class="explorations">
+  <div class="exp-pin">
+    <div class="exp-center-head">
+      <div class="kicker" style="display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.32em;color:var(--muted);font-weight:600;text-transform:uppercase;">Moments · 舞台掠影</div>
+      <h2 class="xh-h2">台前<em style="font-style:italic;">幕后</em></h2>
+      <p class="xh-sub" style="margin-left:auto;margin-right:auto;">排练厅的汗水与聚光灯下的高光，都是星海的日常。</p>
+    </div>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-col" id="expCol1"></div>
+    <div class="exp-col c2" id="expCol2"></div>
+  </div>
+</section>
+<div class="lightbox" id="expLightbox">
+  <button class="lb-close" aria-label="关闭">✕</button>
+  <figure>
+    <img src="" alt="舞台掠影">
+    <figcaption></figcaption>
+  </figure>
+</div>
 
 <!-- 活动荣誉 -->
 <section id="honor">
@@ -674,11 +764,14 @@ html.noanim .hero-cta,html.noanim .scroll-ind{animation:none!important;opacity:1
 </section>
 
 <footer>
+  <div class="ft-video" aria-hidden="true"><video id="ftVideo" autoplay muted loop playsinline></video><div class="ft-ov"></div></div>
+  <div class="ft-inner">
   <div class="marquee" aria-hidden="true"><div class="mq-track" id="mqTrack"><span>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em></span><span>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em></span></div></div>
   <div class="fb">星海艺术团</div>
   上海立信会计金融学院 · 校团委指导 · 校级学生艺术团体<br>
   浦东校区 / 松江校区　|　招新咨询：扫码上方二维码加入咨询群<br>
   © 2026 星海艺术团主席团　·　<a href="/login">工作人员入口</a>　·　<a href="/register" style="color:var(--gold);">注册申请</a>　·　<a href="/admin?key=xinghai2026">招新管理</a>
+  </div>
 </footer>
 
 <!-- 浮动 AI -->
@@ -910,7 +1003,7 @@ if(scStage){
       });
     }
     // 标题逐字揭示
-    initSplit('.hero h1, .sec-head h2', { flag: 'splitHeadings', y: 30, duration: 0.8, stagger: 0.025 });
+    initSplit('.sec-head h2', { flag: 'splitHeadings', y: 30, duration: 0.8, stagger: 0.025 });
     // 正文逐字揭示（欢迎语/简介/卡片描述）
     initSplit('.welcome, .sec-head p, .card .d', { flag: 'splitBody', y: 18, duration: 0.6, stagger: 0.008 });
   })();
@@ -970,6 +1063,130 @@ if(scStage){
   })();
   </script>
 
+  <!-- 模板组件：HLS 视频背景 / 计数加载 / 轮换词 / Bento / 视差画廊 -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
+  <script>
+  (function () {
+    var noanim = document.documentElement.classList.contains('noanim');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var HLS_SRC = 'https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8';
+
+    /* --- HLS 视频背景（Hero + 页脚翻转） --- */
+    function attachHLS(v) {
+      if (!v) return;
+      if (window.Hls && Hls.isSupported()) {
+        var h = new Hls({ enableWorker: false });
+        h.loadSource(HLS_SRC); h.attachMedia(v);
+      } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+        v.src = HLS_SRC;
+      }
+    }
+    attachHLS(document.getElementById('heroVideo'));
+    attachHLS(document.getElementById('ftVideo'));
+
+    /* --- 计数加载屏：000→100 / 2700ms --- */
+    var ld = document.getElementById('boot-screen');
+    if (ld && !noanim) {
+      var cnt = document.getElementById('ldCount'), bar = document.getElementById('ldBar'),
+          wd = document.getElementById('ldWord');
+      var words = ['热爱', '舞台', '闪耀'], wi = 0, t0 = performance.now(), DUR = 2700, wtimer = 0;
+      wtimer = setInterval(function () {
+        wi = (wi + 1) % words.length;
+        wd.textContent = words[wi];
+        wd.style.animation = 'none'; void wd.offsetWidth; wd.style.animation = '';
+      }, 900);
+      var tick = function (now) {
+        var p = Math.min((now - t0) / DUR, 1);
+        cnt.textContent = String(Math.floor(p * 100)).padStart(3, '0');
+        bar.style.transform = 'scaleX(' + p + ')';
+        if (p < 1) requestAnimationFrame(tick);
+        else { clearInterval(wtimer); setTimeout(function () { ld.style.display = 'none'; }, 420); }
+      };
+      requestAnimationFrame(tick);
+    } else if (ld) { ld.style.display = 'none'; }
+
+    /* --- 身份词轮换（每 2s） --- */
+    var roles = ['热爱舞台', '屡获金奖', '双校区协同', '向美而行'], ri = 0,
+        rw = document.getElementById('roleWord');
+    if (rw) setInterval(function () {
+      ri = (ri + 1) % roles.length;
+      rw.textContent = roles[ri];
+      rw.style.animation = 'none'; void rw.offsetWidth; rw.style.animation = '';
+    }, 2000);
+
+    /* --- Bento 网格（数据沿用 SC 演出数组，8 个全保留） --- */
+    var bg = document.getElementById('bentoGrid');
+    if (bg && typeof SC !== 'undefined') {
+      var spans = ['sp7', 'sp5', 'sp5', 'sp7'], asps = ['a1610', 'a43', 'a43', 'a1610'];
+      bg.innerHTML = SC.map(function (s, i) {
+        return '<article class="b-card ' + spans[i % 4] + ' ' + asps[i % 4] + '" style="background-image:url(\'' + s.img + '\')">'
+          + '<div class="b-half"></div>'
+          + '<div class="b-cap"><span class="b-tag">' + s.tag + '</span><h3>' + s.title + '</h3></div>'
+          + '<div class="b-hover"><span class="b-view">观看 — <em>' + s.title + '</em></span></div>'
+          + '</article>';
+      }).join('');
+    }
+
+    /* --- 舞台掠影：卡片 + 灯箱 --- */
+    var MOMENTS = [
+      { img: '/static/uploads/showcase/sc12.jpg', cap: '排练日常' },
+      { img: '/static/uploads/showcase/sc14.jpg', cap: '候场时刻' },
+      { img: '/static/uploads/showcase/sc16.jpg', cap: '幕后花絮' },
+      { img: '/static/uploads/showcase/sc18.jpg', cap: '谢幕瞬间' },
+      { img: '/static/uploads/showcase/sc20.jpg', cap: '侧台记录' },
+      { img: '/static/uploads/showcase/sc22.jpg', cap: '合影定格' }
+    ];
+    var c1 = document.getElementById('expCol1'), c2 = document.getElementById('expCol2'),
+        lb = document.getElementById('expLightbox');
+    function openLB(m) {
+      if (!lb) return;
+      lb.querySelector('img').src = m.img;
+      lb.querySelector('figcaption').textContent = m.cap;
+      lb.classList.add('open');
+    }
+    if (c1 && c2) {
+      MOMENTS.forEach(function (m, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'exp-card ' + (i % 2 ? 'r2' : 'r1');
+        b.setAttribute('aria-label', m.cap);
+        b.innerHTML = '<img src="' + m.img + '" alt="' + m.cap + '" loading="lazy"><span class="cap">' + m.cap + '</span>';
+        b.addEventListener('click', function () { openLB(m); });
+        (i % 2 ? c2 : c1).appendChild(b);
+      });
+    }
+    if (lb) {
+      lb.addEventListener('click', function () { lb.classList.remove('open'); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+    }
+
+    /* --- GSAP：入场时间线 + 视差钉住（CDN 可用且未禁动画时） --- */
+    if (window.gsap && !noanim && !reduce) {
+      var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.fromTo('.name-reveal', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.2 }, 0.1)
+        .fromTo('.blur-in', { opacity: 0, y: 20, filter: 'blur(10px)' },
+                { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1, stagger: 0.1 }, 0.3);
+      if (window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        var sec = document.getElementById('moments');
+        if (sec) {
+          sec.classList.add('parallax-on');
+          ScrollTrigger.create({
+            trigger: sec, start: 'top top', end: 'bottom bottom',
+            pin: sec.querySelector('.exp-pin'), pinSpacing: false
+          });
+          gsap.fromTo('#expCol1', { y: 60 }, { y: -260, ease: 'none',
+            scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true } });
+          gsap.fromTo('#expCol2', { y: 140 }, { y: -520, ease: 'none',
+            scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true } });
+        }
+      }
+    } else {
+      document.querySelectorAll('.name-reveal,.blur-in').forEach(function (el) { el.style.opacity = 1; });
+    }
+  })();
+  </script>
+
   <!-- 页脚跑马灯（GSAP 无缝循环；CDN 缺失时静默降级为静态描边字） -->
   <script>
   (function () {
@@ -981,10 +1198,7 @@ if(scStage){
   })();
   </script>
 
-  <!-- 本地直接打开 index.html 时的兜底：隐藏开场加载屏（线上由 boot.js 处理，此脚本无害可删） -->
-  <script>
-  setTimeout(function () { var b = document.getElementById('boot-screen'); if (b) b.style.display = 'none'; }, 600);
-  </script>
+
   <!-- ========== XINGHAI FX END ========== -->
 </body>
 </html>
