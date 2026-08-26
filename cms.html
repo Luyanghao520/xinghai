@@ -5,39 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>星海艺术团 · 内容管理</title>
 <style>
-        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
+        :root{--navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--bg:#0A0A0A;--card:#141414;--ok:#7FD1A7;--warn:#E8C07A;--bad:#E08A8A;--red:#E08A8A;--accent-soft:#BCD4EA;--font-body:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;--font-display:'Instrument Serif','Noto Serif SC','Songti SC','STSong',serif;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:40px;;background:linear-gradient(135deg,#F5F0FA 0%,#F0F4FF 25%,#FFF5F8 50%,#F8FFF0 75%,#FFF9F0 100%);position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%);}
-  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.97);border-bottom:2px solid #DDE2EC;box-shadow:0 4px 16px rgba(15,42,82,.08);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+  body{font-family:var(--font-body);background:radial-gradient(110% 70% at 50% -10%,#10151C 0%,#0A0A0C 55%,#070708 100%);color:var(--ink);line-height:1.6;padding-bottom:40px;position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,rgba(78,133,191,.10),transparent 42%),radial-gradient(circle at 85% 50%,rgba(137,170,204,.07),transparent 42%),radial-gradient(circle at 50% 85%,rgba(78,133,191,.06),transparent 40%);}
+  header{position:sticky;top:0;z-index:50;background:rgba(20,20,20,.88);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
   header .logo{font-weight:800;color:var(--navy);letter-spacing:1px;font-size:16px;}
   header .logo span{color:var(--gold);}
   header .key{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);}
-  header .key input{padding:8px 11px;border:1.5px solid #DDE2EC;border-radius:9px;font-size:13px;width:150px;outline:none;}
+  header .key input{padding:8px 11px;border:1px solid #2A2A2E;border-radius:10px;font-size:13px;width:150px;outline:none;background:#0A0A0A;color:var(--ink);}
   header .key input:focus{border-color:var(--blue);}
-  .save-btn{margin-left:auto;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:11px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;}
+  .save-btn{margin-left:auto;background:#F5F5F5;color:#0A0A0A;border:none;border-radius:999px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;transition:.25s;}
+  .save-btn:hover{background:#0A0A0A;color:#F5F5F5;box-shadow:inset 0 0 0 1px #2A2A2E,0 0 24px rgba(137,170,204,.16);}
   .save-btn:disabled{opacity:.6;}
   .status{font-size:12.5px;width:100%;min-height:16px;}
-  .status.ok{color:#2E9E5B;} .status.err{color:#E0564B;}
+  .status.ok{color:#7FD1A7;} .status.err{color:#E08A8A;}
   .wrap{max-width:860px;margin:0 auto;padding:0 20px;}
-  .card{background:#fff;border:1.5px solid #DDE2EC;border-radius:16px;padding:20px 22px;margin-top:20px;box-shadow:0 8px 28px rgba(15,42,82,.08),0 2px 6px rgba(15,42,82,.04);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px;margin-top:20px;box-shadow:0 18px 44px rgba(0,0,0,.4);}
   .card h2{font-size:17px;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-  .card h2::before{content:"";width:5px;height:18px;background:linear-gradient(var(--blue),var(--gold));border-radius:3px;}
+  .card h2::before{content:"";width:5px;height:18px;background:linear-gradient(90deg,#89AACC,#4E85BF);border-radius:3px;}
   .card .hint{font-size:12px;color:var(--sub);margin-bottom:16px;}
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
-  .field textarea,.field input[type=text]{width:100%;border:1.5px solid #DDE2EC;border-radius:11px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#FFF;outline:none;resize:vertical;}
-  .field textarea:focus,.field input:focus{border-color:var(--blue);background:#fff;}
+  .field textarea,.field input[type=text]{width:100%;border:1px solid #2A2A2E;border-radius:12px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#0A0A0A;color:var(--ink);outline:none;resize:vertical;}
+  .field textarea:focus,.field input:focus{border-color:var(--blue);background:#0E0E10;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .up-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-  .up-card{background:#FFF;border:1.5px solid #DDE2EC;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
+  .up-card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
   .up-card .up-name{font-size:14px;font-weight:700;color:var(--navy);}
-  .up-btn{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;border-radius:9px;padding:8px 14px;font-size:12.5px;cursor:pointer;user-select:none;}
+  .up-btn{background:linear-gradient(90deg,#89AACC,#4E85BF);color:#0A0F14;font-weight:700;border-radius:999px;padding:8px 16px;font-size:12.5px;cursor:pointer;user-select:none;transition:.2s;}
   .up-prev{min-height:96px;display:flex;align-items:center;justify-content:center;}
-  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1.5px solid #DDE2EC;}
-  .up-del{background:none;border:1px solid #f0c9c4;color:#c0392b;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;}
+  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1px solid #2A2A2E;}
+  .up-del{background:none;border:1px solid rgba(224,138,138,.35);color:#E08A8A;border-radius:999px;padding:5px 14px;font-size:12px;cursor:pointer;transition:.2s;}
   .consult-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
   .consult-box .up-prev{min-height:160px;min-width:160px;}
   footer{text-align:center;font-size:12px;color:var(--sub);margin-top:30px;}
+  /* 压制 HTML 内联浅色：orgEditor 文本域 + 返回链接 */
+  #orgEditor{background:#0A0A0A!important;border-color:#2A2A2E!important;color:var(--ink)!important;}
+  header .key a{color:#89AACC!important;}
   @media(max-width:640px){.grid2,.up-grid{grid-template-columns:1fr;}}
 
   *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
@@ -77,6 +81,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="/static/css/theme.css">
 </head>
 <body>
 <header>
@@ -274,18 +279,18 @@
   }
   function renderSC(){
     const w=document.getElementById('scItems');
-    w.innerHTML=state.carousel.map((s,i)=>`<div style="background:#FFF;border:1.5px solid #DDE2EC;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+    w.innerHTML=state.carousel.map((s,i)=>`<div style="background:#141414;border:1px solid #1F1F1F;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
       <div style="flex:0 0 100px;text-align:center">
         <div class="up-prev" style="min-height:70px">${s.img?'<img src="'+s.img+'" style="max-width:100px;max-height:70px;border-radius:6px">':'<span style="color:#9aa3b0;font-size:11px">未上传</span>'}</div>
         <input type="file" accept="image/*" style="display:none" onchange="upSCImg(${i},this)">
         <button class="up-del" onclick="this.previousElementSibling.click()" style="margin-top:4px;font-size:10px">上传图片</button>
       </div>
       <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:4px">
-        <input value="${(s.tag||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].tag=this.value" placeholder="标签（如 舞蹈专场）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
-        <input value="${(s.title||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].title=this.value" placeholder="标题" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
-        <input value="${(s.desc||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].desc=this.value" placeholder="描述" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
-        <input value="${(s.link||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].link=this.value" placeholder="链接（#honor 或 /recruit）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
-        <input value="${(s.linkText||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].linkText=this.value" placeholder="链接文字（查看荣誉）" style="padding:5px 7px;border:1.5px solid #DDE2EC;border-radius:6px;font-size:11.5px">
+        <input value="${(s.tag||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].tag=this.value" placeholder="标签（如 舞蹈专场）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
+        <input value="${(s.title||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].title=this.value" placeholder="标题" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
+        <input value="${(s.desc||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].desc=this.value" placeholder="描述" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
+        <input value="${(s.link||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].link=this.value" placeholder="链接（#honor 或 /recruit）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
+        <input value="${(s.linkText||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].linkText=this.value" placeholder="链接文字（查看荣誉）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
       </div>
       <button class="up-del" onclick="state.carousel.splice(${i},1);renderSC()">✕</button>
     </div>`).join('');
@@ -302,7 +307,7 @@
   let kbData=[];
   async function loadKB(){
     try{const r=await fetch('/api/kb');kbData=await r.json();renderKB();}
-    catch(e){kbList.innerHTML='<div style="color:#E0564B;font-size:12px">加载失败</div>';}
+    catch(e){kbList.innerHTML='<div style="color:#E08A8A;font-size:12px">加载失败</div>';}
   }
   function renderKB(){
     if(!kbData.length){kbList.innerHTML='<div style="color:#9aa3b0;font-size:12px;padding:6px 0">暂无条目</div>';return;}
@@ -310,14 +315,14 @@
       const isNew=k.id==='new';
       const kw=isNew?'':(k.keywords||[]).join(',');
       const ans=isNew?'':(k.answer||'');
-      return `<div style="background:#FFF;border:1.5px solid #DDE2EC;border-radius:12px;padding:12px;margin-bottom:10px">
+      return `<div style="background:#141414;border:1px solid #1F1F1F;border-radius:12px;padding:12px;margin-bottom:10px">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
           <span style="font-size:11px;font-weight:700;color:var(--blue)">#${isNew?'新':k.id}</span>
-          <input value="${kw.replace(/"/g,'&quot;')}" onchange="k._kw=this.value" placeholder="关键词，逗号分隔" style="flex:1;min-width:140px;padding:6px 8px;border:1.5px solid #DDE2EC;border-radius:8px;font-size:12px">
+          <input value="${kw.replace(/"/g,'&quot;')}" onchange="k._kw=this.value" placeholder="关键词，逗号分隔" style="flex:1;min-width:140px;padding:6px 8px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:8px;font-size:12px">
           <button class="up-btn" onclick="${isNew?'addKBsave()':'saveKB('+k.id+')'}">${isNew?'添加':'保存'}</button>
           ${isNew?'':'<button class="up-del" onclick="delKB('+k.id+')">删除</button>'}
         </div>
-        <textarea onchange="k._ans=this.value" rows="3" placeholder="答案（可用 &lt;b&gt; 加粗、&lt;br&gt; 换行）" style="width:100%;padding:8px;border:1.5px solid #DDE2EC;border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical">${ans.replace(/</g,'&lt;')}</textarea>
+        <textarea onchange="k._ans=this.value" rows="3" placeholder="答案（可用 &lt;b&gt; 加粗、&lt;br&gt; 换行）" style="width:100%;padding:8px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical">${ans.replace(/</g,'&lt;')}</textarea>
       </div>`;
     }).join('');
   }

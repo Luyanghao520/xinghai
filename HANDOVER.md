@@ -18,7 +18,7 @@
 ## 2. 技术栈与关键文件
 
 - 后端：Flask 3.x，单文件 `app.py`（全部路由 + 初始化 + 8 个 SQLite 库自动建表）
-- 前端：原生 HTML/CSS/JS，移动优先，无框架
+- 前端：原生 HTML/CSS/JS，移动优先，无框架；全站暗色设计系统 v2「暗夜星海」（共享令牌 static/css/theme.css：背景 #0A0A0A / 面板 #141414 / 强调渐变 #89AACC→#4E85BF，显示字体 Instrument Serif + Noto Serif SC），改样式先读 theme.css 与 AI_CONTEXT.md 第 8 节
 - 数据：SQLite，独立 `.db`（registrations / members / users / reimburse / reserve / bulletins / apply / assets）
 - 配置：`config.json`（**含密钥，已被 .gitignore 排除，绝不提交**）、`config.example.json`（部署示例）、`content.json`（官网/招新文案与群码，CMS 编辑）、`kb.json`（小星知识库，运行时生成）
 - 静态资源：`static/`（boot.css/boot.js）、`static/uploads/`（logo.png、showcase/sc01~sc23.jpg、咨询群二维码）

@@ -205,3 +205,10 @@ c.commit(); print('ok')
 - 首页登录按钮：`index.html` 导航里的 `openLogin()`
 - 配置项：`app.py` 顶部 `ADMIN_KEY` / `SECRET`
 - 初始化建表：`app.py` 的 `init_reg/mem/usr/rei/res/bul()`
+
+## 8. 设计框架 v2「暗夜星海」（2026-08 全站换肤）
+- 全站已从浅色蓝金主题切换为暗色设计系统：背景 #0A0A0A、面板 #141414、文本 #F5F5F5、次文本 #8A8A8A、描边 #1F1F1F/#2A2A2E、强调渐变 linear-gradient(90deg,#89AACC,#4E85BF)；显示字体 Instrument Serif + Noto Serif SC，正文 Inter + Noto Sans SC（Google Fonts CDN）。
+- **共享令牌**：static/css/theme.css（各页 </style> 后引入；旧变量名 --navy/--blue/--gold 等在其中映射为暗色值）。
+- **首页**：index.html 的 <style> 已整体重写（胶囊导航/暗色轮播/数据墙/药丸新闻/描边跑马灯）；?noanim=1 参数可跳过全部入场动画（截图/排查用）。
+- **加载屏**：static/css/boot.css + static/js/boot.js 配色已从金/深蓝改为蓝灰星海（#89AACC/#4E85BF 系），结构与动画未变。
+- **改样式约定**：页面特有样式仍在各页 <style> 内；颜色一律取 theme.css 令牌；不要再引入金色/浅色面板。

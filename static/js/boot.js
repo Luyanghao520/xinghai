@@ -87,9 +87,9 @@
       const a = s.a * (0.5 + 0.5*Math.sin(s.ph));
       s.y += s.vy; if (s.y > H){ s.y = 0; s.x = Math.random()*W; }
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-      ctx.fillStyle = s.gold ? 'rgba(255,225,160,'+a+')' : 'rgba(180,205,255,'+a+')';
+      ctx.fillStyle = s.gold ? 'rgba(215,232,255,'+a+')' : 'rgba(180,205,255,'+a+')';
       ctx.shadowBlur = s.r*3;
-      ctx.shadowColor = s.gold ? 'rgba(212,162,78,.8)' : 'rgba(120,160,255,.7)';
+      ctx.shadowColor = s.gold ? 'rgba(137,170,204,.85)' : 'rgba(120,160,255,.7)';
       ctx.fill();
     }
     ctx.shadowBlur = 0;
@@ -97,12 +97,12 @@
     // 2) 缓慢旋转的双层星轨
     orbit.a += 0.0016; orbit.b -= 0.0021;
     const cx = W/2, cy = H*0.42, R = Math.min(W, H);
-    drawOrbit(cx, cy, R*0.36, orbit.a, 'rgba(212,162,78,.12)');
+    drawOrbit(cx, cy, R*0.36, orbit.a, 'rgba(137,170,204,.15)');
     drawOrbit(cx, cy, R*0.28, orbit.b, 'rgba(120,160,255,.10)');
 
     // 3) 星座连线 + 呼吸亮星
     ctx.save();
-    ctx.strokeStyle = 'rgba(212,162,78,.22)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(137,170,204,.25)'; ctx.lineWidth = 1;
     ctx.beginPath();
     constellation.forEach((p, i) => {
       const x = p.x*W, y = p.y*H;
@@ -110,10 +110,10 @@
     });
     ctx.stroke();
     const tw = 0.6 + 0.4*Math.sin(frame*0.03);
-    ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(212,162,78,.9)';
+    ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(137,170,204,.9)';
     constellation.forEach(p => {
       ctx.beginPath(); ctx.arc(p.x*W, p.y*H, 2.4, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,235,180,'+tw+')'; ctx.fill();
+      ctx.fillStyle = 'rgba(205,228,255,'+tw+')'; ctx.fill();
     });
     ctx.shadowBlur = 0; ctx.restore();
 
@@ -124,7 +124,7 @@
       m.x += Math.cos(m.ang)*m.sp; m.y += Math.sin(m.ang)*m.sp;
       const tx = m.x - Math.cos(m.ang)*m.len, ty = m.y - Math.sin(m.ang)*m.len;
       const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
-      g.addColorStop(0, 'rgba(255,240,200,.9)'); g.addColorStop(1, 'rgba(255,240,200,0)');
+      g.addColorStop(0, 'rgba(205,228,255,.9)'); g.addColorStop(1, 'rgba(205,228,255,0)');
       ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tx, ty); ctx.stroke();
       if (m.x > W + 60 || m.y > H + 60) meteors.splice(i, 1);

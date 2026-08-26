@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>星海工作端 · 登录</title>
 <style>
-        :root{--navy:#1B2645;--blue:#3D5F8A;--gold:#C09641;--gold-2:#E4C87E;--ink:#1E2433;--sub:#6B7394;--line:#E6E9F2;--bg:#F0F2FA;--card:#FFFFFF;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
+        :root{--navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--bg:#0A0A0A;--card:#141414;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
   *{margin:0;padding:0;box-sizing:border-box;}
 
   /* ── 星空背景 + 光斑 ── */
@@ -13,8 +13,8 @@
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
     min-height:100vh;
     display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(160deg, #0b1a3a, #1a1a4e, #2d1b4e, #1a0a2e);
-    position:relative;overflow:hidden;color:#1A2233;
+    background:#0A0A0A;
+    position:relative;overflow:hidden;color:var(--ink);
   }
   /* 装饰光斑 */
   body::before,body::after{
@@ -22,26 +22,26 @@
   }
   body::before{
     width:420px;height:420px;
-    background:radial-gradient(circle, rgba(212,162,78,.35), transparent 70%);
+    background:radial-gradient(circle, rgba(137,170,204,.28), transparent 70%);
     top:-80px;right:-100px;
   }
   body::after{
     width:360px;height:360px;
-    background:radial-gradient(circle, rgba(43,87,154,.3), transparent 70%);
+    background:radial-gradient(circle, rgba(78,133,191,.25), transparent 70%);
     bottom:-60px;left:-100px;
   }
 
   /* ── 玻璃态卡片 ── */
   .card{
     position:relative;z-index:1;
-    background:rgba(255,255,255,.12);
+    background:#141414;
     backdrop-filter:blur(28px);
     -webkit-backdrop-filter:blur(28px);
-    border:1px solid rgba(255,255,255,.22);
+    border:1px solid #1F1F1F;
     border-radius:20px;
     padding:40px 34px 34px;
     width:360px;max-width:92vw;
-    box-shadow:0 8px 40px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.08) inset;
+    box-shadow:0 8px 40px rgba(0,0,0,.4);
   }
 
   /* ── Logo ── */
@@ -59,33 +59,33 @@
   .input-wrap{position:relative;}
   input{
     width:100%;
-    border:1.5px solid rgba(255,255,255,.18);
+    border:1.5px solid #2A2A2E;
     border-radius:12px;
     padding:12px 14px;
     font-size:14px;outline:none;
-    background:rgba(255,255,255,.10);
+    background:rgba(255,255,255,.04);
     color:#fff;
     transition:all .25s ease;
   }
   input::placeholder{color:rgba(255,255,255,.35);}
   input:focus{
     border-color:var(--gold);
-    background:rgba(255,255,255,.18);
-    box-shadow:0 0 18px rgba(212,162,78,.35), 0 0 0 1px rgba(212,162,78,.12);
+    background:rgba(255,255,255,.06);
+    box-shadow:0 0 18px rgba(137,170,204,.30), 0 0 0 1px rgba(137,170,204,.12);
   }
 
   /* ── 登录按钮 ── */
   .btn{
     width:100%;margin-top:26px;border:none;
-    background:linear-gradient(135deg, #C8922E, #D4A24E, #E0B860);
-    color:#1a0a0a;
-    padding:13px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
+    background:#F5F5F5;
+    color:#0A0A0A;
+    padding:13px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;
     letter-spacing:2px;
     transition:all .3s ease;
-    box-shadow:0 4px 16px rgba(212,162,78,.35);
+    box-shadow:0 4px 16px rgba(0,0,0,.4);
   }
   .btn:hover{
-    box-shadow:0 6px 28px rgba(212,162,78,.55);
+    box-shadow:0 6px 24px rgba(137,170,204,.35);
     transform:translateY(-1px);
   }
   .btn:active{transform:translateY(0);}
@@ -110,11 +110,11 @@
     text-decoration:none;
     letter-spacing:1px;
     transition:all .25s ease;
-    background:rgba(212,162,78,.06);
+    background:rgba(137,170,204,.08);
   }
   .back-reg:hover{
-    background:rgba(212,162,78,.18);
-    box-shadow:0 0 14px rgba(212,162,78,.25);
+    background:rgba(137,170,204,.18);
+    box-shadow:0 0 14px rgba(137,170,204,.25);
     color:#fff;
   }
   @media(max-width:420px){body{align-items:flex-start;padding-top:24px;}.card{padding:28px 20px 24px;}}
@@ -156,6 +156,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="/static/css/theme.css">
 </head>
 <body>
   <div class="card">
