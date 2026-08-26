@@ -39,3 +39,5 @@ pylibs/
 
 # 独立演示项目（作品集落地页），不属于星海官网仓库
 /portfolio-landing/
+
+_shot_*.png
