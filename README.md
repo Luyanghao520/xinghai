@@ -74,6 +74,10 @@ python app.py
 ├── bulletin.html       # 活动通报
 ├── cms.html            # 内容管理后台
 ├── static/
+│   ├── css/
+│   │   └── boot.css          # 开场加载动画样式
+│   ├── js/
+│   │   └── boot.js           # 开场加载动画脚本
 │   └── uploads/
 │       ├── logo.png          # 星海艺术团 Logo
 │       ├── showcase/        # 首页轮播演出照（sc01~sc23.jpg）

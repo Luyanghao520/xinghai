@@ -379,8 +379,33 @@
     #bot:not(.peeking){transform:translateX(-50%)!important;left:50%!important;bottom:0;}
   }
 
+
+  /* ========== XINGHAI FX START（可整体/分块回退：改 window.XINGHAI_FX 开关即可） ========== */
+  /* 卡片镜面高光（纯 CSS，支持任意数量卡片，无 WebGL 上下文限制） */
+  .spec-fx{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;overflow:hidden;}
+  .spec-fx::before{ /* 常驻一缕微光（约 0.32 亮度） */
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:
+      radial-gradient(140px 140px at 22% 16%, rgba(233,192,122,.18), rgba(233,192,122,0) 70%),
+      linear-gradient(135deg, rgba(233,192,122,.12), rgba(43,87,154,0) 42%, rgba(233,192,122,.08));
+  }
+  .spec-fx::after{ /* 鼠标跟随的镜面高光 + 边缘流光 */
+    content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;pointer-events:none;
+    transition:opacity .35s ease;
+    background:radial-gradient(190px 190px at var(--mx,50%) var(--my,50%), rgba(233,192,122,.6), rgba(233,192,122,0) 70%);
+    box-shadow:inset 0 0 22px rgba(233,192,122,.35);
+  }
+  .card:hover>.spec-fx::after,.team-card:hover>.spec-fx::after,.stat:hover>.spec-fx::after{opacity:1;}
+  /* 内容层级置于高光之上 */
+  .card>*,.team-card>*,.stat>*{position:relative;z-index:1;}
+  /* 逐字/逐行揭示 */
+  .split-char{display:inline-block;will-change:transform,opacity;}
+  /* 降级：移动端 / 减少动态 关闭高光 */
+  @media (prefers-reduced-motion:reduce){ .spec-fx{display:none;} }
+  @media (max-width:768px){ .spec-fx{display:none;} }
+  /* ========== XINGHAI FX END ========== */
 </style>
-<link rel="stylesheet" href="/static/boot.css">
+<link rel="stylesheet" href="/static/css/boot.css">
 </head>
 <body>
 
@@ -743,6 +768,134 @@ if(scStage){
   scRender();scReset();
 }
 </script>
-<script src="/static/boot.js" defer></script>
+<script src="/static/js/boot.js" defer></script>
+
+  <!-- ========== XINGHAI FX START（可整体/分块回退：改下方 XINGHAI_FX 开关；或删除本区块） ========== -->
+  <script>window.XINGHAI_FX = { specularCards: true, splitHeadings: true, splitBody: true };</script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script>
+  (function () {
+    var FX = window.XINGHAI_FX || {};
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.gsap) return;
+    if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+    // 递归拆字：保留 <b>/<br> 等内联标签与换行，折叠多余空白，去除前导空白
+    function splitTextNode(textNode, chars) {
+      var text = textNode.nodeValue;
+      var parent = textNode.parentNode;
+      var frag = document.createDocumentFragment();
+      var pendingWs = '';
+      var started = false;
+      function flushWs() {
+        if (pendingWs) { frag.appendChild(document.createTextNode(' ')); pendingWs = ''; }
+      }
+      for (var k = 0; k < text.length; k++) {
+        var ch = text[k];
+        if (ch === ' ' || ch === '\n' || ch === '\r' || ch === '\t') {
+          if (started) pendingWs += ch;
+        } else {
+          if (!started) { started = true; pendingWs = ''; }
+          flushWs();
+          var span = document.createElement('span');
+          span.className = 'split-char';
+          span.textContent = ch;
+          frag.appendChild(span);
+          chars.push(span);
+        }
+      }
+      parent.replaceChild(frag, textNode);
+    }
+    function splitNode(node, chars) {
+      var kids = Array.prototype.slice.call(node.childNodes);
+      for (var m = 0; m < kids.length; m++) {
+        var child = kids[m];
+        if (child.nodeType === 3) splitTextNode(child, chars);
+        else if (child.nodeType === 1) {
+          if (child.tagName === 'BR') continue; // 保留换行
+          splitNode(child, chars); // 保留 <b> 等样式，递归拆字
+        }
+      }
+    }
+    function initSplit(selector, opts) {
+      if (!FX[opts.flag]) return;
+      document.querySelectorAll(selector).forEach(function (el) {
+        var chars = [];
+        splitNode(el, chars);
+        if (!chars.length) return;
+        gsap.set(chars, { opacity: 0, y: opts.y });
+        gsap.to(chars, {
+          opacity: 1, y: 0, duration: opts.duration, ease: 'power3.out', stagger: opts.stagger,
+          scrollTrigger: window.ScrollTrigger ? { trigger: el, start: 'top 88%', once: true } : undefined
+        });
+      });
+    }
+    // 标题逐字揭示
+    initSplit('.hero h1, .sec-head h2', { flag: 'splitHeadings', y: 30, duration: 0.8, stagger: 0.025 });
+    // 正文逐字揭示（欢迎语/简介/卡片描述）
+    initSplit('.welcome, .sec-head p, .card .d', { flag: 'splitBody', y: 18, duration: 0.6, stagger: 0.008 });
+  })();
+  </script>
+
+    <script>
+  (function () {
+    var FX = window.XINGHAI_FX || {};
+    if (!FX.specularCards) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.innerWidth <= 768) return;
+
+    function applySpec(card) {
+      if (card.querySelector(':scope > .spec-fx')) return;
+      var fx = document.createElement('span');
+      fx.className = 'spec-fx';
+      fx.setAttribute('aria-hidden', 'true');
+      card.insertBefore(fx, card.firstChild);
+      var raf = 0, tx = 0, ty = 0, cx = 50, cy = 50;
+      card.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect();
+        tx = e.clientX - r.left; ty = e.clientY - r.top;
+        if (!raf) raf = requestAnimationFrame(step);
+      });
+      card.addEventListener('pointerleave', function () {
+        fx.style.setProperty('--mx', '50%'); fx.style.setProperty('--my', '50%');
+      });
+      function step() {
+        raf = 0;
+        cx += (tx - cx) * 0.25; cy += (ty - cy) * 0.25;
+        fx.style.setProperty('--mx', cx + 'px');
+        fx.style.setProperty('--my', cy + 'px');
+        if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) raf = requestAnimationFrame(step);
+      }
+    }
+
+    function applyAll(root) {
+      root.querySelectorAll('.card, .team-card, .stat').forEach(applySpec);
+    }
+    applyAll(document);
+
+    // 组织架构卡片来自 /api/content 异步渲染，补上高光
+    var orgWrap = document.getElementById('orgContent');
+    if (orgWrap && 'MutationObserver' in window) {
+      var mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (n) {
+            if (n.nodeType === 1) {
+              if (n.matches && n.matches('.card, .team-card, .stat')) applySpec(n);
+              else if (n.querySelectorAll) applyAll(n);
+            }
+          });
+        });
+      });
+      mo.observe(orgWrap, { childList: true, subtree: true });
+    }
+  })();
+  </script>
+
+  <!-- 本地直接打开 index.html 时的兜底：隐藏开场加载屏（线上由 boot.js 处理，此脚本无害可删） -->
+  <script>
+  setTimeout(function () { var b = document.getElementById('boot-screen'); if (b) b.style.display = 'none'; }, 600);
+  </script>
+  <!-- ========== XINGHAI FX END ========== -->
 </body>
 </html>
