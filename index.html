@@ -111,15 +111,37 @@ section{padding:96px 0;position:relative;}
 @keyframes ldIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:none;}}
 @keyframes ldWord{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
 
-/* ---------- HERO（HLS 视频背景） ---------- */
+/* ---------- 全局固定星空背景（全屏铺满 · 高清 · 滚动时保持固定） ---------- */
+.bg-stage{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#0A0A0A;}
+.bg-stage .bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  will-change:transform;animation:bgDrift 46s ease-in-out infinite alternate;}
+@keyframes bgDrift{
+  from{transform:scale(1.08) translate3d(-0.8%,0.5%,0);}
+  to{transform:scale(1.16) translate3d(0.8%,-0.6%,0);}
+}
+/* 星云辉光：与开场加载屏同一套蓝色星云语言，纯 CSS 渐变、无颗粒 */
+.bg-stage .bg-nebula{position:absolute;mix-blend-mode:screen;pointer-events:none;}
+.bg-stage .bg-nebula.n1{top:-22%;left:-14%;width:64%;height:64%;
+  background:radial-gradient(circle,rgba(78,133,191,.28),transparent 70%);filter:blur(52px);
+  animation:bgNebula 12s ease-in-out infinite;}
+.bg-stage .bg-nebula.n2{bottom:-18%;right:-16%;width:70%;height:70%;
+  background:radial-gradient(circle,rgba(137,170,204,.18),transparent 70%);filter:blur(58px);
+  animation:bgNebula 15s ease-in-out infinite reverse;}
+@keyframes bgNebula{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+/* 上下暗角：保证导航与底部内容可读 */
+.bg-stage .bg-tint{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(6,8,12,.50) 0%,rgba(6,8,12,.16) 32%,rgba(6,8,12,.30) 68%,rgba(8,9,12,.62) 100%);}
+@media (max-width:768px){
+  /* 小屏关闭星云模糊层，保证滚动性能；星空图本身仍然全屏固定 */
+  .bg-stage .bg-nebula{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .bg-stage .bg-img,.bg-stage .bg-nebula{animation:none;}
+}
+
+/* ---------- HERO（置于全局星空背景之上） ---------- */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;color:#fff;overflow:hidden;padding:120px 24px 140px;
-  background:radial-gradient(110% 90% at 50% -10%,#15202E 0%,#0C0F14 52%,#070708 100%);}
-.hero-video{position:absolute;left:50%;top:50%;min-width:100%;min-height:100%;width:auto;height:auto;
-  transform:translate(-50%,-50%);object-fit:cover;z-index:0;}
-.hero-ov{position:absolute;inset:0;background:rgba(0,0,0,.2);z-index:1;}
-.hero-fade{position:absolute;left:0;right:0;bottom:0;height:192px;
-  background:linear-gradient(180deg,transparent,var(--bg));z-index:1;}
+  text-align:center;color:#fff;overflow:hidden;padding:120px 24px 140px;background:transparent;}
 .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;}
 .hero .eyebrow{font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:32px;}
 .hero h1{font-family:var(--font-display);font-style:italic;font-weight:600;
@@ -208,12 +230,8 @@ section{padding:96px 0;position:relative;}
 .lb-close{position:absolute;top:20px;right:24px;width:42px;height:42px;border-radius:50%;
   border:1px solid var(--stroke2);background:var(--surface);color:var(--text);font-size:15px;cursor:pointer;}
 
-/* ---------- 页脚视频背景 ---------- */
+/* ---------- 页脚（透出全局星空背景） ---------- */
 footer{position:relative;overflow:hidden;}
-.ft-video{position:absolute;inset:0;z-index:0;pointer-events:none;}
-.ft-video video{position:absolute;left:50%;top:50%;min-width:100%;min-height:100%;width:auto;height:auto;
-  transform:translate(-50%,-50%) scaleY(-1);object-fit:cover;}
-.ft-ov{position:absolute;inset:0;background:rgba(0,0,0,.6);}
 .ft-inner{position:relative;z-index:1;}
 
 /* ---------- 卡片体系 ---------- */
@@ -284,7 +302,7 @@ footer{position:relative;overflow:hidden;}
 .qr .cap{font-size:12.5px;color:var(--muted);}
 
 /* ---------- 页脚 ---------- */
-footer{background:linear-gradient(180deg,rgba(137,170,204,.04),transparent 30%),var(--bg);
+footer{background:linear-gradient(180deg,rgba(137,170,204,.05),transparent 32%),rgba(9,10,12,.72);
   border-top:1px solid var(--stroke);color:var(--muted);text-align:center;padding:56px 22px 40px;font-size:12.5px;line-height:2;}
 footer .fb{color:var(--text);font-weight:700;font-size:16px;letter-spacing:.14em;margin-bottom:8px;
   font-family:var(--font-display);}
@@ -521,6 +539,7 @@ html.noanim .reveal,html.noanim .reveal.in{opacity:1!important;transform:none!im
 html.noanim .split-char{opacity:1!important;transform:none!important;}
 html.noanim #boot-screen{display:none!important;}
 html.noanim body{opacity:1!important;}
+html.noanim .bg-stage .bg-img,html.noanim .bg-stage .bg-nebula{animation:none!important;}
 html.noanim .hero{min-height:min(100svh,920px)!important;}
 html.noanim .name-reveal,html.noanim .blur-in{opacity:1!important;transform:none!important;filter:none!important;}
 html.noanim .role-word,html.noanim .ld-word{animation:none!important;opacity:1!important;transform:none!important;}
@@ -551,8 +570,17 @@ html.noanim .explorations .exp-grid{position:static!important;inset:auto!importa
 </style>
 <link rel="stylesheet" href="/static/css/theme.css">
 <link rel="stylesheet" href="/static/css/boot.css">
+<link rel="preload" as="image" href="/static/uploads/bg-starfield.jpg" fetchpriority="high">
 </head>
 <body>
+
+<!-- 全局固定星空背景：2560px 高清原图 · object-cover 全屏铺满 · position:fixed 滚动不动 -->
+<div class="bg-stage" aria-hidden="true">
+  <img class="bg-img" src="/static/uploads/bg-starfield.jpg" alt="" fetchpriority="high" decoding="async">
+  <div class="bg-nebula n1"></div>
+  <div class="bg-nebula n2"></div>
+  <div class="bg-tint"></div>
+</div>
 
 <!-- 开场加载（模板式：轮换词 + 000→100 计数 + 渐变进度条） -->
 <div id="boot-screen">
@@ -581,11 +609,8 @@ html.noanim .explorations .exp-grid{position:static!important;inset:auto!importa
   </div>
 </div>
 
-<!-- HERO · HLS 视频背景 -->
+<!-- HERO（全局固定星空背景之上） -->
 <section class="hero">
-  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline></video>
-  <div class="hero-ov"></div>
-  <div class="hero-fade"></div>
   <div class="hero-inner">
     <p class="eyebrow blur-in">Shanghai Lixin · Xinghai Art Troupe · 2026</p>
     <h1 class="name-reveal">星海艺术团</h1>
@@ -764,7 +789,6 @@ html.noanim .explorations .exp-grid{position:static!important;inset:auto!importa
 </section>
 
 <footer>
-  <div class="ft-video" aria-hidden="true"><video id="ftVideo" autoplay muted loop playsinline></video><div class="ft-ov"></div></div>
   <div class="ft-inner">
   <div class="marquee" aria-hidden="true"><div class="mq-track" id="mqTrack"><span>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em></span><span>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em>XINGHAI ART TROUPE<em>✦</em>星海艺术团<em>✦</em></span></div></div>
   <div class="fb">星海艺术团</div>
@@ -1063,26 +1087,11 @@ if(scStage){
   })();
   </script>
 
-  <!-- 模板组件：HLS 视频背景 / 计数加载 / 轮换词 / Bento / 视差画廊 -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
+  <!-- 模板组件：固定星空背景 / 计数加载 / 轮换词 / Bento / 视差画廊 -->
   <script>
   (function () {
     var noanim = document.documentElement.classList.contains('noanim');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var HLS_SRC = 'https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8';
-
-    /* --- HLS 视频背景（Hero + 页脚翻转） --- */
-    function attachHLS(v) {
-      if (!v) return;
-      if (window.Hls && Hls.isSupported()) {
-        var h = new Hls({ enableWorker: false });
-        h.loadSource(HLS_SRC); h.attachMedia(v);
-      } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
-        v.src = HLS_SRC;
-      }
-    }
-    attachHLS(document.getElementById('heroVideo'));
-    attachHLS(document.getElementById('ftVideo'));
 
     /* --- 计数加载屏：000→100 / 2700ms --- */
     var ld = document.getElementById('boot-screen');
