@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Design tokens ===== */
+@layer base {
+  :root {
+    --bg: 0 0% 4%;
+    --surface: 0 0% 8%;
+    --text: 0 0% 96%;
+    --muted: 0 0% 53%;
+    --stroke: 0 0% 12%;
+    --accent: 0 0% 96%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg font-body text-text-primary antialiased;
+    /* Forced dark theme — no light mode */
+    color-scheme: dark;
+  }
+}
+
+@layer utilities {
+  /* Accent gradient: logo ring, hover borders, progress bars */
+  .accent-gradient {
+    background-image: linear-gradient(90deg, #89aacc 0%, #4e85bf 100%);
+  }
+
+  .accent-gradient-reverse {
+    background-image: linear-gradient(270deg, #89aacc 0%, #4e85bf 100%);
+  }
+
+  /* Hover-revealed gradient border ring. */
+  .g-hover {
+    position: relative;
+    isolation: isolate;
+  }
+  .g-hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background-image: linear-gradient(90deg, #89aacc 0%, #4e85bf 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    z-index: -1;
+  }
+  .g-hover:hover::before {
+    opacity: 1;
+  }
+
+  /* Always-on animated gradient border (double-background technique) */
+  .animated-g-border {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#ffffff, #ffffff) padding-box,
+      linear-gradient(90deg, #89aacc 0%, #4e85bf 100%) border-box;
+    background-size: auto, 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+  }
+}
+
+/* ===== Custom animations ===== */
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+.animate-scroll-down {
+  animation: scroll-down 1.5s ease-in-out infinite;
+}
+
+@keyframes role-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-role-fade-in {
+  animation: role-fade-in 0.4s ease-out both;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* Initial states for GSAP entrance (prevents flash before JS runs). */
+.name-reveal,
+.blur-in {
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+::selection {
+  background: rgba(137, 170, 204, 0.35);
+}
+
+/* ===== Screenshot aid: ?static forces all entrance-gated content visible. */
+.static-shot * {
+  opacity: 1 !important;
+  filter: none !important;
+}
