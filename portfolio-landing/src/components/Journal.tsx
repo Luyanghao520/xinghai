@@ -4,8 +4,9 @@ import { JOURNAL } from "../lib/data";
 const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
 export default function Journal() {
+  // 背景透明：视频背景全页透出；条目用毛玻璃保证可读
   return (
-    <section id="journal" className="bg-bg/70 py-16 md:py-24">
+    <section id="journal" className="py-16 md:py-24">
       <div className="mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
         {/* Header */}
         <motion.div
@@ -32,9 +33,7 @@ export default function Journal() {
           </div>
 
           <a
-            href="https://Luyanghao.pythonanywhere.com/recruit"
-            target="_blank"
-            rel="noreferrer"
+            href="/recruit"
             className="g-hover hidden shrink-0 items-center gap-2 rounded-full border border-stroke bg-bg px-5 py-2.5 text-sm text-text-primary transition-all duration-300 hover:scale-105 hover:border-transparent md:inline-flex"
           >
             查看全部
@@ -48,7 +47,7 @@ export default function Journal() {
             <motion.a
               key={entry.title}
               href="#contact"
-              className="group flex items-center gap-4 rounded-[40px] border border-stroke bg-surface/40 p-4 transition-colors duration-300 hover:bg-surface sm:gap-6 sm:rounded-full"
+              className="group flex items-center gap-4 rounded-[40px] border border-stroke bg-surface/70 p-4 backdrop-blur-md transition-colors duration-300 hover:bg-surface sm:gap-6 sm:rounded-full"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}

@@ -70,6 +70,19 @@
 
 /* ===== Custom animations ===== */
 
+/* 海报兜底的持续动画：视频流不可用时背景仍是"活"的（缓慢漂移缩放） */
+@keyframes bg-kenburns {
+  0% {
+    transform: scale(1.08) translate3d(-0.8%, 0.5%, 0);
+  }
+  100% {
+    transform: scale(1.16) translate3d(0.8%, -0.6%, 0);
+  }
+}
+.animate-bg-kenburns {
+  animation: bg-kenburns 46s ease-in-out infinite alternate;
+}
+
 @keyframes scroll-down {
   0% {
     transform: translateY(-100%);

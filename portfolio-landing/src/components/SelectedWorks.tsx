@@ -4,8 +4,9 @@ import { PROJECTS } from "../lib/data";
 const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
 export default function SelectedWorks() {
+  // 背景透明：视频背景全页透出，可读性靠卡片自身 surface 底
   return (
-    <section id="work" className="bg-bg/75 py-12 md:py-16">
+    <section id="work" className="py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
         {/* Header */}
         <motion.div

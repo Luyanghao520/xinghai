@@ -110,11 +110,11 @@ export default function FixedBackground() {
 
   return (
     <div aria-hidden className="fixed inset-0 z-0 overflow-hidden bg-bg">
-      {/* 海报兜底层：视频就绪后让位 */}
+      {/* 海报兜底层：视频就绪后让位；未就绪时持续 ken-burns 漂移，背景永远是活的 */}
       <img
         src={POSTER}
         alt=""
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+        className={`absolute inset-0 h-full w-full animate-bg-kenburns object-cover will-change-transform transition-opacity duration-1000 ${
           ready ? "opacity-0" : "opacity-100"
         }`}
       />
@@ -132,10 +132,10 @@ export default function FixedBackground() {
         disablePictureInPicture
       />
 
-      {/* 可读性叠层：轻压暗保通透（画面更清晰）+ 顶/底渐变过渡 */}
+      {/* 可读性叠层：轻压暗保通透 + 顶/底轻渐变（只保导航/页脚可读，不再形成黑底） */}
       <div className="absolute inset-0 bg-black/30" />
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-bg/90 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg/90 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg/60 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg/60 to-transparent" />
     </div>
   );
 }

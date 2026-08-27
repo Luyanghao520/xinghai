@@ -6,6 +6,10 @@ const LINKS = [
   { label: "加入我们", href: "#contact" },
 ];
 
+/* 旧系统入口（Flask 同域部署，保持相对路径） */
+const RECRUIT_URL = "/recruit";
+const LOGIN_URL = "/login";
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("#home");
@@ -77,17 +81,22 @@ export default function Navbar() {
         {/* Divider */}
         <span className="mx-1 hidden h-5 w-px bg-stroke sm:block" />
 
-        {/* Say hi */}
+        {/* 成员登录 —— 内部系统入口 */}
         <a
-          href="#contact"
+          href={LOGIN_URL}
+          className="hidden rounded-full px-3 py-1.5 text-xs text-muted transition-colors duration-200 hover:bg-stroke/50 hover:text-text-primary sm:block sm:px-4 sm:py-2 sm:text-sm"
+        >
+          成员登录
+        </a>
+
+        {/* 招新报名 —— 主 CTA（跳转招新系统） */}
+        <a
+          href={RECRUIT_URL}
           className="group relative inline-flex rounded-full text-xs sm:text-sm"
         >
-          <span
-            className="accent-gradient absolute rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            style={{ inset: "-2px" }}
-          />
-          <span className="relative inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1.5 text-text-primary backdrop-blur-md transition-colors duration-200 group-hover:text-white sm:px-4 sm:py-2">
-            联系我们
+          <span className="accent-gradient absolute rounded-full opacity-90 transition-opacity duration-300 group-hover:opacity-100" style={{ inset: "0" }} />
+          <span className="relative inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-semibold text-white transition-transform duration-200 group-hover:scale-105 sm:px-4 sm:py-2">
+            招新报名
             <span aria-hidden>↗</span>
           </span>
         </a>

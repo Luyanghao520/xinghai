@@ -87,10 +87,10 @@ export default function Hero({ ready }: HeroProps) {
             观看风采
           </a>
           <a
-            href="#contact"
-            className="g-hover rounded-full border-2 border-stroke bg-bg px-7 py-3.5 text-sm text-text-primary transition-all duration-300 hover:scale-105 hover:border-transparent"
+            href="/recruit"
+            className="g-hover rounded-full border-2 border-stroke bg-bg/70 px-7 py-3.5 text-sm text-text-primary backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-transparent"
           >
-            加入我们...
+            加入我们 ↗
           </a>
         </div>
       </div>
