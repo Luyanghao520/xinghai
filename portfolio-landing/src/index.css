@@ -83,6 +83,55 @@
   animation: bg-kenburns 46s ease-in-out infinite alternate;
 }
 
+/* ===== 背景星云辉光（移植自旧首页 .bg-nebula）=====
+   screen 混合把蓝色光晕"加"到视频暗部上：消除死黑 + 持续脉动 */
+.bg-nebula {
+  position: absolute;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.bg-nebula-1 {
+  top: -22%;
+  left: -14%;
+  width: 64%;
+  height: 64%;
+  background: radial-gradient(circle, rgba(78, 133, 191, 0.28), transparent 70%);
+  filter: blur(52px);
+  animation: bg-nebula-pulse 12s ease-in-out infinite;
+}
+.bg-nebula-2 {
+  bottom: -18%;
+  right: -16%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(137, 170, 204, 0.18), transparent 70%);
+  filter: blur(58px);
+  animation: bg-nebula-pulse 15s ease-in-out infinite reverse;
+}
+@keyframes bg-nebula-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.07);
+  }
+}
+/* 小屏关闭星云模糊层保滚动性能（视频背景仍在） */
+@media (max-width: 768px) {
+  .bg-nebula {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-nebula,
+  .animate-bg-kenburns {
+    animation: none;
+  }
+}
+
 @keyframes scroll-down {
   0% {
     transform: translateY(-100%);

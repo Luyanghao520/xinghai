@@ -119,3 +119,37 @@ tbody tr:hover{background:rgba(137,170,204,.05);}
   *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important;}
   html{scroll-behavior:auto;}
 }
+
+/* ===== 全站统一星空背景（与新官网首页同源同款）=====
+   body::before = 星空海报 ken-burns 缓慢漂移；body::after = 双蓝色星云脉动。
+   fixed 定位 + z-index:-1，滚动不动、不挡内容；与首页 FixedBackground 视觉一致。 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:#0A0A0A url("/static/uploads/bg-starfield.jpg") center/cover no-repeat;
+  will-change:transform;
+  animation:xh-bg-drift 46s ease-in-out infinite alternate;
+}
+@keyframes xh-bg-drift{
+  from{transform:scale(1.08) translate3d(-0.8%,0.5%,0);}
+  to{transform:scale(1.16) translate3d(0.8%,-0.6%,0);}
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  mix-blend-mode:screen;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(78,133,191,.30), transparent 34%),
+    radial-gradient(circle at 84% 88%, rgba(137,170,204,.20), transparent 38%);
+  filter:blur(48px);
+  animation:xh-bg-nebula 15s ease-in-out infinite;
+}
+@keyframes xh-bg-nebula{
+  0%,100%{opacity:.55;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.06);}
+}
+@media (max-width:768px){
+  /* 小屏关掉模糊星云保滚动性能，星空图仍在 */
+  body::after{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  body::before,body::after{animation:none;}
+}

@@ -1,97 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import Hls from "hls.js";
-
-const HLS_SRC =
-  "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
-
-/** 视频就绪前的海报兜底（敦煌《千手观音》，金色调与视频氛围一致） */
-const POSTER = "/showcase/sc09.jpg";
 
 /**
- * 全屏固定背景视频。
+ * 全屏固定背景：本地星空视频（同源直出，无外网 CDN 依赖）。
  * - position: fixed —— 页面滚动时纹丝不动，所有模块从它上面滑过；
- * - 超清：ABR 配置乐观（高初始带宽估计 + 激进升档因子），快速爬到最高码率档；
- * - 流畅不卡切片：60s 前向大缓冲吸收网络抖动，Web Worker 解复用不占主线程，
- *   且视频完全可播前隐藏（只显示海报），避免半加载切片的马赛克闪现；
- * - 降级链：hls.js → Safari 原生 HLS → 静态海报（网络不可用时页面依旧成立）。
+ * - 本地 mp4 直接 video.src，无 HLS 切片 → 无马赛克、无卡顿、离线可用；
+ * - 蓝色星云辉光层（screen 混合、持续脉动）压在视频暗部之上，
+ *   消除画面下半的死黑并让背景始终"活着"；
+ * - 降级链：视频 → 海报 ken-burns 漂移（同样是持续动画）。
  */
+const VIDEO_SRC = "/static/uploads/bg-starfield.mp4";
+const POSTER = "/static/uploads/bg-starfield.jpg";
 export default function FixedBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const [motionOk] = useState(
-    () =>
-      typeof window === "undefined" ||
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
 
   useEffect(() => {
-    if (!motionOk) return;
     const video = videoRef.current;
     if (!video) return;
 
-    let hls: Hls | null = null;
-    let recovered = false;
-
-    /* 真正开始渲染第一帧才淡入 —— 杜绝“糊一下再清晰”的切片感 */
+    /* 真正开始渲染第一帧才淡入 */
     const onPlaying = () => setReady(true);
     video.addEventListener("playing", onPlaying, { once: true });
+    video.src = VIDEO_SRC;
+    void video.play().catch(() => {});
 
-    if (Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true, // demux/remux 进 worker，主线程零负担
-        lowLatencyMode: false, // 要丝滑不要低延迟
-        maxBufferLength: 60, // 前向缓冲 60s —— 抗抖动核心
-        maxMaxBufferLength: 600,
-        backBufferLength: 30,
-        maxBufferHole: 0.5, // 收紧缓冲空洞，卡顿即补
-        abrEwmaDefaultEstimate: 5_000_000, // 高初始带宽估计
-        abrBandWidthUpFactor: 2, // 升档最快
-        capLevelToPlayerSize: false, // 全屏下允许满分辨率档位
-      });
-      hls.loadSource(HLS_SRC);
-      hls.attachMedia(video);
-
-      /* 清单解析后锁定最高清档（1708×1212 @ ~4.5Mbps）：
-         恒定最高画质 + 零档位切换抖动 —— “更高清”的最强保证。 */
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        if (!hls) return;
-        const top = hls.levels.length - 1;
-        if (top >= 0) {
-          hls.currentLevel = top;
-          hls.nextLevel = top;
-        }
-      });
-
-      hls.on(Hls.Events.ERROR, (_evt, data) => {
-        if (data.fatal) {
-          if (!recovered) {
-            recovered = true;
-            if (data.type === Hls.ErrorTypes.MEDIA_ERROR)
-              hls?.recoverMediaError();
-            else hls?.startLoad();
-            return;
-          }
-          /* 二次致命错误：放弃流媒体，停留在海报层 */
-          hls?.destroy();
-          hls = null;
-          return;
-        }
-        /* 非致命但缓冲耗尽（锁最高档遇弱网）：临时放开 auto 保流畅，
-           网络恢复后 MANIFEST 重载会重新锁回最高档。 */
-        if (
-          data.type === Hls.ErrorTypes.MEDIA_ERROR &&
-          data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR &&
-          hls &&
-          hls.currentLevel !== -1
-        ) {
-          hls.currentLevel = -1;
-        }
-      });
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = HLS_SRC; // Safari 原生 HLS
-    }
-
-    /* 标签页隐藏时暂停，回来即续播 —— 省电省带宽 */
+    /* 标签页隐藏时暂停，回来即续播 —— 省电 */
     const onVisibility = () => {
       if (document.hidden) {
         video.pause();
@@ -104,9 +37,8 @@ export default function FixedBackground() {
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       video.removeEventListener("playing", onPlaying);
-      hls?.destroy();
     };
-  }, [motionOk]);
+  }, []);
 
   return (
     <div aria-hidden className="fixed inset-0 z-0 overflow-hidden bg-bg">
@@ -132,8 +64,11 @@ export default function FixedBackground() {
         disablePictureInPicture
       />
 
-      {/* 可读性叠层：轻压暗保通透 + 顶/底轻渐变（只保导航/页脚可读，不再形成黑底） */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* 蓝色星云辉光：screen 混合点亮视频暗部，持续脉动 —— 移植自旧首页 */}
+      <div className="bg-nebula bg-nebula-1" />
+      <div className="bg-nebula bg-nebula-2" />
+
+      {/* 顶/底轻渐变：只保导航与页脚文字可读 */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg/60 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg/60 to-transparent" />
     </div>
