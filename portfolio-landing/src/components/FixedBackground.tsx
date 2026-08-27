@@ -160,6 +160,7 @@ export default function FixedBackground() {
       {/* 蓝色星云辉光：screen 混合点亮视频暗部，持续脉动 */}
       <div className="bg-nebula bg-nebula-1" />
       <div className="bg-nebula bg-nebula-2" />
+      <div className="bg-nebula bg-nebula-3" />
 
       {/* 顶/底轻渐变：只保导航与页脚文字可读 */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg/60 to-transparent" />
