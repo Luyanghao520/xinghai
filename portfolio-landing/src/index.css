@@ -84,15 +84,15 @@
 }
 
 /* ===== 背景视频几何（A/B 双视频共用）=====
-   取景框高 130% 且 object-position 锚定源片顶部：
-   源片底部自带的黑场整段落进视口外被裁掉，
-   与屏幕宽高比无关，任何比例都不会露黑缝。 */
+   取景框高 185%、锚定源片顶部：把漩涡亮部整体
+   压进视口并铺满 —— 屏幕任意比例下底边都落在
+   源片上段纹理带内，配合蓝雾层消除残余暗角。 */
 .bg-video {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
-  height: 130%;
+  height: 185%;
   object-fit: cover;
   object-position: center top;
   opacity: 0;
@@ -102,6 +102,11 @@
 /* .on = 当前画面角色：唯一可见的一层 */
 .bg-video.on {
   opacity: 1;
+}
+/* stage：亮度/饱和提升 —— 把源片固有近黑像素抬成可见深蓝纹理，
+   消除源片自身明度分布造成的"右下空洞感" */
+[data-bg="stage"] .bg-video {
+  filter: brightness(1.5) contrast(1.06) saturate(1.22);
 }
 /* star 源片满幅构图无黑场：恢复标准视口框、居中取景 */
 [data-bg="star"] .bg-video {
@@ -126,23 +131,23 @@
   animation: bg-nebula-pulse 12s ease-in-out infinite;
 }
 .bg-nebula-2 {
-  bottom: -18%;
-  right: -16%;
-  width: 78%;
-  height: 78%;
-  background: radial-gradient(circle, rgba(137, 170, 204, 0.3), transparent 70%);
+  bottom: -22%;
+  right: -14%;
+  width: 88%;
+  height: 88%;
+  background: radial-gradient(circle, rgba(137, 170, 204, 0.42), transparent 68%);
   filter: blur(58px);
   animation: bg-nebula-pulse 15s ease-in-out infinite reverse;
 }
 /* 贴底全宽深空蓝雾：把源片固有暗部抬成"深蓝星空"，专治观感黑缝 */
 .bg-nebula-3 {
-  bottom: -6%;
+  bottom: -10%;
   left: -10%;
   right: -10%;
   width: 120%;
-  height: 46%;
-  background: radial-gradient(ellipse at 50% 100%, rgba(64, 110, 168, 0.34), rgba(30, 58, 96, 0.14) 55%, transparent 78%);
-  filter: blur(46px);
+  height: 72%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(72, 122, 184, 0.55), rgba(34, 66, 110, 0.28) 60%, rgba(20, 40, 70, 0.12) 82%, transparent 95%);
+  filter: blur(42px);
   animation: bg-nebula-pulse 17s ease-in-out infinite;
 }
 @keyframes bg-nebula-pulse {
