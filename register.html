@@ -4,97 +4,91 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>注册申请 · 星海艺术团</title>
-<style>
-        :root{--navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--bg:#0A0A0A;--card:#141414;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 45%),radial-gradient(circle at 85% 50%,var(--iride-2),transparent 45%),radial-gradient(circle at 50% 85%,var(--iride-3),transparent 45%);}
-  .card{width:380px;max-width:92vw;background:#141414;border:1px solid #1F1F1F;border-radius:20px;padding:26px 24px;box-shadow:0 10px 40px rgba(0,0,0,.4);}
-  .brand{text-align:center;font-weight:800;font-size:20px;color:var(--navy);letter-spacing:1px;margin-bottom:4px;}
-  .brand span{color:var(--gold);}
-  .sub{text-align:center;color:var(--sub);font-size:13px;margin-bottom:18px;}
-  .fld{display:flex;flex-direction:column;margin-bottom:13px;}
-  .fld label{font-size:12px;color:var(--navy);font-weight:700;margin-bottom:5px;}
-  .fld input,.fld select{padding:10px 12px;border:1.5px solid #2A2A2E;border-radius:9px;font-size:14px;background:rgba(255,255,255,.04);color:var(--ink);outline:none;}
-  .fld input:focus,.fld select:focus{border-color:var(--blue);background:rgba(255,255,255,.06);}
-  .hint{font-size:11.5px;color:var(--sub);margin-top:4px;}
-  .btn{border:none;border-radius:999px;padding:12px;width:100%;font-size:14px;font-weight:700;cursor:pointer;color:#0A0A0A;background:#F5F5F5;margin-top:6px;box-shadow:0 4px 16px rgba(0,0,0,.4);}
-  .btn:disabled{opacity:.6;cursor:not-allowed;}
-  .err{color:#E0564B;font-size:12.5px;min-height:16px;margin:8px 0;text-align:center;}
-  .link{text-align:center;margin-top:14px;font-size:13px;color:var(--sub);}
-  .link a{color:var(--blue);text-decoration:none;font-weight:600;}
-  .back{display:block;text-align:center;margin-top:8px;color:var(--blue);font-size:12.5px;text-decoration:none;}
-  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);color:#fff;padding:11px 20px;border-radius:30px;font-size:13.5px;opacity:0;transition:.3s;z-index:90;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.4);}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  .empty{color:var(--sub);font-size:12.5px;min-height:16px;}
-  @media(max-width:420px){body{align-items:flex-start;padding-top:24px;}.card{border-radius:14px;padding:20px 16px;}}
-
-  *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
-  body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
-  button,a,.clickable{min-height:44px;}
-  input,select,textarea{font-size:16px!important;}
-  @media(max-width:480px){
-    body{font-size:14px;line-height:1.6;}
-    .wrap{padding:0 14px;}
-    section{padding:40px 0;}
-    .sec-head h2{font-size:21px;}
-    .sec-head .kicker{font-size:10.5px;}
-  }
-
-  @media(max-width:480px){
-    .grid2{grid-template-columns:1fr!important;}
-    .grid.g2{grid-template-columns:1fr!important;}
-    .grid.g3{grid-template-columns:1fr!important;}
-    .grid.g4{grid-template-columns:1fr 1fr!important;}
-    .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-    table{font-size:11px;min-width:560px;}
-    th,td{padding:6px 7px;}
-    header{padding:10px 14px;gap:8px;flex-wrap:wrap;}
-    .brand{font-size:14px;}
-    .bar{flex-direction:column;gap:8px;}
-    .bar .grow{width:100%;}
-    .btn{width:100%;text-align:center;}
-    .fld input,.fld select,.fld textarea{font-size:16px!important;padding:10px 10px;}
-    .fld label{font-size:11.5px;}
-    .form{padding:16px 14px!important;}
-    .modal{width:95%!important;max-width:none!important;padding:20px 16px!important;margin:10px auto!important;border-radius:14px!important;}
-    .card{padding:16px!important;}
-    .err{font-size:11.5px;}
-    .toggle{width:100%;justify-content:center;}
-    .toggle button{padding:8px 12px;font-size:12px;}
-    .empty{padding:24px!important;font-size:12px;}
-  }
-
-</style>
 <link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+<style>
+  body{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  .reg-card{width:400px;max-width:94vw;padding:30px 28px 26px;}
+  .reg-brand{text-align:center;margin-bottom:20px;}
+  .reg-brand h1{
+    margin:0;font-family:var(--xh-font-display);font-weight:600;
+    font-size:22px;letter-spacing:.08em;color:var(--xh-text);
+  }
+  .reg-brand h1 em{
+    font-style:normal;
+    background-image:var(--xh-accent);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .reg-sub{font-size:12.5px;color:var(--xh-muted);margin-top:6px;}
+  .reg-form{display:flex;flex-direction:column;gap:14px;}
+  .reg-err{color:var(--xh-bad);font-size:12.5px;text-align:center;min-height:18px;line-height:1.5;}
+  .reg-links{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+  .reg-back{display:block;text-align:center;font-size:12.5px;color:var(--xh-muted);text-decoration:none;transition:color var(--xh-t-fast);}
+  .reg-back:hover{color:var(--xh-text);}
+  @media (max-width:420px){
+    body{align-items:flex-start;padding-top:6vh;}
+    .reg-card{padding:24px 18px 20px;}
+  }
+</style>
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
-<div class="card">
-  <div class="brand">星海艺术团</div>
-  <div class="sub">成员注册申请（提交后需管理员审批）</div>
-  <div class="fld"><label>学号</label><input id="xh" placeholder="9 位数字学号" maxlength="9" inputmode="numeric"></div>
-  <div class="fld"><label>密码</label><input id="pwd" type="password" placeholder="至少8位，含大小写+数字">
-    <div class="hint">须至少 8 位，且同时包含大写字母、小写字母、数字</div></div>
-  <div class="fld"><label>姓名</label><input id="name" placeholder="真实姓名"></div>
-  <div class="fld"><label>校区</label>
-    <select id="campus"><option value="">请选择</option><option>浦东</option><option>松江</option></select></div>
-  <div class="err" id="err"></div>
-  <button class="btn" id="btn" onclick="reg()">提交申请</button>
-  <div class="link">已有账号？<a href="/login">去登录</a></div>
-  <a class="back" href="#" onclick="history.back();return false">← 返回</a>
-</div>
-<div class="toast" id="toast"></div>
+  <main class="xh-panel reg-card">
+    <div class="reg-brand">
+      <h1>星海<em>艺术团</em> · 注册申请</h1>
+      <div class="reg-sub">提交后需管理员审批通过方可登录</div>
+    </div>
+    <div class="reg-form">
+      <div class="xh-field">
+        <label for="xh">学号<span class="xh-req">*</span></label>
+        <input id="xh" class="xh-input" placeholder="9 位数字学号" maxlength="9" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="xh-field">
+        <label for="pwd">密码<span class="xh-req">*</span></label>
+        <input id="pwd" class="xh-input" type="password" placeholder="至少 8 位，含大小写与数字">
+        <div class="xh-hint">须至少 8 位，且同时包含大写字母、小写字母、数字</div>
+      </div>
+      <div class="xh-field">
+        <label for="confirm_pwd">确认密码<span class="xh-req">*</span></label>
+        <input id="confirm_pwd" class="xh-input" type="password" placeholder="再次输入密码">
+      </div>
+      <div class="xh-field">
+        <label for="name">姓名<span class="xh-req">*</span></label>
+        <input id="name" class="xh-input" placeholder="真实姓名">
+      </div>
+      <div class="xh-field">
+        <label for="campus">校区<span class="xh-req">*</span></label>
+        <select id="campus" class="xh-input">
+          <option value="">请选择</option>
+          <option>浦东</option>
+          <option>松江</option>
+        </select>
+      </div>
+      <div class="reg-err" id="err"></div>
+      <button class="xh-btn xh-btn-primary xh-btn-block" id="btn" onclick="reg()">提交申请</button>
+    </div>
+    <div class="reg-links">
+      <a class="xh-btn xh-btn-ghost xh-btn-block" href="/login">已有账号？去登录</a>
+      <a class="reg-back" href="#" onclick="history.back();return false">← 返回</a>
+    </div>
+  </main>
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script src="/static/js/ui.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-function toast(m,ok){const t=$('toast');t.textContent=m;t.style.background=ok?'#2E9E5B':'#0F2A52';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 function reg(){
   const pwd=document.getElementById('pwd').value;
   if(pwd.length<8||!/[a-z]/.test(pwd)||!/[A-Z]/.test(pwd)||!/\d/.test(pwd)){document.getElementById('err').textContent='密码须≥8位，包含大小写字母和数字';return;}
+  if($('confirm_pwd').value!==pwd){document.getElementById('err').textContent='两次输入的密码不一致';return;}
   const d={xh:document.getElementById('xh').value.trim(),pwd:pwd,name:document.getElementById('name').value.trim(),campus:document.getElementById('campus').value};
   if(!d.xh||!d.pwd||!d.name||!d.campus){$('err').textContent='请填写完整信息';return;}
   $('err').textContent='';const b=$('btn');b.disabled=true;b.textContent='提交中…';
   fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
     .then(r=>r.json()).then(res=>{b.disabled=false;b.textContent='提交申请';
-      if(res.ok){toast(res.msg||'已提交，等待审批',true);
+      if(res.ok){XH.toast(res.msg||'已提交，等待审批','ok');
         ['xh','pwd','name'].forEach(i=>$(i).value='');$('campus').value='';}
       else{$('err').textContent=res.error||'提交失败';}})
     .catch(()=>{b.disabled=false;b.textContent='提交申请';$('err').textContent='网络异常';});

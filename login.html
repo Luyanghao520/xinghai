@@ -4,179 +4,129 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>星海工作端 · 登录</title>
-<style>
-        :root{--navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--bg:#0A0A0A;--card:#141414;--grad-hero:linear-gradient(160deg,#11162D 0%,#1B2645 35%,#253255 65%,#1E2A3E 100%);--iride-1:rgba(186,205,255,.55);--iride-2:rgba(220,196,255,.5);--iride-3:rgba(255,200,224,.5);--iride-4:rgba(255,224,196,.5);--iride-5:rgba(196,255,224,.5);}
-  *{margin:0;padding:0;box-sizing:border-box;}
-
-  /* ── 星空背景 + 光斑 ── */
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-    min-height:100vh;
-    display:flex;align-items:center;justify-content:center;
-    background:#0A0A0A;
-    position:relative;overflow:hidden;color:var(--ink);
-  }
-  /* 装饰光斑 */
-  body::before,body::after{
-    content:'';position:absolute;border-radius:50%;filter:blur(80px);opacity:.45;pointer-events:none;
-  }
-  body::before{
-    width:420px;height:420px;
-    background:radial-gradient(circle, rgba(137,170,204,.28), transparent 70%);
-    top:-80px;right:-100px;
-  }
-  body::after{
-    width:360px;height:360px;
-    background:radial-gradient(circle, rgba(78,133,191,.25), transparent 70%);
-    bottom:-60px;left:-100px;
-  }
-
-  /* ── 玻璃态卡片 ── */
-  .card{
-    position:relative;z-index:1;
-    background:#141414;
-    backdrop-filter:blur(28px);
-    -webkit-backdrop-filter:blur(28px);
-    border:1px solid #1F1F1F;
-    border-radius:20px;
-    padding:40px 34px 34px;
-    width:360px;max-width:92vw;
-    box-shadow:0 8px 40px rgba(0,0,0,.4);
-  }
-
-  /* ── Logo ── */
-  .logo{text-align:center;font-weight:900;font-size:26px;color:#fff;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.3);}
-  .logo span{color:var(--gold);}
-  .sub{text-align:center;color:rgba(255,255,255,.65);font-size:13px;margin:6px 0 28px;letter-spacing:1px;}
-
-  /* ── 标签 ── */
-  label{
-    display:block;font-size:13px;color:rgba(255,255,255,.85);font-weight:600;
-    margin:16px 0 6px 2px;letter-spacing:.5px;
-  }
-
-  /* ── 输入框 ── */
-  .input-wrap{position:relative;}
-  input{
-    width:100%;
-    border:1.5px solid #2A2A2E;
-    border-radius:12px;
-    padding:12px 14px;
-    font-size:14px;outline:none;
-    background:rgba(255,255,255,.04);
-    color:#fff;
-    transition:all .25s ease;
-  }
-  input::placeholder{color:rgba(255,255,255,.35);}
-  input:focus{
-    border-color:var(--gold);
-    background:rgba(255,255,255,.06);
-    box-shadow:0 0 18px rgba(137,170,204,.30), 0 0 0 1px rgba(137,170,204,.12);
-  }
-
-  /* ── 登录按钮 ── */
-  .btn{
-    width:100%;margin-top:26px;border:none;
-    background:#F5F5F5;
-    color:#0A0A0A;
-    padding:13px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;
-    letter-spacing:2px;
-    transition:all .3s ease;
-    box-shadow:0 4px 16px rgba(0,0,0,.4);
-  }
-  .btn:hover{
-    box-shadow:0 6px 24px rgba(137,170,204,.35);
-    transform:translateY(-1px);
-  }
-  .btn:active{transform:translateY(0);}
-  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
-
-  /* ── 错误提示 ── */
-  .err{color:#FF8A80;font-size:12.5px;text-align:center;margin-top:12px;min-height:18px;}
-
-  /* ── 底部链接 ── */
-  .back{display:block;text-align:center;margin-top:18px;color:rgba(255,255,255,.55);font-size:12.5px;text-decoration:none;
-    transition:color .2s;}
-  .back:hover{color:rgba(255,255,255,.9);}
-
-  /* ── 注册链接突出 ── */
-  .back-reg{
-    display:block;text-align:center;margin-top:12px;
-    padding:10px 0;
-    border:1px solid var(--gold);
-    border-radius:10px;
-    color:var(--gold);
-    font-size:13px;font-weight:600;
-    text-decoration:none;
-    letter-spacing:1px;
-    transition:all .25s ease;
-    background:rgba(137,170,204,.08);
-  }
-  .back-reg:hover{
-    background:rgba(137,170,204,.18);
-    box-shadow:0 0 14px rgba(137,170,204,.25);
-    color:#fff;
-  }
-  @media(max-width:420px){body{align-items:flex-start;padding-top:24px;}.card{padding:28px 20px 24px;}}
-
-  *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
-  body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
-  button,a,.clickable{min-height:44px;}
-  input,select,textarea{font-size:16px!important;}
-  @media(max-width:480px){
-    body{font-size:14px;line-height:1.6;}
-    .wrap{padding:0 14px;}
-    section{padding:40px 0;}
-    .sec-head h2{font-size:21px;}
-    .sec-head .kicker{font-size:10.5px;}
-  }
-
-  @media(max-width:480px){
-    .grid2{grid-template-columns:1fr!important;}
-    .grid.g2{grid-template-columns:1fr!important;}
-    .grid.g3{grid-template-columns:1fr!important;}
-    .grid.g4{grid-template-columns:1fr 1fr!important;}
-    .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-    table{font-size:11px;min-width:560px;}
-    th,td{padding:6px 7px;}
-    header{padding:10px 14px;gap:8px;flex-wrap:wrap;}
-    .brand{font-size:14px;}
-    .bar{flex-direction:column;gap:8px;}
-    .bar .grow{width:100%;}
-    .btn{width:100%;text-align:center;}
-    .fld input,.fld select,.fld textarea{font-size:16px!important;padding:10px 10px;}
-    .fld label{font-size:11.5px;}
-    .form{padding:16px 14px!important;}
-    .modal{width:95%!important;max-width:none!important;padding:20px 16px!important;margin:10px auto!important;border-radius:14px!important;}
-    .card{padding:16px!important;}
-    .err{font-size:11.5px;}
-    .toggle{width:100%;justify-content:center;}
-    .toggle button{padding:8px 12px;font-size:12px;}
-    .empty{padding:24px!important;font-size:12px;}
-  }
-
-</style>
 <link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+<link rel="stylesheet" href="/static/css/bg.css">
+<style>
+  body{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  .login-card{width:400px;max-width:94vw;padding:34px 30px 28px;}
+  .login-brand{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+  .login-brand img{width:60px;height:60px;border-radius:50%;box-shadow:var(--xh-glow),0 8px 30px rgba(0,0,0,.5);}
+  .login-brand h1{
+    margin:0;font-family:var(--xh-font-display);font-weight:600;
+    font-size:22px;letter-spacing:.08em;color:var(--xh-text);
+  }
+  .login-brand h1 em{
+    font-style:normal;
+    background-image:var(--xh-accent);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .login-sub{font-size:12px;color:var(--xh-muted);letter-spacing:.3em;}
+  .login-fields{display:flex;flex-direction:column;gap:16px;margin-top:26px;}
+  /* 密码可见切换 */
+  .pwd-wrap{position:relative;}
+  .pwd-wrap .xh-input{padding-right:44px;}
+  .pwd-eye{
+    position:absolute;right:6px;top:50%;transform:translateY(-50%);
+    width:32px;height:32px;border:none;border-radius:8px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:transparent;color:var(--xh-muted);transition:color var(--xh-t-fast),background var(--xh-t-fast);
+  }
+  .pwd-eye:hover{color:var(--xh-text);background:rgba(255,255,255,.06);}
+  .pwd-eye svg{width:16px;height:16px;}
+  /* 保持登录 + 忘记密码 */
+  .login-aux{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:-4px;}
+  .login-aux a{font-size:12px;color:var(--xh-muted);text-decoration:none;transition:color var(--xh-t-fast);}
+  .login-aux a:hover{color:var(--xh-info);}
+  /* 三方登录行 */
+  .login-div{display:flex;align-items:center;gap:12px;margin-top:22px;color:#5A5A60;font-size:11px;letter-spacing:.1em;}
+  .login-div::before,.login-div::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.07);}
+  .provider-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+  .provider-row .xh-btn-ghost{height:38px;font-size:12.5px;}
+  .err{color:var(--xh-bad);font-size:12.5px;text-align:center;min-height:18px;line-height:1.5;}
+  .login-links{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+  .login-back{display:block;text-align:center;font-size:12.5px;color:var(--xh-muted);text-decoration:none;transition:color var(--xh-t-fast);}
+  .login-back:hover{color:var(--xh-text);}
+  @media (max-width:420px){
+    body{align-items:flex-start;padding-top:8vh;}
+    .login-card{padding:26px 18px 22px;}
+  }
+</style>
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">星海艺术团工作端</div>
-    <div class="sub">成员 / 干部统一登录</div>
-    <label>学号 / 工号</label>
-    <input id="xh" placeholder="如 251400143" autocomplete="off">
-    <label>密码</label>
-    <input id="pwd" type="password" placeholder="请输入密码">
-    <button class="btn" id="loginBtn" onclick="doLogin()">登 录</button>
-    <div class="err" id="err"></div>
-    <a class="back" href="#" onclick="if(window.history.length>1){history.back();}else{location.href='/';}return false">← 返回</a>
-    <a class="back-reg" href="/register">📝 新成员注册申请</a>
-  </div>
+  <main class="xh-panel login-card">
+    <div class="login-brand">
+      <img src="/static/uploads/logo.png" alt="星海艺术团">
+      <h1>星海<em>艺术团</em> · 工作端</h1>
+      <div class="login-sub">成员 / 干部 统一登录</div>
+    </div>
+    <div class="login-fields">
+      <div class="xh-field">
+        <label for="xh">学号 / 工号</label>
+        <input id="xh" class="xh-input" placeholder="如 251400143" autocomplete="off" inputmode="numeric">
+      </div>
+      <div class="xh-field">
+        <label for="pwd">密码</label>
+        <div class="pwd-wrap">
+          <input id="pwd" class="xh-input" type="password" placeholder="请输入密码">
+          <button type="button" class="pwd-eye" id="eyeBtn" aria-label="显示密码" onclick="togglePwd()">
+            <svg id="eyeOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="login-aux">
+        <label class="xh-check" style="font-size:12.5px"><input type="checkbox" id="keep"> 保持登录</label>
+        <a href="/reset">忘记密码？</a>
+      </div>
+      <button class="xh-btn xh-btn-primary xh-btn-block" id="loginBtn" onclick="doLogin()">登 录</button>
+      <div class="err" id="err"></div>
+    </div>
+
+    <div class="login-div">第三方登录</div>
+    <div class="provider-row">
+      <button type="button" class="xh-btn xh-btn-ghost" onclick="provider('QQ')">QQ</button>
+      <button type="button" class="xh-btn xh-btn-ghost" onclick="provider('微信')">微信</button>
+      <button type="button" class="xh-btn xh-btn-ghost" onclick="provider('钉钉')">钉钉</button>
+    </div>
+
+    <div class="login-links">
+      <a class="xh-btn xh-btn-ghost xh-btn-block" href="/register">新成员注册申请</a>
+      <a class="login-back" href="#" onclick="if(window.history.length>1){history.back();}else{location.href='/';}return false">← 返回官网</a>
+    </div>
+  </main>
+<script src="/static/js/ui.js"></script>
 <script>
+  const $=id=>document.getElementById(id);
+  /* 密码可见切换 */
+  function togglePwd(){
+    const pwd=$('pwd'),on=$('eyeOn'),off=$('eyeOff');
+    const show=pwd.type==='password';
+    pwd.type=show?'text':'password';
+    on.style.display=show?'none':'block';
+    off.style.display=show?'block':'none';
+    $('eyeBtn').setAttribute('aria-label',show?'隐藏密码':'显示密码');
+  }
+  /* 保持登录：记住学号 */
+  try{
+    if(localStorage.getItem('xh-remember')==='1'){
+      $('keep').checked=true;
+      const saved=localStorage.getItem('xh-saved');if(saved)$('xh').value=saved;
+    }
+  }catch(e){}
+  function provider(name){XH.toast(name+' 登录暂未开通，请使用学号登录','warn');}
   function doLogin(){
-    const xh=document.getElementById('xh').value.trim();
-    const pwd=document.getElementById('pwd').value;
-    const err=document.getElementById('err');const btn=document.getElementById('loginBtn');
+    const xh=$('xh').value.trim();
+    const pwd=$('pwd').value;
+    const err=$('err');const btn=$('loginBtn');
     if(!xh||!pwd){err.textContent='请输入学号/工号和密码';return;}
+    try{
+      if($('keep').checked){localStorage.setItem('xh-remember','1');localStorage.setItem('xh-saved',xh);}
+      else{localStorage.removeItem('xh-remember');localStorage.removeItem('xh-saved');}
+    }catch(e){}
     btn.disabled=true;btn.textContent='登录中…';err.textContent='';
     fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({xh:xh,pwd:pwd})})
       .then(r=>r.json()).then(d=>{
@@ -184,7 +134,7 @@
         else{err.textContent=d.error||'登录失败';btn.disabled=false;btn.textContent='登 录';}
       }).catch(()=>{err.textContent='网络异常';btn.disabled=false;btn.textContent='登 录';});
   }
-  document.getElementById('pwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  $('pwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 </script>
 </body>
 </html>

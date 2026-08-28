@@ -57,6 +57,14 @@ def db(path):
 def hx(s):  # 学号哈希（加盐）
     return hashlib.sha256((SECRET + str(s)).encode("utf-8")).hexdigest()
 
+def _session_pv_valid():
+    """会话内的密码版本号与库中一致（改密后旧会话全部失效）"""
+    cx = db(DB_USR)
+    row = cx.execute("SELECT pv FROM users WHERE xh=?", (session["uid"],)).fetchone()
+    cx.close()
+    cur_pv = (row["pv"] or 0) if row else 0
+    return session.get("pv", 0) == cur_pv
+
 def login_required(f):
     from functools import wraps
     @wraps(f)
@@ -64,6 +72,11 @@ def login_required(f):
         if "uid" not in session:
             if request.path.startswith("/api"):
                 return jsonify({"ok": False, "error": "未登录"}), 401
+            return redirect("/login")
+        if not _session_pv_valid():
+            session.clear()
+            if request.path.startswith("/api"):
+                return jsonify({"ok": False, "error": "会话已失效，请重新登录"}), 401
             return redirect("/login")
         return f(*a, **k)
     return w
@@ -129,9 +142,11 @@ def init_usr():
     cx = db(DB_USR)
     cx.execute("""CREATE TABLE IF NOT EXISTS users(
         xh TEXT PRIMARY KEY, name TEXT, role TEXT, pwd TEXT, campus TEXT, status TEXT)""")
+    try: cx.execute("ALTER TABLE users ADD COLUMN pv INTEGER DEFAULT 0")  # 密码版本号
+    except sqlite3.OperationalError: pass  # 列已存在则跳过
     cx.commit()
     if cx.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"] == 0:
-        cx.execute("INSERT INTO users VALUES (?,?,?,?,?,?)",
+        cx.execute("INSERT INTO users (xh,name,role,pwd,campus,status) VALUES (?,?,?,?,?,?)",
                    ("000000000", "系统管理员", "主席", hx("xinghai2026"), "", "在团"))
         cx.commit()
     cx.close()
@@ -323,13 +338,19 @@ def export_csv():
 def admin():
     if request.args.get("key") != ADMIN_KEY:
         return Response("无权限：key 错误", status=403)
-    q = (request.args.get("q") or "").strip()
-    export = request.args.get("export")
-    rows = all_rows(q if q else None)
-    if export == "csv":
+    if request.args.get("export") == "csv":
         export_csv()
         return send_file(os.path.join(BASE, "registrations.csv"), mimetype="text/csv",
                          as_attachment=True, download_name="星海艺术团报名.csv")
+    return send_file(os.path.join(BASE, "admin.html"))
+
+@app.route("/api/admin/rows")
+def api_admin_rows():
+    """招新后台数据接口（key 鉴权）：统计 + 明细一次拉取"""
+    if request.args.get("key") != ADMIN_KEY:
+        return jsonify({"ok": False, "error": "无权限"}), 403
+    q = (request.args.get("q") or "").strip()
+    rows = all_rows(q if q else None)
     cx = db(DB_REG)
     total = cx.execute("SELECT COUNT(*) AS c FROM registrations").fetchone()["c"]
     by_campus = dict((r["campus"] or "未填", r["c"]) for r in
@@ -337,47 +358,8 @@ def admin():
     by_target = dict((r["target"] or "未填", r["c"]) for r in
                        cx.execute("SELECT target, COUNT(*) AS c FROM registrations GROUP BY target"))
     cx.close()
-    h = ['<meta charset="utf-8"><title>星海报名后台</title>',
-         '<style>body{font-family:-apple-system,"Microsoft YaHei",sans-serif;background:#f4f7fb;margin:0;padding:24px;color:#1A2233}a{color:#2B579A}'
-         '.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}'
-         '.card{background:#fff;border:1px solid #e7ecf3;border-radius:14px;padding:14px 18px;box-shadow:0 6px 20px rgba(15,42,82,.06)}'
-         '.stat{font-size:13px;color:#6B7280}.stat b{color:#0F2A52;font-size:22px;font-weight:900}'
-         '.bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.pill{background:#EEF4FB;border:1px solid #dbe6f3;color:#2B579A;border-radius:20px;padding:4px 12px;font-size:12.5px}'
-         'form.srch input{padding:9px 12px;border:1px solid #dbe6f3;border-radius:9px;font-size:13px}'
-         'form.srch button{padding:9px 16px;border:none;background:#2B579A;color:#fff;border-radius:9px;cursor:pointer}'
-         'a.btn{display:inline-block;padding:9px 16px;border-radius:9px;background:#0F2A52;color:#fff;text-decoration:none;font-size:13px;margin-left:auto}'
-         'table{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff;margin-top:16px;box-shadow:0 6px 20px rgba(15,42,82,.06);border-radius:14px;overflow:hidden}'
-         'th,td{border-bottom:1px solid #eef2f7;padding:9px 10px;text-align:left;vertical-align:top}'
-         'th{background:#0F2A52;color:#fff;font-weight:700}tr:hover td{background:#f7faff}'
-         '.del{background:#fdeceb;color:#c0392b;border:1px solid #f5c6bd;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px}'
-         '.empty{text-align:center;color:#9aa3b0;padding:40px}</style>']
-    cols = ["time", "target", "name", "gender", "birth", "campus", "college", "major", "phone", "wechat", "email", "skill", "motive", "adjust"]
-    labels = {"time": "提交时间", "target": "意向方向", "name": "姓名", "gender": "性别", "birth": "出生年月",
-             "campus": "校区", "college": "院系", "major": "专业/班级", "phone": "手机号", "wechat": "微信",
-             "email": "邮箱", "skill": "特长/经历", "motive": "报名动机", "adjust": "服从调剂"}
-    h.append('<div class="top"><div class="card stat">报名总数 <b>%d</b> 人</div></div>' % total)
-    pills = [('<span class="pill">%s：%d</span>' % (escape(k), by_campus[k])) for k in ("浦东", "松江") if k in by_campus]
-    h.append('<div class="bar">校区：' + ("".join(pills) if pills else '<span class="pill">暂无</span>') + '</div>')
-    tp = "".join('<span class="pill">%s：%d</span>' % (escape(k), v) for k, v in by_target.items())
-    h.append('<div class="bar">方向：' + (tp if tp else '<span class="pill">暂无</span>') + '</div>')
-    h.append('<div class="top"><form class="srch" method="get"><input name="q" value="%s" placeholder="搜姓名/手机/方向/院系">'
-             '<button>检索</button></form>' % escape(q) +
-             '<a class="btn" href="?key=%s&export=csv">⬇ 导出 CSV</a>' % ADMIN_KEY +
-             '<a class="btn" style="background:#2B579A;margin-left:10px" href="/cms" target="_blank">🛠 内容管理</a></div>')
-    if not rows:
-        h.append('<div class="empty">暂无报名数据</div>')
-    else:
-        head = "".join("<th>%s</th>" % escape(labels[c]) for c in cols) + "<th>操作</th>"
-        body = []
-        for r in rows:
-            tds = "".join("<td>%s</td>" % escape(str(r.get(c, ""))) for c in cols)
-            tds += '<td><button class="del" onclick="del(%d)">删除</button></td>' % r["id"]
-            body.append("<tr>" + tds + "</tr>")
-        h.append('<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>' % (head, "".join(body)))
-    h.append("""<script>function del(id){if(!confirm('确认删除该报名记录？'))return;
-      fetch('/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,key:'%s'})})
-      .then(r=>r.json()).then(d=>{if(d.ok)location.reload();else alert('删除失败：'+(d.error||''));});}</script>""" % ADMIN_KEY)
-    return Response("".join(h), mimetype="text/html")
+    return jsonify({"ok": True, "total": total, "by_campus": by_campus,
+                    "by_target": by_target, "rows": rows})
 
 # ============ 内容库（CMS，复用） ============
 def load_content():
@@ -444,12 +426,44 @@ def api_login():
     if not u or u["pwd"] != hx(pwd):
         return jsonify({"ok": False, "error": "学号/工号或密码错误"}), 401
     session["uid"] = u["xh"]; session["name"] = u["name"]; session["role"] = u["role"]
+    session["pv"] = u["pv"] or 0
     return jsonify({"ok": True, "name": u["name"], "role": u["role"]})
+
+@app.route("/api/reset", methods=["POST"])
+def api_reset():
+    """密码重置：旧密码验证 + 新密码规则校验；pv+1 使所有设备的旧会话全部失效"""
+    d = request.get_json(force=True, silent=True) or {}
+    xh = (d.get("xh") or "").strip()
+    old = d.get("old_pwd") or ""
+    new = d.get("new_pwd") or ""
+    if not (xh and old and new):
+        return jsonify({"ok": False, "error": "请填写完整"}), 400
+    if len(new) < 8 or not any(c.islower() for c in new) \
+            or not any(c.isupper() for c in new) or not any(c.isdigit() for c in new):
+        return jsonify({"ok": False, "error": "新密码须≥8位，包含大小写字母和数字"}), 400
+    if new == old:
+        return jsonify({"ok": False, "error": "新密码不能与旧密码相同"}), 400
+    cx = db(DB_USR)
+    u = cx.execute("SELECT * FROM users WHERE xh=?", (xh,)).fetchone()
+    if not u or u["pwd"] != hx(old):
+        cx.close()
+        return jsonify({"ok": False, "error": "学号或旧密码错误"}), 401
+    cx.execute("UPDATE users SET pwd=?, pv=COALESCE(pv,0)+1 WHERE xh=?", (hx(new), xh))
+    cx.commit(); cx.close()
+    session.clear()  # 本设备的会话一并结束，需用新密码重新登录
+    return jsonify({"ok": True, "msg": "密码已更新，所有设备的会话已结束"})
+
+@app.route("/reset", methods=["GET"])
+def reset_page():
+    return send_file(os.path.join(BASE, "reset.html"))
 
 @app.route("/api/me")
 def api_me():
     if "uid" not in session:
         return jsonify({"ok": False})
+    if not _session_pv_valid():
+        session.clear()
+        return jsonify({"ok": False, "expired": True})
     return jsonify({"ok": True, "name": session.get("name"),
                     "role": session.get("role"), "uid": session.get("uid")})
 
