@@ -16,6 +16,28 @@
   --xh-radius:20px;
   --xh-font-body:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
   --xh-font-display:'Instrument Serif','Noto Serif SC','Songti SC','STSong',serif;
+
+  /* ===== v3「深空玻璃」组件令牌（全站 UI 组件库 ui.css 消费） =====
+     语义：玻璃面板半浮于 fixed 星空之上；React 侧 index.css 有一份镜像，改令牌两处同步。 */
+  --xh-glass:rgba(17,20,26,.55);            /* 玻璃面板填充 */
+  --xh-glass-2:rgba(22,26,33,.62);          /* 玻璃面板-悬停/次级 */
+  --xh-glass-strong:rgba(10,12,16,.74);     /* 顶栏/弹窗强玻璃 */
+  --xh-glass-border:rgba(137,170,204,.16);  /* 玻璃发丝描边 */
+  --xh-glass-hi:rgba(255,255,255,.055);     /* 面板顶部内高光 */
+  --xh-blur:20px;                           /* 面板模糊半径 */
+  --xh-blur-strong:28px;                    /* 顶栏/弹窗模糊半径 */
+  --xh-radius-sm:12px;
+  --xh-radius-lg:28px;
+  --xh-ease:cubic-bezier(.22,.61,.36,1);
+  --xh-t-fast:.18s;
+  --xh-t-mid:.35s;
+  --xh-shadow-sm:0 8px 24px rgba(0,0,0,.35);
+  --xh-ok:#7FD1A7;
+  --xh-warn:#E8C07A;
+  --xh-bad:#E08A8A;
+  --xh-info:#BCD4EA;
+  --xh-red:#E06C6C;
+
   --bg:var(--xh-bg);
   --card:var(--xh-surface);
   --ink:var(--xh-text);

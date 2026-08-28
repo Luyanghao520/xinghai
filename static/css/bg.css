@@ -1,0 +1,76 @@
+/* ============================================================
+   全站固定背景样式 —— 与官网首页 portfolio-landing/src/index.css
+   背景段逐值一致（参数勿改，首页是唯一调参源，两边同步改）。
+   唯一差异：.bg-host 用 z-index:-1（首页是 z-0 + 内容 z-10），
+   使系统页内容无需包裹即处于视频之上。
+   ============================================================ */
+
+.bg-host{
+  position:fixed;inset:0;z-index:-1;
+  overflow:hidden;pointer-events:none;
+  background:transparent; /* 视频就绪前透出 theme 星空图作海报兜底 */
+  /* 取景框高度：越大画面越往下沉（顶部锚定，底部离源片黑场更远）。
+     首页 index.css 当前为 185%；系统页应用户要求下移至 195%。
+     若首页要同步，改 portfolio-landing/src/index.css 的 .bg-video height 后重新构建。 */
+  --xh-bg-frame:205%;
+}
+.bg-inner{position:absolute;inset:0;}
+
+/* ===== 背景视频几何（A/B 双视频共用）===== */
+.bg-video{
+  position:absolute;left:0;top:0;
+  width:100%;height:var(--xh-bg-frame);
+  object-fit:cover;object-position:center top;
+  opacity:0;transition:opacity 1.1s ease-in-out;
+  will-change:opacity;
+}
+.bg-video.on{opacity:1;}
+[data-bg="stage"] .bg-video{filter:brightness(1.5) contrast(1.06) saturate(1.22);}
+[data-bg="star"] .bg-video{height:100%;object-position:center;}
+
+/* ===== 背景星云辉光（与首页 .bg-nebula 同值）===== */
+.bg-nebula{position:absolute;mix-blend-mode:screen;pointer-events:none;}
+.bg-nebula-1{
+  top:-22%;left:-14%;width:64%;height:64%;
+  background:radial-gradient(circle,rgba(78,133,191,.28),transparent 70%);
+  filter:blur(52px);
+  animation:bg-nebula-pulse 12s ease-in-out infinite;
+}
+.bg-nebula-2{
+  bottom:-22%;right:-14%;width:88%;height:88%;
+  background:radial-gradient(circle,rgba(137,170,204,.42),transparent 68%);
+  filter:blur(58px);
+  animation:bg-nebula-pulse 15s ease-in-out infinite reverse;
+}
+.bg-nebula-3{
+  bottom:-10%;left:-10%;right:-10%;width:120%;height:72%;
+  background:radial-gradient(ellipse at 50% 100%,rgba(72,122,184,.55),rgba(34,66,110,.28) 60%,rgba(20,40,70,.12) 82%,transparent 95%);
+  filter:blur(42px);
+  animation:bg-nebula-pulse 17s ease-in-out infinite;
+}
+@keyframes bg-nebula-pulse{
+  0%,100%{opacity:.55;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.07);}
+}
+
+/* ===== 顶/底轻渐变纱：保导航与内容可读（首页 h-32 from-bg/60）===== */
+.bg-scrim{position:absolute;left:0;right:0;height:128px;pointer-events:none;}
+.bg-scrim-top{top:0;background:linear-gradient(to bottom,rgba(10,10,10,.6),transparent);}
+.bg-scrim-bottom{bottom:0;background:linear-gradient(to top,rgba(10,10,10,.6),transparent);}
+
+/* ===== 内容可读纱 =====
+   系统页正文直接铺在视频上（首页是 Hero 大字+玻璃卡，不需这层）。
+   作用等同首页 Hero 的径向 scrim：只整体轻压视频亮度保文字对比度，
+   不改视频构图/滤镜参数。觉得太暗/太亮只调 --xh-bg-veil 一个值。 */
+:root{--xh-bg-veil:.45;}
+.bg-veil{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:rgba(10,10,10,var(--xh-bg-veil));
+}
+
+@media (max-width:768px){
+  .bg-nebula{display:none;} /* 小屏关星云模糊保性能，视频仍在（与首页一致） */
+}
+@media (prefers-reduced-motion:reduce){
+  .bg-nebula{animation:none;}
+}

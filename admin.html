@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>招新报名后台 · 星海艺术团</title>
+<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+<style>
+  /* 页面特有 */
+  .f-err{color:var(--xh-bad);font-size:12.5px;min-height:16px;}
+  .xh-tablewrap table{min-width:980px;}
+  td.name{font-weight:600;color:var(--xh-text);white-space:nowrap;}
+  td.wrap-cell{white-space:normal;min-width:140px;max-width:260px;}
+</style>
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
+</head>
+<body>
+<header class="xh-topbar">
+  <a class="xh-topbar-brand" href="/"><img src="/static/uploads/logo.png" alt="">星海<em>招新后台</em></a>
+  <span class="xh-badge info">管理员</span>
+  <div class="xh-topbar-spacer"></div>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" href="/cms" target="_blank"><i data-lucide="settings"></i>内容管理</a>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" id="exportBtn" href="#"><i data-lucide="download"></i>导出 CSV</a>
+</header>
+
+<main class="xh-page xh-page-wide">
+  <div class="xh-page-head">
+    <h1 class="xh-page-title">招新报名后台</h1>
+    <div class="xh-page-sub">线上报名数据查看 / 检索 / 导出 / 删除，数据存于 registrations.db</div>
+  </div>
+
+  <div class="xh-stats">
+    <div class="xh-stat"><b id="sTotal">—</b><span>报名总数</span></div>
+    <div class="xh-stat"><b id="sPudong">—</b><span>浦东校区</span></div>
+    <div class="xh-stat"><b id="sSongjiang">—</b><span>松江校区</span></div>
+    <div class="xh-stat"><b id="sShown">—</b><span>当前筛选</span></div>
+  </div>
+
+  <div class="xh-toolbar xh-section-gap">
+    <input id="q" class="xh-input" style="min-width:240px" placeholder="搜姓名 / 手机 / 方向 / 院系 / 专业…" oninput="debLoad()">
+    <div class="xh-toolbar-spacer"></div>
+    <div id="targetPills" class="xh-row"></div>
+  </div>
+
+  <section class="xh-panel xh-panel-flush">
+    <div class="xh-tablewrap">
+      <table>
+        <thead id="thead"><tr></tr></thead>
+        <tbody id="tbody"><tr><td colspan="15" class="xh-empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script src="/static/js/ui.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const KEY=params.get('key')||'';
+const $=id=>document.getElementById(id);
+const cols=["time","target","name","gender","birth","campus","college","major","phone","wechat","email","skill","motive","adjust"];
+const labels={"time":"提交时间","target":"意向方向","name":"姓名","gender":"性别","birth":"出生年月",
+  "campus":"校区","college":"院系","major":"专业/班级","phone":"手机号","wechat":"微信",
+  "email":"邮箱","skill":"特长/经历","motive":"报名动机","adjust":"服从调剂"};
+if(!KEY){document.body.innerHTML='<main class="xh-page"><div class="xh-panel"><div class="xh-empty">缺少 key 参数，请从工作端进入</div></div></main>';}
+$('exportBtn').href='?key='+encodeURIComponent(KEY)+'&export=csv';
+
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+let timer=null;
+function debLoad(){clearTimeout(timer);timer=setTimeout(load,300);}
+
+function load(){
+  const q=$('q').value.trim();
+  fetch('/api/admin/rows?key='+encodeURIComponent(KEY)+'&q='+encodeURIComponent(q))
+    .then(r=>{if(r.status===403)throw new Error('无权限：key 错误');return r.json();})
+    .then(d=>{
+      if(!d.ok)throw new Error(d.error||'加载失败');
+      $('sTotal').textContent=d.total;
+      $('sPudong').textContent=d.by_campus['浦东']||0;
+      $('sSongjiang').textContent=d.by_campus['松江']||0;
+      $('sShown').textContent=d.rows.length;
+      $('targetPills').innerHTML=Object.entries(d.by_target).map(([k,v])=>'<span class="xh-badge neutral">'+esc(k)+'：'+v+'</span>').join('')||'<span class="xh-badge neutral">暂无方向数据</span>';
+      $('thead').innerHTML='<tr>'+cols.map(c=>'<th>'+labels[c]+'</th>').join('')+'<th>操作</th></tr>';
+      const tb=$('tbody');
+      if(!d.rows.length){tb.innerHTML='<tr><td colspan="15" class="xh-empty">暂无报名数据</td></tr>';return;}
+      tb.innerHTML=d.rows.map(r=>'<tr>'+
+        cols.map(c=>{
+          const v=esc(String(r[c]==null?'':r[c]));
+          if(c==='name')return '<td class="name">'+v+'</td>';
+          if(c==='skill'||c==='motive')return '<td class="wrap-cell">'+v+'</td>';
+          return '<td class="xh-num">'+v+'</td>';
+        }).join('')+
+        '<td><span class="xh-btn-text xh-danger-text" onclick="del('+r.id+')">删除</span></td></tr>').join('');
+    })
+    .catch(e=>{$('tbody').innerHTML='<tr><td colspan="15" class="xh-empty">'+esc(e.message||'加载失败')+'</td></tr>';});
+}
+function del(id){
+  if(!confirm('确认删除该报名记录？此操作不可撤销。'))return;
+  fetch('/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,key:KEY})})
+    .then(r=>r.json()).then(d=>{if(d.ok){XH.toast('已删除','ok');load();}else XH.toast('删除失败：'+(d.error||''),'bad');});
+}
+load();
+</script>
+</body>
+</html>

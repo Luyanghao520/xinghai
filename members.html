@@ -4,294 +4,134 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>成员信息 · 星海工作端</title>
-<style>
-/* ================= 星海 · 暗夜星海设计框架（成员信息管理） ================= */
-:root{
-  --bg:#0A0A0A; --surface:#141414; --raised:#1A1A1C;
-  --text:#F5F5F5; --muted:#8A8A8A;
-  --stroke:#1F1F1F; --stroke2:#2A2A2E;
-  --a1:#89AACC; --a2:#4E85BF;
-  --accent:linear-gradient(90deg,#89AACC 0%,#4E85BF 100%);
-  --glow:0 0 24px rgba(137,170,204,.16);
-  --ok:#7FD1A7; --warn:#E8C07A; --bad:#E08A8A; --accent-soft:#BCD4EA;
-  --font-body:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
-  --font-display:'Instrument Serif','Noto Serif SC','Songti SC','STSong',serif;
-  /* 旧变量兼容映射：保留变量名，值指向新令牌 */
-  --navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--card:#141414;
-  --grad-hero:linear-gradient(160deg,#0A0A0A 0%,#0D1320 45%,#101828 100%);
-  --iride-1:rgba(78,133,191,.10);--iride-2:rgba(137,170,204,.08);--iride-3:rgba(78,133,191,.07);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html{color-scheme:dark;}
-::selection{background:rgba(137,170,204,.35);}
-body{
-  font-family:var(--font-body);
-  background:radial-gradient(120% 60% at 50% -10%,#10151E 0%,#0B0C10 50%,var(--bg) 100%);
-  color:var(--ink);line-height:1.7;position:relative;min-height:100vh;
-}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(circle at 15% 20%,var(--iride-1),transparent 42%),
-             radial-gradient(circle at 85% 50%,var(--iride-3),transparent 40%),
-             radial-gradient(circle at 50% 85%,rgba(137,170,204,.06),transparent 44%);}
-
-/* ===== 顶部导航条：sticky 暗色玻璃 ===== */
-header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:11px 22px;
-  background:rgba(20,20,20,.85);
-  backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
-  border-bottom:1px solid var(--stroke);}
-.brand{font-weight:700;font-size:16px;color:var(--text);letter-spacing:.04em;}
-.brand span{background-image:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.crumb{font-size:12.5px;color:var(--muted);}
-.crumb a{color:var(--a1);text-decoration:none;font-weight:600;}
-.crumb a:hover{text-decoration:underline;}
-.user{margin-left:auto;font-size:13px;color:var(--muted);}
-.user b{color:var(--text);} .user a{margin-left:12px;color:var(--a1);text-decoration:none;font-weight:600;}
-.user a:hover{text-decoration:underline;}
-/* 覆盖返回按钮内联的浅色描边 */
-header a[onclick]{border-color:var(--stroke2)!important;border-radius:999px;transition:border-color .2s,color .2s;}
-header a[onclick]:hover{border-color:var(--a1);}
-
-.wrap{max-width:1080px;margin:24px auto;padding:0 18px;}
-
-/* 工具栏：搜索 / 筛选 */
-.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;}
-.bar input,.bar select{
-  padding:10px 14px;border:1px solid var(--stroke2);border-radius:12px;font-size:13.5px;font-family:inherit;
-  background:var(--bg);color:var(--text);outline:none;
-  transition:border-color .2s,background .2s;
-}
-.bar input::placeholder{color:#5A5A60;}
-.bar input:focus,.bar select:focus{border-color:var(--a1);background:#0E0E10;}
-.bar select option{background:var(--surface);color:var(--text);}
-.bar .grow{flex:1;min-width:180px;}
-
-/* 按钮：主 / 强调 / 次 */
-.btn{
-  border:none;border-radius:999px;padding:10px 20px;font-size:13.5px;font-weight:700;cursor:pointer;
-  color:#0A0A0A;background:#F5F5F5;
-  transition:transform .2s,box-shadow .25s,background .25s,color .25s,border-color .25s;
-}
-.btn:hover{background:var(--bg);color:var(--text);box-shadow:inset 0 0 0 1px var(--stroke2),var(--glow);}
-.btn:active{transform:scale(.97);}
-.btn.gold{background:rgba(137,170,204,.1);color:var(--accent-soft);border:1px solid rgba(137,170,204,.35);}
-.btn.gold:hover{background:rgba(137,170,204,.16);border-color:var(--a1);color:#D6E5F2;box-shadow:none;}
-.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--stroke2);}
-.btn.ghost:hover{background:transparent;border-color:var(--a1);color:var(--a1);box-shadow:none;}
-.btn:disabled{opacity:.55;cursor:not-allowed;}
-.count{font-size:12.5px;color:var(--muted);margin-left:auto;}
-
-/* 表格容器 */
-.tablewrap{
-  background:var(--surface);border:1px solid var(--stroke);border-radius:20px;overflow:hidden;
-  box-shadow:0 14px 38px rgba(0,0,0,.4);
-}
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-table{border-collapse:collapse;width:100%;font-size:13px;min-width:880px;}
-th,td{border-bottom:1px solid var(--stroke);padding:11px 12px;text-align:left;vertical-align:top;white-space:nowrap;}
-th{
-  background:#121214;color:var(--muted);font-weight:600;font-size:11px;
-  letter-spacing:.12em;text-transform:uppercase;position:sticky;top:0;z-index:1;
-}
-tbody tr{transition:background .15s;}
-tbody tr:hover{background:rgba(137,170,204,.05);}
-td.name{font-weight:600;color:var(--text);}
-.xh{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--a1);font-weight:600;}
-
-/* 标签徽章 */
-.tag{
-  display:inline-block;font-size:11px;padding:2px 10px;border-radius:999px;font-weight:600;letter-spacing:.03em;
-  background:rgba(137,170,204,.08);color:var(--accent-soft);border:1px solid rgba(137,170,204,.28);
-}
-.tag.act{background:rgba(127,209,167,.08);color:var(--ok);border-color:rgba(127,209,167,.28);}
-.tag.left{background:rgba(224,138,138,.08);color:var(--bad);border-color:rgba(224,138,138,.28);}
-
-.op{color:var(--a1);cursor:pointer;text-decoration:underline;margin-right:8px;font-weight:600;}
-.op:hover{color:var(--accent-soft);}
-.op.del{color:var(--bad);}
-.op.del:hover{color:#EDADAD;}
-/* JS 注入的内联金色「离团」→ 统一警告色 */
-.op[style]{color:var(--warn)!important;}
-.empty{text-align:center;color:#6A6A72;padding:40px;font-size:13px;}
-
-/* 弹窗表单 */
-.mask{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  z-index:80;display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;}
-.mask.open{display:flex;}
-.modal{
-  position:relative;background:var(--surface);border:1px solid var(--stroke2);border-radius:20px;
-  width:560px;max-width:100%;padding:26px 24px 22px;box-shadow:0 30px 80px rgba(0,0,0,.7);
-}
-.modal::before{content:"";position:absolute;top:0;left:24px;right:24px;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(137,170,204,.55),transparent);}
-.modal h3{font-family:var(--font-display);color:var(--text);font-weight:600;font-size:21px;margin-bottom:4px;letter-spacing:.01em;}
-.modal .ms{font-size:12.5px;color:var(--muted);margin-bottom:18px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;}
-.fld{display:flex;flex-direction:column;}
-.fld.full{grid-column:1/-1;}
-.fld label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px;letter-spacing:.04em;}
-.fld label .req{color:var(--bad);}
-.fld input,.fld select,.fld textarea{
-  padding:9px 12px;border:1px solid var(--stroke2);border-radius:12px;font-size:13px;font-family:inherit;
-  background:var(--bg);color:var(--text);outline:none;
-  transition:border-color .2s,background .2s;
-}
-.fld input::placeholder,.fld textarea::placeholder{color:#5A5A60;}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--a1);background:#0E0E10;}
-.fld select option{background:var(--surface);color:var(--text);}
-.fld textarea{resize:vertical;min-height:54px;}
-.err{color:var(--bad);font-size:12px;margin:10px 0 0;min-height:14px;}
-.mfoot{display:flex;gap:10px;margin-top:18px;}
-.mfoot .btn{flex:1;}
-
-/* 提示 toast */
-.toast{
-  position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);
-  background:var(--raised);color:var(--text);border:1px solid var(--stroke2);
-  padding:11px 22px;border-radius:999px;font-size:13.5px;
-  opacity:0;transition:.3s;z-index:90;pointer-events:none;
-  box-shadow:0 10px 30px rgba(0,0,0,.55),var(--glow);
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* 离团记录面板：覆盖 HTML 内联的白色底 */
-#alumniWrap{background:var(--surface)!important;border-color:var(--stroke)!important;border-radius:20px!important;}
-
-/* 统计卡数字统一显示字体（如后续复用统计卡） */
-.stat-card .num{font-family:var(--font-display);font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
-
-/* ===== 响应式 ===== */
-@media(max-width:768px){
-  .grid2{grid-template-columns:1fr;}
-  .wrap{margin:16px auto;}
-  header{padding:10px 14px;gap:10px;}
-  .brand{font-size:14px;}
-}
-
-/* iOS 安全区 + 三端触控优化 */
-*{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
-body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
-button,a,.clickable{min-height:44px;}
-input,select,textarea{font-size:16px!important;}
-
-@media(max-width:480px){
-  body{font-size:14px;line-height:1.6;}
-  .wrap{padding:0 14px;}
-  section{padding:40px 0;}
-  .sec-head h2{font-size:21px;}
-  .sec-head .kicker{font-size:10.5px;}
-}
-
-@media(max-width:480px){
-  .stats-row{grid-template-columns:1fr 1fr!important;display:grid;gap:8px;}
-  .stat-card{padding:12px 10px;min-width:0;}
-  .stat-card .num{font-size:20px;}
-  .stat-card .label{font-size:10.5px;}
-  .grid{grid-template-columns:1fr!important;}
-  .mod{padding:16px;}
-  .mod .t{font-size:13px;}
-  .mod .d{font-size:11.5px;}
-  .ic-circle{width:38px;height:38px;font-size:16px;}
-  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  table{font-size:11px;min-width:600px;}
-  th,td{padding:7px 8px;}
-  header{padding:10px 14px;gap:8px;}
-  .brand{font-size:14px;}
-  .user{font-size:12px;}
-  .hi{font-size:20px;}
-  .badge{font-size:9.5px;padding:2px 8px;}
-}
-
-</style>
 <link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+<style>
+  /* 页面特有 */
+  .op-dis{opacity:.35;cursor:default;}
+  .xh-tablewrap table{min-width:880px;}
+  td.name{font-weight:600;color:var(--xh-text);}
+  td.xh{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--xh-a1);font-weight:600;}
+  .xh-modal-card{width:min(640px,100%);}
+</style>
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="brand">星海艺术团工作端</div>
-  <a href="#" onclick="history.back();return false" style="color:var(--blue);font-size:12.5px;text-decoration:none;font-weight:600;padding:4px 10px;border-radius:8px;border:1.5px solid #DDE2EC">← 返回</a><div class="crumb"><a href="/work">总览</a> / 成员信息</div>
-  <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
+<header class="xh-topbar">
+  <a class="xh-topbar-brand" href="/work"><img src="/static/uploads/logo.png" alt="">星海<em>工作端</em></a>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" href="#" onclick="history.back();return false">← 返回</a>
+  <div class="xh-topbar-crumb"><a href="/work">总览</a> / 成员信息</div>
+  <div class="xh-topbar-spacer"></div>
+  <div class="xh-topbar-user">你好，<b id="uname">—</b><span class="xh-role" id="urole">—</span><a class="xh-btn-text" href="/logout">登出</a></div>
 </header>
 
-<div class="wrap">
-  <div class="bar">
-    <input class="grow" id="q" placeholder="搜学号 / 姓名 / 部门 / 院系 / 专业…" oninput="debLoad()">
-    <select id="fCampus" onchange="load()">
+<main class="xh-page">
+  <div class="xh-page-head">
+    <h1 class="xh-page-title">成员信息</h1>
+    <div class="xh-page-sub">学号为唯一主键，支持检索、筛选、批量导入导出</div>
+  </div>
+
+  <div class="xh-toolbar">
+    <input class="xh-input xh-grow" id="q" style="min-width:200px" placeholder="搜学号 / 姓名 / 部门 / 院系 / 专业…" oninput="debLoad()">
+    <select id="fCampus" class="xh-input" onchange="load()">
       <option value="">全部校区</option>
       <option value="浦东">浦东</option>
       <option value="松江">松江</option>
     </select>
-    <select id="fRole" onchange="load()">
+    <select id="fRole" class="xh-input" onchange="load()">
       <option value="">全部角色</option>
       <option>主席</option><option>副主席</option><option>团长</option>
       <option>团秘</option><option>部长</option><option>副部长</option>
       <option>干事</option><option>队员</option>
     </select>
-    <select id="fDept" onchange="load()">
+    <select id="fDept" class="xh-input" onchange="load()">
       <option value="">全部部门/团队</option>
       <option>办公室</option><option>资产管理部</option><option>企宣部</option>
       <option>合唱团</option><option>交响乐团</option><option>民乐团</option><option>舞蹈团</option>
       <option>话剧团</option><option>主持团</option><option>礼仪队</option>
     </select>
-    <button class="btn" onclick="openForm()">＋ 录入成员</button>
-    <button class="btn gold" onclick="importCSV()">⬆ 导入</button>
-    <button class="btn ghost" onclick="exportCSV()">⬇ 导出</button>
+    <button class="xh-btn xh-btn-primary" onclick="openForm()"><i data-lucide="plus"></i>录入成员</button>
+    <button class="xh-btn xh-btn-ghost" onclick="importCSV()"><i data-lucide="upload"></i>导入</button>
+    <button class="xh-btn xh-btn-ghost" onclick="exportCSV()"><i data-lucide="download"></i>导出</button>
     <input type="file" id="file" accept=".csv" style="display:none" onchange="doImport(this)">
-    <span class="count" id="count">—</span>
+    <div class="xh-toolbar-spacer"></div>
+    <span class="xh-count" id="count">—</span>
   </div>
 
-  <div class="tablewrap">
-    <div class="scroll">
+  <section class="xh-panel xh-panel-flush">
+    <div class="xh-tablewrap">
       <table>
         <thead><tr>
           <th>学号</th><th>姓名</th><th>性别</th><th>校区</th><th>院系</th><th>专业/班级</th>
           <th>手机</th><th>角色</th><th>部门/团队</th><th>职务</th><th>届别</th><th>状态</th><th>操作</th>
         </tr></thead>
-        <tbody id="tbody"><tr><td colspan="13" class="empty">加载中…</td></tr></tbody>
+        <tbody id="tbody"><tr><td colspan="13" class="xh-empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="xh-section-gap">
+    <button class="xh-btn xh-btn-ghost" onclick="showAlumni()"><i data-lucide="archive"></i>离团记录</button>
+  </section>
+  <div id="alumniWrap" class="xh-panel xh-panel-flush" style="display:none;margin-top:14px">
+    <div class="xh-panel-hd"><h3>离团记录</h3></div>
+    <div class="xh-tablewrap">
+      <table>
+        <thead><tr><th>学号</th><th>姓名</th><th>部门/团队</th><th>届别</th><th>离团日期</th><th>离团原因</th></tr></thead>
+        <tbody id="alumniBody"><tr><td colspan="6" class="xh-empty">点击上方按钮加载</td></tr></tbody>
       </table>
     </div>
   </div>
-</div>
+</main>
 
-<!-- 录入/编辑抽屉 -->
-<div class="mask" id="mask">
-  <div class="modal">
-    <h3 id="mTitle">＋ 录入成员</h3>
-    <div class="ms">学号为唯一主键（9 位数字，如 251400143）。重复学号将自动更新。</div>
-    <div class="grid2">
-      <div class="fld"><label>学号 <span class="req">*</span></label><input id="f_xh" placeholder="9 位数字" maxlength="9"></div>
-      <div class="fld"><label>姓名 <span class="req">*</span></label><input id="f_name" placeholder="姓名"></div>
-      <div class="fld"><label>性别</label><select id="f_gender"><option></option><option>男</option><option>女</option></select></div>
-      <div class="fld"><label>校区</label><select id="f_campus"><option></option><option>浦东</option><option>松江</option></select></div>
-      <div class="fld"><label>学院</label><input id="f_college" placeholder="如 国际商务学院"></div>
-      <div class="fld"><label>专业/班级</label><input id="f_major" placeholder="如 国际商务 2401"></div>
-      <div class="fld"><label>手机号</label><input id="f_phone" placeholder="11 位手机号"></div>
-      <div class="fld"><label>微信</label><input id="f_wechat" placeholder="微信号"></div>
-      <div class="fld"><label>邮箱</label><input id="f_email" placeholder="邮箱"></div>
-      <div class="fld"><label>角色</label><select id="f_role">
-        <option></option><option>主席</option><option>副主席</option><option>团长</option>
-        <option>团秘</option><option>部长</option><option>副部长</option><option>干事</option><option>队员</option>
-      </select></div>
-      <div class="fld"><label>职务</label><select id="f_position">
-        <option></option><option>教师</option><option>主席</option><option>副主席</option><option>团秘</option>
-        <option>部长</option><option>副部长</option><option>组长</option>
-        <option>团长</option><option>副团长</option><option>团干</option><option>成员</option>
-      </select></div>
-      <div class="fld"><label>所属部门/团队</label><input id="f_dept" placeholder="如 合唱团 / 办公室"></div>
-      <div class="fld"><label>入团时间</label><input id="f_join_date" placeholder="如 2024-09"></div>
-      <div class="fld"><label>届别</label><input id="f_grade" placeholder="如 2024 级"></div>
-      <div class="fld"><label>状态</label><select id="f_status"><option></option><option>在团</option><option>休团</option><option>退团</option></select></div>
-      <div class="fld full"><label>特长/经历</label><textarea id="f_skill" placeholder="获奖、擅长的领域等"></textarea></div>
-      <div class="fld full"><label>备注</label><textarea id="f_note" placeholder="备注信息"></textarea></div>
+<!-- 录入/编辑弹窗 -->
+<div class="xh-modal" id="mask">
+  <div class="xh-modal-mask" data-close></div>
+  <div class="xh-modal-card">
+    <div class="xh-modal-hd">
+      <h3 id="mTitle">＋ 录入成员</h3>
+      <button class="xh-modal-close" onclick="closeForm()" aria-label="关闭"><i data-lucide="x"></i></button>
     </div>
-    <div class="err" id="fErr"></div>
-    <div class="mfoot">
-      <button class="btn ghost" onclick="closeForm()">取消</button>
-      <button class="btn" id="saveBtn" onclick="save()">保存</button>
+    <div class="xh-modal-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">学号为唯一主键（9 位数字，如 251400143）。重复学号将自动更新。</div>
+      <div class="xh-form-grid">
+        <div class="xh-field"><label>学号<span class="xh-req">*</span></label><input id="f_xh" class="xh-input" placeholder="9 位数字" maxlength="9" inputmode="numeric"></div>
+        <div class="xh-field"><label>姓名<span class="xh-req">*</span></label><input id="f_name" class="xh-input" placeholder="姓名"></div>
+        <div class="xh-field"><label>性别</label><select id="f_gender" class="xh-input"><option></option><option>男</option><option>女</option></select></div>
+        <div class="xh-field"><label>校区</label><select id="f_campus" class="xh-input"><option></option><option>浦东</option><option>松江</option></select></div>
+        <div class="xh-field"><label>学院</label><input id="f_college" class="xh-input" placeholder="如 国际商务学院"></div>
+        <div class="xh-field"><label>专业/班级</label><input id="f_major" class="xh-input" placeholder="如 国际商务 2401"></div>
+        <div class="xh-field"><label>手机号</label><input id="f_phone" class="xh-input" placeholder="11 位手机号"></div>
+        <div class="xh-field"><label>微信</label><input id="f_wechat" class="xh-input" placeholder="微信号"></div>
+        <div class="xh-field"><label>邮箱</label><input id="f_email" class="xh-input" placeholder="邮箱"></div>
+        <div class="xh-field"><label>角色</label><select id="f_role" class="xh-input">
+          <option></option><option>主席</option><option>副主席</option><option>团长</option>
+          <option>团秘</option><option>部长</option><option>副部长</option><option>干事</option><option>队员</option>
+        </select></div>
+        <div class="xh-field"><label>职务</label><select id="f_position" class="xh-input">
+          <option></option><option>教师</option><option>主席</option><option>副主席</option><option>团秘</option>
+          <option>部长</option><option>副部长</option><option>组长</option>
+          <option>团长</option><option>副团长</option><option>团干</option><option>成员</option>
+        </select></div>
+        <div class="xh-field"><label>所属部门/团队</label><input id="f_dept" class="xh-input" placeholder="如 合唱团 / 办公室"></div>
+        <div class="xh-field"><label>入团时间</label><input id="f_join_date" class="xh-input" placeholder="如 2024-09"></div>
+        <div class="xh-field"><label>届别</label><input id="f_grade" class="xh-input" placeholder="如 2024 级"></div>
+        <div class="xh-field"><label>状态</label><select id="f_status" class="xh-input"><option></option><option>在团</option><option>休团</option><option>退团</option></select></div>
+        <div class="xh-field xh-span-2"><label>特长/经历</label><textarea id="f_skill" class="xh-input" placeholder="获奖、擅长的领域等"></textarea></div>
+        <div class="xh-field xh-span-2"><label>备注</label><textarea id="f_note" class="xh-input" placeholder="备注信息"></textarea></div>
+      </div>
+      <div class="f-err" id="fErr" style="margin-top:12px"></div>
+      <div class="xh-row" style="justify-content:flex-end;margin-top:12px">
+        <button class="xh-btn xh-btn-ghost" onclick="closeForm()">取消</button>
+        <button class="xh-btn xh-btn-primary" id="saveBtn" onclick="save()">保存</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script src="/static/js/ui.js"></script>
 <script>
 const COLS=["xh","name","gender","campus","college","major","phone","wechat","email","role","dept","position","join_date","grade","status","skill","note"];
 const $ = id => document.getElementById(id);
@@ -305,10 +145,10 @@ fetch('/api/me').then(r=>r.json()).then(d=>{
 });
 
 function statusTag(s){
-  if(s==='在团') return '<span class="tag act">在团</span>';
-  if(s==='退团') return '<span class="tag left">退团</span>';
-  if(s==='休团') return '<span class="tag">休团</span>';
-  return s?('<span class="tag">'+esc(s)+'</span>'):'';
+  if(s==='在团') return '<span class="xh-badge ok">在团</span>';
+  if(s==='退团') return '<span class="xh-badge bad">退团</span>';
+  if(s==='休团') return '<span class="xh-badge neutral">休团</span>';
+  return s?('<span class="xh-badge neutral">'+esc(s)+'</span>'):'';
 }
 function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
@@ -320,9 +160,8 @@ function load(){
   fetch('/api/members?'+p.toString()).then(r=>r.json()).then(rows=>{
     const tb=$('tbody');
     $('count').textContent='共 '+rows.length+' 条';
-    if(!rows.length){tb.innerHTML='<tr><td colspan="13" class="empty">暂无成员，点「＋ 录入成员」开始录入</td></tr>';return;}
+    if(!rows.length){tb.innerHTML='<tr><td colspan="13" class="xh-empty">暂无成员，点「＋ 录入成员」开始录入</td></tr>';return;}
     tb.innerHTML=rows.map(r=>{
-      const op=editing;
       return '<tr>'+
         '<td class="xh">'+esc(r.xh)+'</td>'+
         '<td class="name">'+esc(r.name)+'</td>'+
@@ -331,14 +170,14 @@ function load(){
         '<td>'+(esc(r.college)||'—')+'</td>'+
         '<td>'+(esc(r.major)||'—')+'</td>'+
         '<td>'+(esc(r.phone)||'—')+'</td>'+
-        '<td>'+(esc(r.role)?'<span class="tag">'+esc(r.role)+'</span>':'—')+'</td>'+
+        '<td>'+(esc(r.role)?'<span class="xh-badge info">'+esc(r.role)+'</span>':'—')+'</td>'+
         '<td>'+(esc(r.dept)||'—')+'</td>'+
         '<td>'+(esc(r.position)||'—')+'</td>'+
         '<td>'+(esc(r.grade)||'—')+'</td>'+
         '<td>'+statusTag(r.status)+'</td>'+
-        '<td><span class="op" onclick="openForm(\''+esc(r.xh)+'\')">编辑</span>'+
-        '<span class="op del" onclick="del(\''+esc(r.xh)+'\')">删除</span>'+
-        (window._canLeave?'<span class="op" style="color:#B5860B" onclick="leave(\''+esc(r.xh)+'\',\''+esc(r.name)+'\')">离团</span>':'')+'</td>'+
+        '<td style="white-space:nowrap"><span class="xh-btn-text" onclick="openForm(\''+esc(r.xh)+'\')">编辑</span>'+
+        '<span class="xh-btn-text xh-danger-text" onclick="del(\''+esc(r.xh)+'\')">删除</span>'+
+        (window._canLeave?'<span class="xh-btn-text" style="color:var(--xh-warn)" onclick="leave(\''+esc(r.xh)+'\',\''+esc(r.name)+'\')">离团</span>':'')+'</td>'+
       '</tr>';
     }).join('');
   });
@@ -354,14 +193,13 @@ function openForm(xh){
     const row=[...document.querySelectorAll('#tbody tr')].find(tr=>tr.querySelector('.xh')&&tr.querySelector('.xh').textContent===xh);
     fetch('/api/members?q='+encodeURIComponent(xh)).then(r=>r.json()).then(rows=>{
       const r=rows.find(x=>x.xh===xh);if(!r)return;
-      editing=xh;$('mTitle').textContent='✎ 编辑 '+r.name;
+      editing=xh;$('mTitle').textContent='编辑 '+r.name;
       COLS.forEach(c=>{const el=$('f_'+c);if(el)el.value=r[c]||'';});
     });
   }
-  $('mask').classList.add('open');
+  XH.modal.open('mask');
 }
-function closeForm(){$('mask').classList.remove('open');editing=null;}
-$('mask').addEventListener('click',e=>{if(e.target===$('mask'))closeForm();});
+function closeForm(){XH.modal.close('mask');editing=null;}
 
 function save(){
   const d={};
@@ -397,11 +235,7 @@ function doImport(input){
   }).catch(()=>{toast('导入异常');input.value='';});
 }
 
-let toastTimer=null;
-function toast(msg){
-  const t=$('toast');t.textContent=msg;t.classList.add('show');
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
-}
+function toast(msg){XH.toast(msg);}
 function leave(xh,name){
   const reason=prompt('离团原因（选填）：');if(reason===null)return;
   fetch('/api/members/'+xh+'/leave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:reason||''})})
@@ -413,19 +247,10 @@ function showAlumni(){
   w.style.display='block';
   fetch('/api/alumni').then(r=>r.json()).then(rows=>{
     const tb=document.getElementById('alumniBody');
-    if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="empty">暂无离团记录</td></tr>';return;}
+    if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="xh-empty">暂无离团记录</td></tr>';return;}
     tb.innerHTML=rows.map(r=>'<tr><td>'+esc(r.xh)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.dept||'—')+'</td><td>'+esc(r.grade||'—')+'</td><td>'+esc(r.leave_date||'—')+'</td><td>'+esc(r.leave_reason||'—')+'</td></tr>').join('');
   });
 }
 </script>
-  <div style="max-width:1080px;margin:0 auto;padding:0 18px 30px">
-    <button class="btn ghost" onclick="showAlumni()" style="margin-bottom:12px">📋 离团记录</button>
-    <div id="alumniWrap" style="display:none;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden">
-      <div class="scroll"><table>
-        <thead><tr><th>学号</th><th>姓名</th><th>部门/团队</th><th>届别</th><th>离团日期</th><th>离团原因</th></tr></thead>
-        <tbody id="alumniBody"><tr><td colspan="6" class="empty">点击上方按钮加载</td></tr></tbody>
-      </table></div>
-    </div>
-  </div>
 </body>
 </html>

@@ -4,32 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>活动通报 · 星海工作端</title>
+<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
 <style>
-/* ================= 星海 · 暗夜星海设计框架 ================= */
+/* ===== 原版页面背景（保留，勿改动）：渐变底 + 光斑，本身即 fixed 定位 ===== */
 :root{
-  --bg:#0A0A0A; --surface:#141414; --raised:#1A1A1C;
-  --text:#F5F5F5; --muted:#8A8A8A;
-  --stroke:#1F1F1F; --stroke2:#2A2A2E;
-  --a1:#89AACC; --a2:#4E85BF;
-  --accent:linear-gradient(90deg,#89AACC 0%,#4E85BF 100%);
-  --glow:0 0 24px rgba(137,170,204,.16);
-  --ok:#7FD1A7; --warn:#E8C07A; --bad:#E08A8A; --red:#E08A8A; --accent-soft:#BCD4EA;
-  --font-body:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
-  --font-display:'Instrument Serif','Noto Serif SC','Songti SC','STSong',serif;
-  /* 旧变量兼容映射：保留变量名，值指向新令牌 */
-  --navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--card:#141414;
-  --grad-hero:linear-gradient(160deg,#0A0A0A 0%,#0D1320 45%,#101828 100%);
   --iride-1:rgba(78,133,191,.10);--iride-2:rgba(137,170,204,.08);--iride-3:rgba(78,133,191,.07);--iride-4:rgba(137,170,204,.06);--iride-5:rgba(78,133,191,.09);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{color-scheme:dark;}
-::selection{background:rgba(137,170,204,.35);}
-
-/* ===== Body 背景：暗夜星海 ===== */
 html body{
-  font-family:var(--font-body);
-  background:radial-gradient(120% 70% at 50% -12%,#11161F 0%,#0B0C10 48%,var(--bg) 100%);
-  color:var(--ink);line-height:1.7;min-height:100vh;
+  background:radial-gradient(120% 70% at 50% -12%,#11161F 0%,#0B0C10 48%,var(--xh-bg) 100%);
   position:relative;overflow-x:hidden;
 }
 html body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -40,155 +23,76 @@ html body::after{content:"";position:fixed;bottom:-140px;left:-100px;width:420px
   background:radial-gradient(circle,rgba(78,133,191,.08) 0%,transparent 70%);
   pointer-events:none;z-index:0;}
 
-/* ===== 顶部导航条：sticky 暗色玻璃 ===== */
-header{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:12px 24px;height:54px;
-  background:rgba(20,20,20,.85);
-  backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
-  border-bottom:1px solid var(--stroke);}
-.brand{font-weight:700;font-size:16px;color:var(--text);letter-spacing:.05em;display:flex;align-items:center;gap:6px;}
-.brand span{background-image:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;}
-.crumb{font-size:12.5px;color:var(--muted);}
-.crumb a{color:var(--blue);text-decoration:none;transition:color .2s;}
-.crumb a:hover{color:var(--accent-soft);}
-.user{margin-left:auto;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px;}
-.user b{color:var(--text);font-weight:600;}
-.user a{margin-left:12px;color:var(--blue);text-decoration:none;font-weight:600;padding:4px 12px;border-radius:999px;font-size:12.5px;border:1px solid var(--stroke2);transition:border-color .2s,color .2s,background .2s;}
-.user a:hover{border-color:var(--a1);color:var(--a1);background:rgba(137,170,204,.06);}
-/* ===== 主容器 ===== */
-.wrap{max-width:860px;margin:22px auto;padding:0 18px;}
-.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
-
-/* ===== 按钮：主按钮浅底深字，hover 反转 + 蓝光晕；次按钮透明底描边 ===== */
-.btn{border:none;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:700;cursor:pointer;
-  color:#0A0A0A;background:#F5F5F5;transition:all .25s;letter-spacing:.02em;}
-.btn:hover{background:#141414;color:#F5F5F5;box-shadow:inset 0 0 0 1px #2A2A2E,0 0 24px rgba(137,170,204,.16);transform:translateY(-1px);}
-.btn:active{transform:scale(.97);}
-.btn.gold{background-image:var(--accent);color:#0B1220;box-shadow:0 0 18px rgba(137,170,204,.12);}
-.btn.gold:hover{background-image:var(--accent);color:#0B1220;box-shadow:0 0 24px rgba(137,170,204,.28);transform:translateY(-1px);}
-.btn.ghost{background:transparent;color:var(--blue);border:1px solid #2A2A2E;box-shadow:none;}
-.btn.ghost:hover{border-color:#89AACC;color:#89AACC;background:rgba(137,170,204,.06);box-shadow:none;transform:none;}
-.btn.sm{padding:6px 14px;font-size:12px;}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
-.toggle{display:inline-flex;background:var(--surface);border:1px solid var(--stroke2);border-radius:999px;overflow:hidden;}
-.toggle button{border:none;background:transparent;padding:8px 16px;font-size:13px;cursor:pointer;color:var(--muted);font-weight:600;transition:color .2s,background .2s;}
-.toggle button:hover{color:var(--text);}
-.toggle button.on{background-image:var(--accent);color:#0A0A0A;}
-.count{font-size:12.5px;color:var(--sub);margin-left:auto;}
-/* ===== 表单面板：暗色卡片 ===== */
-.form{display:none;background:var(--surface);border:1px solid var(--stroke);border-radius:20px;padding:18px 20px;margin-bottom:16px;box-shadow:0 18px 44px rgba(0,0,0,.35);}
-.form.open{display:block;}
-.fld{display:flex;flex-direction:column;margin-bottom:12px;}
-.fld label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:5px;letter-spacing:.04em;}
-/* 必填星号为 HTML 内联红色，样式表压制为危险色令牌 */
-.fld label span{color:var(--red) !important;}
-.fld input,.fld select,.fld textarea{padding:10px 12px;border:1px solid #2A2A2E;border-radius:12px;font-size:13px;font-family:inherit;background:#0A0A0A;color:var(--ink);outline:none;transition:border-color .2s,background .2s;}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--a1);background:#0E0E10;box-shadow:0 0 0 3px rgba(137,170,204,.10);}
-.fld textarea{resize:vertical;min-height:90px;}
-.row2{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
-.chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink);cursor:pointer;}
-.chk input{width:16px;height:16px;accent-color:#89AACC;}
-.err{color:var(--bad);font-size:12px;margin:8px 0 0;min-height:14px;}
-.mfoot{display:flex;gap:10px;margin-top:6px;}
-.mfoot .btn{flex:1;}
-
-/* ===== 通报列表：卡片流 ===== */
-.list{display:flex;flex-direction:column;gap:12px;}
-.post{background:var(--surface);border:1px solid var(--stroke);border-radius:20px;padding:15px 17px;box-shadow:0 10px 30px rgba(0,0,0,.3);position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s;}
-.post::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background-image:var(--accent);opacity:.25;transition:opacity .25s;}
-.post:hover{transform:translateY(-3px);border-color:#2A2A2E;box-shadow:0 18px 44px rgba(0,0,0,.4);}
-.post:hover::before{opacity:.7;}
-.post.pin{border-color:rgba(137,170,204,.42);box-shadow:0 14px 36px rgba(0,0,0,.45),0 0 24px rgba(137,170,204,.12);}
-.post.pin::before{opacity:1;}
-.post .top{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex-wrap:wrap;}
-.post .tt{font-weight:600;font-size:15.5px;color:var(--text);letter-spacing:.01em;}
-.post .pinbadge{font-size:11px;font-weight:700;color:#0B1220;background-image:var(--accent);padding:3px 11px;border-radius:999px;letter-spacing:.04em;}
-.post .lv{font-size:11px;font-weight:600;padding:3px 11px;border-radius:999px;border:1px solid transparent;}
-.post .lv.urg{background:rgba(224,138,138,.08);color:#E08A8A;border-color:rgba(224,138,138,.28);}
-.post .lv.imp{background:rgba(232,192,122,.08);color:#E8C07A;border-color:rgba(232,192,122,.28);}
-.post .lv.nor{background:rgba(137,170,204,.10);color:#BCD4EA;border-color:rgba(137,170,204,.35);}
-.post .body{font-size:13.5px;color:var(--ink);line-height:1.75;white-space:pre-wrap;word-break:break-word;}
-.post .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-.post .op{color:var(--bad);cursor:pointer;text-decoration:none;font-weight:600;font-size:12px;padding:3px 10px;border-radius:8px;border:1px solid rgba(224,138,138,.22);transition:all .2s;}
-.post .op:hover{background:rgba(224,138,138,.08);border-color:rgba(224,138,138,.32);}
-
-
-.empty{text-align:center;color:#5A5A60;padding:36px;font-size:13px;}
-.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);
-  background:rgba(26,26,28,.92);backdrop-filter:blur(12px);border:1px solid #2A2A2E;color:#F5F5F5;
-  padding:11px 20px;border-radius:999px;font-size:13.5px;opacity:0;transition:.3s ease;z-index:90;pointer-events:none;
-  box-shadow:0 14px 36px rgba(0,0,0,.5),0 0 24px rgba(137,170,204,.10);}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* iOS 安全区 + 三端触控优化 */
-*{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
-body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
-button,a,.clickable{min-height:44px;}
-input,select,textarea{font-size:16px !important;}
-@media(max-width:480px){
-  body{font-size:14px;line-height:1.6;}
-  .wrap{padding:0 14px;}
-  section{padding:40px 0;}
-  .sec-head h2{font-size:21px;}
-  .sec-head .kicker{font-size:10.5px;}
-}
-
-@media(max-width:480px){
-  .grid2{grid-template-columns:1fr!important;}
-  .grid.g2{grid-template-columns:1fr!important;}
-  .grid.g3{grid-template-columns:1fr!important;}
-  .grid.g4{grid-template-columns:1fr 1fr!important;}
-  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .scroll table{font-size:11px;min-width:560px;}
-  .scroll th,.scroll td{padding:6px 7px;}
-  header{padding:10px 14px;gap:8px;flex-wrap:wrap;}
-  .brand{font-size:14px;}
-  .user{font-size:12px;}
-  .bar{flex-direction:column;gap:8px;}
-  .bar .grow{width:100%;}
-  .btn{width:100%;text-align:center;}
-  .fld input,.fld select,.fld textarea{font-size:16px !important;padding:10px 10px;}
-  .fld label{font-size:11.5px;}
-  .form{padding:16px 14px !important;}
-  .modal{width:95% !important;max-width:none !important;padding:20px 16px !important;margin:10px auto !important;border-radius:14px !important;}
-  .card{padding:16px !important;}
-  .err{font-size:11.5px;}
-  .toggle{width:100%;justify-content:center;}
-  .toggle button{padding:8px 12px;font-size:12px;}
-  .empty{padding:24px !important;font-size:12px;}
-}
+  /* 页面特有：发布表单开合 + 通报卡片流 */
+  .pub-form{display:none;margin-bottom:16px;}
+  .pub-form.open{display:block;animation:xh-fade-in var(--xh-t-mid) var(--xh-ease);}
+  .post{
+    transition:transform var(--xh-t-mid) var(--xh-ease),border-color var(--xh-t-mid),box-shadow var(--xh-t-mid);
+  }
+  .post:hover{transform:translateY(-3px);border-color:rgba(137,170,204,.35);box-shadow:var(--xh-shadow),var(--xh-glow);}
+  .post.pin{border-color:rgba(137,170,204,.45);box-shadow:var(--xh-shadow),var(--xh-glow);}
+  .post.pin::before{opacity:1;}
+  .post .top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap;}
+  .post .tt{font-weight:600;font-size:15.5px;color:var(--xh-text);letter-spacing:.01em;}
+  .post .body{font-size:13.5px;color:var(--xh-text);line-height:1.75;white-space:pre-wrap;word-break:break-word;}
+  .post .meta{font-size:12px;color:var(--xh-muted);margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .list{display:flex;flex-direction:column;gap:12px;}
+  .f-err{color:var(--xh-bad);font-size:12px;min-height:14px;}
 </style>
-<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="brand">星海<span>·</span>工作端</div>
-  <div class="crumb"><a href="/work">总览</a> / 活动通报</div>
-  <div class="user">你好，<b id="uname">—</b>（<span id="urole">—</span>） <a href="/logout">登出</a></div>
+<header class="xh-topbar">
+  <a class="xh-topbar-brand" href="/work"><img src="/static/uploads/logo.png" alt="">星海<em>工作端</em></a>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" href="#" onclick="history.back();return false">← 返回</a>
+  <div class="xh-topbar-crumb"><a href="/work">总览</a> / 活动通报</div>
+  <div class="xh-topbar-spacer"></div>
+  <div class="xh-topbar-user">你好，<b id="uname">—</b><span class="xh-role" id="urole">—</span><a class="xh-btn-text" href="/logout">登出</a></div>
 </header>
 
-<div class="wrap">
-  <div class="bar">
-    <button class="btn" onclick="document.getElementById('form').classList.toggle('open')">＋ 发布通报</button>
-    <span class="count" id="count">—</span>
+<main class="xh-page xh-page-narrow">
+  <div class="xh-page-head">
+    <h1 class="xh-page-title">活动通报</h1>
+    <div class="xh-page-sub">面向全体成员的通知发布，支持置顶与重要级别</div>
   </div>
 
-  <div class="form" id="form">
-    <div class="fld"><label>标题 <span style="color:#C0392B">*</span></label><input id="f_title" placeholder="如 9月迎新晚会彩排通知"></div>
-    <div class="fld"><label>内容 <span style="color:#C0392B">*</span></label><textarea id="f_body" placeholder="时间、地点、注意事项…"></textarea></div>
-    <div class="row2">
-      <div class="fld" style="margin:0;"><label>级别</label>
-        <select id="f_level"><option>普通</option><option>重要</option><option>紧急</option></select></div>
-      <label class="chk"><input type="checkbox" id="f_pinned"> 📌 置顶</label>
+  <div class="xh-toolbar">
+    <button class="xh-btn xh-btn-primary" onclick="document.getElementById('form').classList.toggle('open')"><i data-lucide="plus"></i>发布通报</button>
+    <div class="xh-toolbar-spacer"></div>
+    <span class="xh-count" id="count">—</span>
+  </div>
+
+  <section class="xh-panel pub-form" id="form">
+    <div class="xh-panel-bd">
+      <div class="xh-field">
+        <label for="f_title">标题<span class="xh-req">*</span></label>
+        <input id="f_title" class="xh-input" placeholder="如 9月迎新晚会彩排通知">
+      </div>
+      <div class="xh-field" style="margin-top:12px">
+        <label for="f_body">内容<span class="xh-req">*</span></label>
+        <textarea id="f_body" class="xh-input" placeholder="时间、地点、注意事项…"></textarea>
+      </div>
+      <div class="xh-row" style="margin-top:14px">
+        <div class="xh-field" style="width:160px">
+          <label for="f_level">级别</label>
+          <select id="f_level" class="xh-input"><option>普通</option><option>重要</option><option>紧急</option></select>
+        </div>
+        <label class="xh-check" style="margin-top:20px"><input type="checkbox" id="f_pinned"> 置顶</label>
+      </div>
+      <div class="f-err" id="fErr" style="margin-top:6px"></div>
+      <div class="xh-row" style="justify-content:flex-end;margin-top:8px">
+        <button class="xh-btn xh-btn-ghost" onclick="document.getElementById('form').classList.remove('open')">取消</button>
+        <button class="xh-btn xh-btn-primary" id="saveBtn" onclick="save()">发布</button>
+      </div>
     </div>
-    <div class="err" id="fErr"></div>
-    <div class="mfoot"><button class="btn ghost" onclick="document.getElementById('form').classList.remove('open')">取消</button>
-      <button class="btn" id="saveBtn" onclick="save()">发布</button></div>
-  </div>
+  </section>
 
-  <div class="list" id="list"><div class="empty">加载中…</div></div>
-</div>
+  <div class="list xh-section-gap" id="list"><div class="xh-empty">加载中…</div></div>
+</main>
 
-<div class="toast" id="toast"></div>
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script src="/static/js/ui.js"></script>
 <script>
 let uid='',role='';
 const $=id=>document.getElementById(id);
@@ -197,25 +101,27 @@ fetch('/api/me').then(r=>r.json()).then(d=>{
   $('uname').textContent=d.name;$('urole').textContent=d.role;uid=d.uid;role=d.role;load();
 });
 function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-function lvTag(l){return l==='紧急'?'<span class="lv urg">紧急</span>':l==='重要'?'<span class="lv imp">重要</span>':'<span class="lv nor">普通</span>';}
-function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function lvTag(l){return l==='紧急'?'<span class="xh-badge bad">紧急</span>':l==='重要'?'<span class="xh-badge warn">重要</span>':'<span class="xh-badge info">普通</span>';}
+function toast(m){XH.toast(m);}
 
 function load(){
   fetch('/api/bulletin').then(r=>r.json()).then(rows=>{
     $('count').textContent='共 '+rows.length+' 条';
     const list=$('list');
-    if(!rows.length){list.innerHTML='<div class="empty">暂无通报，点「发布通报」发布第一条</div>';return;}
+    if(!rows.length){list.innerHTML='<div class="xh-empty">暂无通报，点「发布通报」发布第一条</div>';return;}
     list.innerHTML=rows.map(r=>{
       const isOwner=(r.author_xh===uid);
       const isAppr=(role==='主席'||role==='副主席');
-      let op = (isOwner||isAppr) ? '<span class="op" onclick="del('+r.id+')">删除</span>' : '';
-      return '<div class="post'+(r.pinned?' pin':'')+'">'+
+      let op = (isOwner||isAppr) ? '<span class="xh-btn-text xh-danger-text" onclick="del('+r.id+')">删除</span>' : '';
+      return '<article class="xh-panel post'+(r.pinned?' pin':'')+'">'+
+        '<div class="xh-panel-bd">'+
         '<div class="top"><span class="tt">'+esc(r.title)+'</span>'+
-        (r.pinned?'<span class="pinbadge">置顶</span>':'')+lvTag(r.level)+'</div>'+
+        (r.pinned?'<span class="xh-badge info xh-ico"><i data-lucide="pin"></i>置顶</span>':'')+lvTag(r.level)+'</div>'+
         '<div class="body">'+esc(r.body)+'</div>'+
-        '<div class="meta"><span>📝 '+esc(r.author)+'</span><span>🕒 '+(esc(r.created)||'—')+'</span>'+(op?'<span style="margin-left:auto">'+op+'</span>':'')+'</div>'+
-      '</div>';
+        '<div class="meta"><span>'+esc(r.author)+'</span><span class="xh-num">'+(esc(r.created)||'—')+'</span>'+(op?'<span style="margin-left:auto">'+op+'</span>':'')+'</div>'+
+        '</div></article>';
     }).join('');
+    XH.icons();
   });
 }
 function save(){

@@ -4,170 +4,149 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>星海艺术团 · 内容管理</title>
+<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
 <style>
-        :root{--navy:#F5F5F5;--blue:#89AACC;--gold:#89AACC;--gold-2:#C2D8EC;--ink:#F5F5F5;--sub:#8A8A8A;--line:#1F1F1F;--bg:#0A0A0A;--card:#141414;--ok:#7FD1A7;--warn:#E8C07A;--bad:#E08A8A;--red:#E08A8A;--accent-soft:#BCD4EA;--font-body:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;--font-display:'Instrument Serif','Noto Serif SC','Songti SC','STSong',serif;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:var(--font-body);background:radial-gradient(110% 70% at 50% -10%,#10151C 0%,#0A0A0C 55%,#070708 100%);color:var(--ink);line-height:1.6;padding-bottom:40px;position:relative;}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 15% 20%,rgba(78,133,191,.10),transparent 42%),radial-gradient(circle at 85% 50%,rgba(137,170,204,.07),transparent 42%),radial-gradient(circle at 50% 85%,rgba(78,133,191,.06),transparent 40%);}
-  header{position:sticky;top:0;z-index:50;background:rgba(20,20,20,.88);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
-  header .logo{font-weight:800;color:var(--navy);letter-spacing:1px;font-size:16px;}
-  header .logo span{color:var(--gold);}
-  header .key{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);}
-  header .key input{padding:8px 11px;border:1px solid #2A2A2E;border-radius:10px;font-size:13px;width:150px;outline:none;background:#0A0A0A;color:var(--ink);}
-  header .key input:focus{border-color:var(--blue);}
-  .save-btn{margin-left:auto;background:#F5F5F5;color:#0A0A0A;border:none;border-radius:999px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;transition:.25s;}
-  .save-btn:hover{background:#0A0A0A;color:#F5F5F5;box-shadow:inset 0 0 0 1px #2A2A2E,0 0 24px rgba(137,170,204,.16);}
-  .save-btn:disabled{opacity:.6;}
-  .status{font-size:12.5px;width:100%;min-height:16px;}
-  .status.ok{color:#7FD1A7;} .status.err{color:#E08A8A;}
-  .wrap{max-width:860px;margin:0 auto;padding:0 20px;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px;margin-top:20px;box-shadow:0 18px 44px rgba(0,0,0,.4);}
-  .card h2{font-size:17px;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-  .card h2::before{content:"";width:5px;height:18px;background:linear-gradient(90deg,#89AACC,#4E85BF);border-radius:3px;}
-  .card .hint{font-size:12px;color:var(--sub);margin-bottom:16px;}
-  .field{margin-bottom:16px;}
-  .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
-  .field textarea,.field input[type=text]{width:100%;border:1px solid #2A2A2E;border-radius:12px;padding:11px 13px;font-size:13.5px;font-family:inherit;background:#0A0A0A;color:var(--ink);outline:none;resize:vertical;}
-  .field textarea:focus,.field input:focus{border-color:var(--blue);background:#0E0E10;}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  /* 页面特有：顶栏密码框/状态 + CMS 专属编辑组件（JS 动态生成依赖这些类名，保留命名） */
+  .status{font-size:12.5px;flex-basis:100%;min-height:16px;}
+  .status.ok{color:var(--xh-ok);}
+  .status.err{color:var(--xh-bad);}
+  .key{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--xh-muted);}
+  .key .xh-input{width:150px;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;min-width:0;}
+  .field label{font-size:12px;font-weight:600;color:var(--xh-muted);letter-spacing:.04em;}
+  .field textarea,.field input[type=text]{width:100%;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
   .up-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-  .up-card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
-  .up-card .up-name{font-size:14px;font-weight:700;color:var(--navy);}
-  .up-btn{background:linear-gradient(90deg,#89AACC,#4E85BF);color:#0A0F14;font-weight:700;border-radius:999px;padding:8px 16px;font-size:12.5px;cursor:pointer;user-select:none;transition:.2s;}
-  .up-prev{min-height:96px;display:flex;align-items:center;justify-content:center;}
-  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1px solid #2A2A2E;}
-  .up-del{background:none;border:1px solid rgba(224,138,138,.35);color:#E08A8A;border-radius:999px;padding:5px 14px;font-size:12px;cursor:pointer;transition:.2s;}
+  .up-card{
+    display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;
+    background:rgba(10,12,16,.45);border:1px solid var(--xh-stroke-2);border-radius:16px;padding:14px;
+  }
+  .up-card .up-name{font-size:14px;font-weight:700;color:var(--xh-text);}
+  .up-btn{
+    background-image:var(--xh-accent);color:#0A0F16;font-weight:700;border:none;
+    border-radius:999px;padding:8px 16px;font-size:12.5px;cursor:pointer;user-select:none;
+    transition:filter var(--xh-t-fast),box-shadow var(--xh-t-fast);
+  }
+  .up-btn:hover{filter:brightness(1.1);box-shadow:0 3px 14px rgba(78,133,191,.35);}
+  .up-prev{min-height:96px;display:flex;align-items:center;justify-content:center;width:100%;}
+  .up-prev img{max-width:120px;max-height:120px;border-radius:8px;border:1px solid var(--xh-glass-border);}
+  .up-del{
+    background:none;border:1px solid rgba(224,108,108,.35);color:var(--xh-red);
+    border-radius:999px;padding:5px 14px;font-size:12px;cursor:pointer;
+    font-family:inherit;transition:all var(--xh-t-fast);
+  }
+  .up-del:hover{background:rgba(224,108,108,.12);border-color:rgba(224,108,108,.55);}
   .consult-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
   .consult-box .up-prev{min-height:160px;min-width:160px;}
-  footer{text-align:center;font-size:12px;color:var(--sub);margin-top:30px;}
-  /* 压制 HTML 内联浅色：orgEditor 文本域 + 返回链接 */
-  #orgEditor{background:#0A0A0A!important;border-color:#2A2A2E!important;color:var(--ink)!important;}
-  header .key a{color:#89AACC!important;}
+  #orgEditor{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;}
   @media(max-width:640px){.grid2,.up-grid{grid-template-columns:1fr;}}
-
-  *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
-  body{padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
-  button,a,.clickable{min-height:44px;}
-  input,select,textarea{font-size:16px!important;}
-  @media(max-width:480px){
-    body{font-size:14px;line-height:1.6;}
-    .wrap{padding:0 14px;}
-    section{padding:40px 0;}
-    .sec-head h2{font-size:21px;}
-    .sec-head .kicker{font-size:10.5px;}
-  }
-
-  @media(max-width:480px){
-    .grid2{grid-template-columns:1fr!important;}
-    .grid.g2{grid-template-columns:1fr!important;}
-    .grid.g3{grid-template-columns:1fr!important;}
-    .grid.g4{grid-template-columns:1fr 1fr!important;}
-    .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-    table{font-size:11px;min-width:560px;}
-    th,td{padding:6px 7px;}
-    header{padding:10px 14px;gap:8px;flex-wrap:wrap;}
-    .brand{font-size:14px;}
-    .bar{flex-direction:column;gap:8px;}
-    .bar .grow{width:100%;}
-    .btn{width:100%;text-align:center;}
-    .fld input,.fld select,.fld textarea{font-size:16px!important;padding:10px 10px;}
-    .fld label{font-size:11.5px;}
-    .form{padding:16px 14px!important;}
-    .modal{width:95%!important;max-width:none!important;padding:20px 16px!important;margin:10px auto!important;border-radius:14px!important;}
-    .card{padding:16px!important;}
-    .err{font-size:11.5px;}
-    .toggle{width:100%;justify-content:center;}
-    .toggle button{padding:8px 12px;font-size:12px;}
-    .empty{padding:24px!important;font-size:12px;}
-  }
-
 </style>
-<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="logo">星海艺术团内容管理</div>
-  <div class="key">管理密码 <input id="keyInput" type="text" value="xinghai2026"> <a href="#" onclick="history.back();return false" style="color:#2B579A;font-size:12.5px;text-decoration:none;font-weight:600;margin-right:8px">← 返回</a></div>
-  <button class="save-btn" id="saveBtn" onclick="save()">💾 保存全部修改</button>
+<header class="xh-topbar">
+  <a class="xh-topbar-brand" href="/work"><img src="/static/uploads/logo.png" alt="">星海<em>内容管理</em></a>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" href="#" onclick="history.back();return false">← 返回</a>
+  <div class="key">管理密码 <input id="keyInput" class="xh-input" type="text" value="xinghai2026"></div>
+  <div class="xh-topbar-spacer"></div>
+  <button class="xh-btn xh-btn-primary" id="saveBtn" onclick="save()">保存全部修改</button>
   <div class="status" id="status"></div>
 </header>
 
-<div class="wrap">
-  <!-- 基础文案 -->
-  <div class="card">
-    <h2>基础文案</h2>
-    <div class="hint">修改后点右上角「保存全部修改」生效。留空 = 沿用招新网页当前默认文案。</div>
-    <div class="field">
-      <label>Hero 欢迎语（封面大字下方那段话，可用 &lt;br&gt; 换行、&lt;b&gt;加粗）</label>
-      <textarea id="hero_welcome" rows="4"></textarea>
-    </div>
-    <div class="grid2">
-      <div class="field"><label>加入理由 · 第1条</label><textarea id="b0" rows="2"></textarea></div>
-      <div class="field"><label>加入理由 · 第2条</label><textarea id="b1" rows="2"></textarea></div>
-      <div class="field"><label>加入理由 · 第3条</label><textarea id="b2" rows="2"></textarea></div>
-      <div class="field"><label>加入理由 · 第4条</label><textarea id="b3" rows="2"></textarea></div>
-      <div class="field"><label>指导老师 · 魏启旦 简介</label><textarea id="t_wei" rows="3"></textarea></div>
-      <div class="field"><label>指导老师 · 戴旭彤 简介</label><textarea id="t_dai" rows="2"></textarea></div>
-    </div>
-    <div class="field">
-      <label>页脚文案（可用 &lt;br&gt; 换行）</label>
-      <textarea id="footer" rows="2"></textarea>
-    </div>
-  </div>
+<main class="xh-page xh-page-narrow" style="padding-top:8px">
 
-  <!-- 咨询群二维码 -->
-  <div class="card">
-    <h2>招新咨询群二维码</h2>
-    <div class="hint">放在网页最下方「扫码加入招新咨询群」位置。</div>
-    <div class="consult-box">
-      <div class="up-prev" id="consultPrev"></div>
-      <div>
-        <input type="file" id="consultInp" accept="image/*" style="display:none">
-        <button class="up-btn" onclick="document.getElementById('consultInp').click()">上传咨询群二维码</button>
-        <div style="margin-top:10px;"><button class="up-del" onclick="delConsult()">移除</button></div>
+  <!-- 基础文案 -->
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>基础文案</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">修改后点右上角「保存全部修改」生效。留空 = 沿用招新网页当前默认文案。</div>
+      <div class="field">
+        <label>Hero 欢迎语（封面大字下方那段话，可用 &lt;br&gt; 换行、&lt;b&gt;加粗）</label>
+        <textarea id="hero_welcome" class="xh-input" rows="4"></textarea>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>加入理由 · 第1条</label><textarea id="b0" class="xh-input" rows="2"></textarea></div>
+        <div class="field"><label>加入理由 · 第2条</label><textarea id="b1" class="xh-input" rows="2"></textarea></div>
+        <div class="field"><label>加入理由 · 第3条</label><textarea id="b2" class="xh-input" rows="2"></textarea></div>
+        <div class="field"><label>加入理由 · 第4条</label><textarea id="b3" class="xh-input" rows="2"></textarea></div>
+        <div class="field"><label>指导老师 · 魏启旦 简介</label><textarea id="t_wei" class="xh-input" rows="3"></textarea></div>
+        <div class="field"><label>指导老师 · 戴旭彤 简介</label><textarea id="t_dai" class="xh-input" rows="2"></textarea></div>
+      </div>
+      <div class="field">
+        <label>页脚文案（可用 &lt;br&gt; 换行）</label>
+        <textarea id="footer" class="xh-input" rows="2"></textarea>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- 咨询群二维码 -->
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>招新咨询群二维码</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">放在网页最下方「扫码加入招新咨询群」位置。</div>
+      <div class="consult-box">
+        <div class="up-prev" id="consultPrev"></div>
+        <div>
+          <input type="file" id="consultInp" accept="image/*" style="display:none">
+          <button class="up-btn" onclick="document.getElementById('consultInp').click()">上传咨询群二维码</button>
+          <div style="margin-top:10px;"><button class="up-del" onclick="delConsult()">移除</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- 团队招新群二维码 -->
-  <div class="card">
-    <h2>各团队 / 部门 招新群二维码</h2>
-    <div class="hint">报名某团队成功后，会自动弹出对应团队的群码（未设置则提示留意咨询群）。</div>
-    <div class="up-grid" id="teamQrGrid"></div>
-  </div>
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>各团队 / 部门 招新群二维码</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">报名某团队成功后，会自动弹出对应团队的群码（未设置则提示留意咨询群）。</div>
+      <div class="up-grid" id="teamQrGrid"></div>
+    </div>
+  </section>
 
   <!-- 团队简介 -->
-  <div class="card">
-    <h2>各团队 / 部门 简介文案</h2>
-    <div class="hint">对应招新网页上每个卡片下方那句介绍。</div>
-    <div class="grid2" id="descGrid"></div>
-  </div>
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>各团队 / 部门 简介文案</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">对应招新网页上每个卡片下方那句介绍。</div>
+      <div class="grid2" id="descGrid"></div>
+    </div>
+  </section>
 
   <!-- 首页轮播 -->
-  <div class="card">
-    <h2>首页轮播图</h2>
-    <div class="hint">管理首页「精彩活动」轮播（不限数量）。图片建议尺寸一致。保存后刷新官网首页即可生效。</div>
-    <div id="scItems"></div>
-    <button class="up-btn" onclick="addSC()" style="margin-top:10px">＋ 添加轮播项</button>
-  </div>
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>首页轮播图</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">管理首页「精彩活动」轮播（不限数量）。图片建议尺寸一致。保存后刷新官网首页即可生效。</div>
+      <div id="scItems"></div>
+      <button class="up-btn" onclick="addSC()" style="margin-top:10px"><i data-lucide="plus"></i>添加轮播项</button>
+    </div>
+  </section>
 
   <!-- 组织架构（CMS 可编辑） -->
-  <div class="card">
-    <h2>组织架构 · 人事信息</h2>
-    <div class="hint">编辑主席团 / 表演团队 / 行政部门的信息。使用 <b>JSON 格式</b>，修改后点右上角保存全部即可。</div>
-    <textarea id="orgEditor" rows="12" style="width:100%;border:1.5px solid #DDE2EC;border-radius:11px;padding:11px 13px;font-size:12.5px;font-family:monospace;background:#FBFCFE;outline:none;resize:vertical"></textarea>
-    <div style="font-size:11px;color:var(--sub);margin-top:6px">字段结构：chairman、vice_pudong、vice_songjiang、perform_teams、admin_teams。每条含 ico/name(title)/desc。</div>
-  </div>
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>组织架构 · 人事信息</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">编辑主席团 / 表演团队 / 行政部门的信息。使用 <b>JSON 格式</b>，修改后点右上角保存全部即可。</div>
+      <textarea id="orgEditor" class="xh-input" rows="12" style="width:100%"></textarea>
+      <div style="font-size:11px;color:var(--xh-muted);margin-top:6px">字段结构：chairman、vice_pudong、vice_songjiang、perform_teams、admin_teams。每条含 ico/name(title)/desc。</div>
+    </div>
+  </section>
 
   <!-- 小星知识库 -->
-  <div class="card">
-    <h2>小星知识库（AI 答疑素材）</h2>
-    <div class="hint">小星回答访客时从这里<b>智能匹配</b>。可随时添加 / 修改 / 删除条目：<b>关键词</b>用逗号分隔，命中任一即回复对应答案（支持同义词）。</div>
-    <div id="kbList"></div>
-    <button class="up-btn" onclick="addKB()" style="margin-top:14px">＋ 添加一条</button>
-  </div>
+  <section class="xh-panel xh-section-gap">
+    <div class="xh-panel-hd"><h3>小星知识库（AI 答疑素材）</h3></div>
+    <div class="xh-panel-bd">
+      <div class="xh-page-sub" style="margin:0 0 16px">小星回答访客时从这里<b>智能匹配</b>。可随时添加 / 修改 / 删除条目：<b>关键词</b>用逗号分隔，命中任一即回复对应答案（支持同义词）。</div>
+      <div id="kbList"></div>
+      <button class="up-btn" onclick="addKB()" style="margin-top:14px"><i data-lucide="plus"></i>添加一条</button>
+    </div>
+  </section>
 
-  <footer>修改保存到内容库后，刷新招新网页即可看到效果。</footer>
-</div>
+  <footer style="text-align:center;font-size:12px;color:var(--xh-muted);margin-top:30px">修改保存到内容库后，刷新招新网页即可看到效果。</footer>
+</main>
 
 <script>
   const TEAMS=[
@@ -223,12 +202,12 @@
     inp.addEventListener('change',async()=>{
       if(!inp.files[0])return;inp.disabled=true;
       try{const url=await uploadFile(inp.files[0]);state.team_qr[name]=url;preview(url,prev);}
-      catch(e){status('❌ 上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
+      catch(e){status('上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
     });
     del.addEventListener('click',()=>{delete state.team_qr[name];preview('',prev);});
 
     const d=document.createElement('div');d.className='field';
-    d.innerHTML='<label>'+name+'</label><textarea class="desc" rows="2"></textarea>';
+    d.innerHTML='<label>'+name+'</label><textarea class="desc xh-input" rows="2"></textarea>';
     descWrap.appendChild(d);d._name=name;
   });
 
@@ -237,7 +216,7 @@
   consultInp.addEventListener('change',async()=>{
     if(!consultInp.files[0])return;consultInp.disabled=true;
     try{const url=await uploadFile(consultInp.files[0]);state.consult_qr=url;preview(url,consultPrev);}
-    catch(e){status('❌ 上传失败：'+e.message,'err');}finally{consultInp.disabled=false;consultInp.value='';}
+    catch(e){status('上传失败：'+e.message,'err');}finally{consultInp.disabled=false;consultInp.value='';}
   });
   function delConsult(){state.consult_qr='';preview('',consultPrev);}
 
@@ -256,7 +235,7 @@
     });
   }).catch(()=>{});
 
-  function parseOrg(){try{const v=document.getElementById('orgEditor').value;return v?JSON.parse(v):null;}catch(e){status('❌ 组织架构JSON格式错误：'+e.message,'err');throw e;}}
+  function parseOrg(){try{const v=document.getElementById('orgEditor').value;return v?JSON.parse(v):null;}catch(e){status('组织架构JSON格式错误：'+e.message,'err');throw e;}}
 
   async function save(){
     const payload={
@@ -272,33 +251,33 @@
     try{
       const r=await fetch('/api/content?key='+encodeURIComponent(KEY.value),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();
-      if(r.ok&&d.ok)status('✅ 已保存，刷新招新网页即可生效','ok');
-      else status('❌ '+(d.error||'保存失败（密码错误？）'),'err');
-    }catch(e){status('❌ 网络异常','err');}
-    btn.disabled=false;btn.textContent='💾 保存全部修改';
+      if(r.ok&&d.ok)status('已保存，刷新招新网页即可生效','ok');
+      else status((d.error||'保存失败（密码错误？）'),'err');
+    }catch(e){status('网络异常','err');}
+    btn.disabled=false;btn.textContent='保存全部修改';
   }
   function renderSC(){
     const w=document.getElementById('scItems');
-    w.innerHTML=state.carousel.map((s,i)=>`<div style="background:#141414;border:1px solid #1F1F1F;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+    w.innerHTML=state.carousel.map((s,i)=>`<div style="background:rgba(10,12,16,.45);border:1px solid var(--xh-stroke-2);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
       <div style="flex:0 0 100px;text-align:center">
         <div class="up-prev" style="min-height:70px">${s.img?'<img src="'+s.img+'" style="max-width:100px;max-height:70px;border-radius:6px">':'<span style="color:#9aa3b0;font-size:11px">未上传</span>'}</div>
         <input type="file" accept="image/*" style="display:none" onchange="upSCImg(${i},this)">
         <button class="up-del" onclick="this.previousElementSibling.click()" style="margin-top:4px;font-size:10px">上传图片</button>
       </div>
       <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:4px">
-        <input value="${(s.tag||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].tag=this.value" placeholder="标签（如 舞蹈专场）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
-        <input value="${(s.title||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].title=this.value" placeholder="标题" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
-        <input value="${(s.desc||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].desc=this.value" placeholder="描述" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
-        <input value="${(s.link||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].link=this.value" placeholder="链接（#honor 或 /recruit）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
-        <input value="${(s.linkText||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].linkText=this.value" placeholder="链接文字（查看荣誉）" style="padding:5px 7px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:6px;font-size:11.5px">
+        <input value="${(s.tag||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].tag=this.value" placeholder="标签（如 舞蹈专场）" style="padding:6px 9px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:11.5px;font-family:inherit">
+        <input value="${(s.title||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].title=this.value" placeholder="标题" style="padding:6px 9px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:11.5px;font-family:inherit">
+        <input value="${(s.desc||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].desc=this.value" placeholder="描述" style="padding:6px 9px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:11.5px;font-family:inherit">
+        <input value="${(s.link||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].link=this.value" placeholder="链接（#honor 或 /recruit）" style="padding:6px 9px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:11.5px;font-family:inherit">
+        <input value="${(s.linkText||'').replace(/"/g,'&quot;')}" onchange="state.carousel[${i}].linkText=this.value" placeholder="链接文字（查看荣誉）" style="padding:6px 9px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:11.5px;font-family:inherit">
       </div>
-      <button class="up-del" onclick="state.carousel.splice(${i},1);renderSC()">✕</button>
+      <button class="up-del" onclick="state.carousel.splice(${i},1);renderSC()">×</button>
     </div>`).join('');
   }
   async function upSCImg(i,inp){
     if(!inp.files[0])return;inp.disabled=true;
     try{const url=await uploadFile(inp.files[0]);state.carousel[i].img=url;renderSC();}
-    catch(e){status('❌ 上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
+    catch(e){status('上传失败：'+e.message,'err');}finally{inp.disabled=false;inp.value='';}
   }
   function addSC(){state.carousel.push({img:'',tag:'',title:'',desc:'',link:'',linkText:''});renderSC();}
 
@@ -307,7 +286,7 @@
   let kbData=[];
   async function loadKB(){
     try{const r=await fetch('/api/kb');kbData=await r.json();renderKB();}
-    catch(e){kbList.innerHTML='<div style="color:#E08A8A;font-size:12px">加载失败</div>';}
+    catch(e){kbList.innerHTML='<div style="color:var(--xh-bad);font-size:12px">加载失败</div>';}
   }
   function renderKB(){
     if(!kbData.length){kbList.innerHTML='<div style="color:#9aa3b0;font-size:12px;padding:6px 0">暂无条目</div>';return;}
@@ -315,14 +294,14 @@
       const isNew=k.id==='new';
       const kw=isNew?'':(k.keywords||[]).join(',');
       const ans=isNew?'':(k.answer||'');
-      return `<div style="background:#141414;border:1px solid #1F1F1F;border-radius:12px;padding:12px;margin-bottom:10px">
+      return `<div style="background:rgba(10,12,16,.45);border:1px solid var(--xh-stroke-2);border-radius:12px;padding:12px;margin-bottom:10px">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:700;color:var(--blue)">#${isNew?'新':k.id}</span>
-          <input value="${kw.replace(/"/g,'&quot;')}" onchange="k._kw=this.value" placeholder="关键词，逗号分隔" style="flex:1;min-width:140px;padding:6px 8px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:8px;font-size:12px">
+          <span style="font-size:11px;font-weight:700;color:var(--xh-a1)">#${isNew?'新':k.id}</span>
+          <input value="${kw.replace(/"/g,'&quot;')}" onchange="k._kw=this.value" placeholder="关键词，逗号分隔" style="flex:1;min-width:140px;padding:6px 8px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:12px;font-family:inherit">
           <button class="up-btn" onclick="${isNew?'addKBsave()':'saveKB('+k.id+')'}">${isNew?'添加':'保存'}</button>
           ${isNew?'':'<button class="up-del" onclick="delKB('+k.id+')">删除</button>'}
         </div>
-        <textarea onchange="k._ans=this.value" rows="3" placeholder="答案（可用 &lt;b&gt; 加粗、&lt;br&gt; 换行）" style="width:100%;padding:8px;border:1px solid #2A2A2E;background:#0A0A0A;color:var(--ink);border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical">${ans.replace(/</g,'&lt;')}</textarea>
+        <textarea onchange="k._ans=this.value" rows="3" placeholder="答案（可用 &lt;b&gt; 加粗、&lt;br&gt; 换行）" style="width:100%;padding:8px;border:1px solid var(--xh-stroke-2);background:rgba(10,12,16,.5);color:var(--xh-text);border-radius:8px;font-size:12.5px;font-family:inherit;resize:vertical">${ans.replace(/</g,'&lt;')}</textarea>
       </div>`;
     }).join('');
   }
@@ -333,32 +312,34 @@
     try{
       const r=await fetch('/api/kb/'+id+'?key='+encodeURIComponent(KEY.value),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:kw,answer:ans})});
       const d=await r.json();
-      if(r.ok&&d.ok){status('✅ 已保存该条目','ok');loadKB();}
-      else status('❌ '+(d.error||'保存失败（密码错误？）'),'err');
-    }catch(e){status('❌ 网络异常','err');}
+      if(r.ok&&d.ok){status('已保存该条目','ok');loadKB();}
+      else status((d.error||'保存失败（密码错误？）'),'err');
+    }catch(e){status('网络异常','err');}
   }
   async function delKB(id){
     if(!confirm('确定删除这条知识库条目？'))return;
     try{
       const r=await fetch('/api/kb/'+id+'?key='+encodeURIComponent(KEY.value),{method:'DELETE'});
       const d=await r.json();
-      if(r.ok&&d.ok){status('✅ 已删除','ok');loadKB();}
-      else status('❌ '+(d.error||'删除失败'),'err');
-    }catch(e){status('❌ 网络异常','err');}
+      if(r.ok&&d.ok){status('已删除','ok');loadKB();}
+      else status((d.error||'删除失败'),'err');
+    }catch(e){status('网络异常','err');}
   }
   function addKB(){kbData.unshift({id:'new',keywords:[],answer:''});renderKB();const f=kbList.querySelector('input');if(f)f.focus();}
   async function addKBsave(){
     const k=kbData.find(x=>x.id==='new');if(!k)return;
     const kw=k._kw||'';const ans=k._ans||'';
-    if(!kw.trim()||!ans.trim()){status('❌ 请填写关键词和答案','err');return;}
+    if(!kw.trim()||!ans.trim()){status('请填写关键词和答案','err');return;}
     try{
       const r=await fetch('/api/kb?key='+encodeURIComponent(KEY.value),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keywords:kw,answer:ans})});
       const d=await r.json();
-      if(r.ok&&d.ok){status('✅ 已添加','ok');loadKB();}
-      else status('❌ '+(d.error||'失败'),'err');
-    }catch(e){status('❌ 网络异常','err');}
+      if(r.ok&&d.ok){status('已添加','ok');loadKB();}
+      else status((d.error||'失败'),'err');
+    }catch(e){status('网络异常','err');}
   }
   loadKB();
 </script>
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script>window.addEventListener("DOMContentLoaded",function(){if(window.lucide)try{lucide.createIcons({attrs:{width:15,height:15,"stroke-width":1.75}})}catch(e){}});</script>
 </body>
 </html>
