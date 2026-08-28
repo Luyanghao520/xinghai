@@ -387,6 +387,61 @@
 </style>
 <link rel="stylesheet" href="/static/css/theme.css">
 <link rel="stylesheet" href="/static/css/boot.css">
+<style>
+/* ===== v3「深空玻璃」覆层：平面卡片 → 玻璃面板（参数取 ui.css 令牌） ===== */
+.qn,.benefit,.teacher,.dept,.stat,.cd-cell,.tl-item,.step,.moment,.quote,.qa,.qr-box,#botHint{
+  background:var(--xh-glass);
+  backdrop-filter:blur(var(--xh-blur)) saturate(130%);
+  -webkit-backdrop-filter:blur(var(--xh-blur)) saturate(130%);
+  border:1px solid var(--xh-glass-border);
+  box-shadow:var(--xh-shadow-sm);
+}
+.modal{
+  background:var(--xh-glass-strong);
+  backdrop-filter:blur(var(--xh-blur-strong)) saturate(140%);
+  -webkit-backdrop-filter:blur(var(--xh-blur-strong)) saturate(140%);
+  border:1px solid var(--xh-glass-border);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+#chat{
+  background:var(--xh-glass-strong);
+  backdrop-filter:blur(var(--xh-blur-strong));
+  -webkit-backdrop-filter:blur(var(--xh-blur-strong));
+  border:1px solid var(--xh-glass-border);
+}
+#nav.solid{
+  background:var(--xh-glass-strong);
+  backdrop-filter:blur(var(--xh-blur-strong)) saturate(150%);
+  -webkit-backdrop-filter:blur(var(--xh-blur-strong)) saturate(150%);
+  border-bottom:1px solid var(--xh-glass-border);
+}
+.sec-tint{background:linear-gradient(180deg,rgba(13,17,24,.66),rgba(16,18,22,.66));}
+.band{background:linear-gradient(180deg,rgba(13,20,30,.72),rgba(9,13,19,.72));}
+.mask{background:rgba(4,5,8,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.field input,.field select,.field textarea{background:rgba(10,12,16,.5);border-color:var(--xh-stroke-2);}
+.dept{border-left:3px solid var(--accent);}
+.hero .welcome{
+  background:var(--xh-glass);
+  backdrop-filter:blur(var(--xh-blur)) saturate(130%);
+  -webkit-backdrop-filter:blur(var(--xh-blur)) saturate(130%);
+  border:1px solid var(--xh-glass-border);
+}
+.signup{
+  background:linear-gradient(150deg,rgba(22,32,44,.72),rgba(15,21,28,.72));
+  backdrop-filter:blur(var(--xh-blur));
+  -webkit-backdrop-filter:blur(var(--xh-blur));
+  border:1px solid var(--xh-glass-border);
+}
+@media (max-width:768px){
+  /* 小屏降模糊保滚动性能，玻璃感改由提高不透明度维持 */
+  .qn,.benefit,.teacher,.dept,.stat,.cd-cell,.tl-item,.step,.moment,.quote,.qa,.qr-box,.hero .welcome,.modal,.signup{
+    backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(18,21,27,.84);
+  }
+  #nav.solid,#chat{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(12,14,18,.94);}
+}
+</style>
+<link rel="stylesheet" href="/static/css/bg.css">
+<script src="/static/js/bg.js" defer></script>
 </head>
 <body>
 <div id="progress"></div>

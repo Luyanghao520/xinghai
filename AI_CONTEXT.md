@@ -208,9 +208,12 @@ c.commit(); print('ok')
 - 配置项：`app.py` 顶部（环境变量 > config.json > 内置默认 三级加载）
 - 初始化建表：`app.py` 的 `init_reg/mem/usr/rei/res/bul()`
 
-## 8. 设计框架 v2「暗夜星海」（2026-08 全站换肤）
-- 全站已从浅色蓝金主题切换为暗色设计系统：背景 #0A0A0A、面板 #141414、文本 #F5F5F5、次文本 #8A8A8A、描边 #1F1F1F/#2A2A2E、强调渐变 linear-gradient(90deg,#89AACC,#4E85BF)；显示字体 Instrument Serif + Noto Serif SC，正文 Inter + Noto Sans SC（Google Fonts CDN）。
-- **共享令牌**：static/css/theme.css（各页 </style> 后引入；旧变量名 --navy/--blue/--gold 等在其中映射为暗色值）。
-- **首页**：现为 React 落地页（`portfolio-landing/`），暗色令牌与全站一致；旧系统页统一背景由 theme.css 的 body::before/after 提供。
-- **加载屏**：static/css/boot.css + static/js/boot.js 配色已从金/深蓝改为蓝灰星海（#89AACC/#4E85BF 系），结构与动画未变。
-- **改样式约定**：页面特有样式仍在各页 <style> 内；颜色一律取 theme.css 令牌；不要再引入金色/浅色面板。
+## 8. 设计框架 v3.1「深空玻璃 · Linear 化」（2026-08 全站）
+- **组件库**：static/css/ui.css（theme.css 之后引入）+ static/js/ui.js（`XH.toast/XH.modal/XH.icons/XH.countUp`）。设计语言：中性发丝线、扁平玻璃（面板 74% 填充）、圆角收敛（面板14/控件10/标签6）、状态色点+文字；**禁 emoji，图标一律 Lucide**（本地 static/js/vendor/lucide.min.js，动态内容渲染后调 `XH.icons()`）。
+- **顶栏**：`.xh-topbar` 浮动半透明（sticky top:10px + 圆角 + 边距），滚动后 ui.js 加 `.scrolled` 抬升（navbar-12 同语义）。
+- **⚠️ 背景红线**：全站背景 = 首页星云视频组件。首页是 `portfolio-landing/src/components/FixedBackground.tsx` + `src/index.css`（唯一调参源，勿改）；系统页镜像为 static/css/bg.css + static/js/bg.js（同视频/同参数/A-B 交叉淡化移植）。**改构图两处必须同步**；当前系统页取景 205%（`--xh-bg-frame`，应 owner 要求下移），首页仍 185%。改密不影响背景；可读纱浓度调 `bg.css` 的 `--xh-bg-veil`（0.45）。
+- **认证**：登录页=居中卡+密码可见+保持登录+三方行（占位）；`/reset` 密码重置（匹配校验）；users 表有 `pv` 密码版本列，改密后所有设备会话失效（login_required 与 /api/me 都校验）。本地测试管理员 `000000000/xinghai2026`；注意本地 config.json 的 ADMIN_KEY/SECRET 覆盖内置值。
+- **首页新增**：导航 v2（滚动抬升+移动端下拉）、Hero 标题逐字 staggered（GSAP `.name-char`）、SelectedWorks 顶部 CardSpread 扇形卡组（星光集 6 图，悬停/点按展开）。
+- **admin 后台**：`/admin?key=` 现渲染 admin.html（暗色玻璃），数据走 `/api/admin/rows`（key 鉴权）；CSV 导出逻辑不变。
+- **预览约定**：本地预览必须走 `http://127.0.0.1:8000/...`（双击 html 文件是 file://，样式与接口全失效）。
+- **学习参考**：React Bits Pro（pro.reactbits.dev）为付费 registry（需 REACTBITS_LICENSE_KEY，本机无）；本项目相关体验为免费自研同款。参考仓库克隆在 `.tools/ref-ui/`（daisyUI/open-props）。
