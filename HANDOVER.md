@@ -108,11 +108,13 @@ token 能做的事（`Authorization: Token <token>`）：
 
 > 踩坑：API 新建的 bash 控制台必须先在浏览器加载一次 iframe 才会真正启动，token 无法代劳；**优先用文件 API 直接传构建产物 + reload**，比控制台可靠。
 
-### 5.3 GitHub 推送（本机需代理）
+### 5.3 GitHub 推送
 
 ```powershell
-git -c http.proxy=http://127.0.0.1:26561 push origin main
+git push origin main
 ```
+
+> 网络说明：本机对 github.com 的访问偶发被阻断，历史上曾依赖本地代理 `http://127.0.0.1:26561`（该代理目前已不在运行）。**先试直连**，直连失败再排查代理。
 
 ### 5.4 WSGI 与依赖
 
