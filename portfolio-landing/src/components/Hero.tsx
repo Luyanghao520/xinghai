@@ -3,6 +3,7 @@ import gsap from "gsap";
 import Navbar from "./Navbar";
 
 const ROLES = ["歌声", "舞步", "琴弦", "戏韵", "妙语"];
+const TITLE = "星海艺术团".split("");
 
 interface HeroProps {
   /** Gates the GSAP entrance until the loading screen is gone */
@@ -28,15 +29,15 @@ export default function Hero({ ready }: HeroProps) {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.fromTo(
-        ".name-reveal",
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1.2 },
+        ".name-char",
+        { opacity: 0, y: 90, rotate: 8 },
+        { opacity: 1, y: 0, rotate: 0, duration: 1, stagger: 0.09, ease: "power4.out" },
         0.1
       ).fromTo(
         ".blur-in",
         { opacity: 0, y: 20, filter: "blur(10px)" },
         { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, stagger: 0.1 },
-        0.3
+        0.55
       );
     }, sectionRef);
     return () => ctx.revert();
@@ -59,8 +60,15 @@ export default function Hero({ ready }: HeroProps) {
           Lixin · Xinghai Art Troupe
         </p>
 
-        <h1 className="name-reveal mb-6 font-display text-6xl italic leading-[0.9] tracking-tight text-text-primary md:text-8xl lg:text-9xl">
-          星海艺术团
+        <h1
+          className="mb-6 font-display text-6xl italic leading-[0.9] tracking-tight text-text-primary md:text-8xl lg:text-9xl"
+          aria-label="星海艺术团"
+        >
+          {TITLE.map((ch, i) => (
+            <span key={i} aria-hidden className="name-char inline-block">
+              {ch}
+            </span>
+          ))}
         </h1>
 
         <p className="blur-in mb-6 text-base text-muted md:text-lg">

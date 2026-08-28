@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { PROJECTS } from "../lib/data";
+import CardSpread from "./CardSpread";
 
 const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
@@ -40,6 +41,9 @@ export default function SelectedWorks() {
             <span aria-hidden>→</span>
           </a>
         </motion.div>
+
+        {/* 扇形卡组（card-spread 同款交互） */}
+        <CardSpread />
 
         {/* Bento grid */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-12 md:gap-6">

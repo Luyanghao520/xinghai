@@ -223,6 +223,11 @@
   opacity: 0;
   will-change: transform, opacity, filter;
 }
+/* Hero 标题逐字 stagger（.name-char 由 GSAP 逐字唤醒） */
+.name-char {
+  opacity: 0;
+  will-change: transform, opacity;
+}
 
 ::selection {
   background: rgba(137, 170, 204, 0.35);
