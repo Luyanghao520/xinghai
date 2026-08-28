@@ -4,11 +4,13 @@
 官网面向学生与访客（公开），招新与各类后台面向成员 / 干部（需登录）。
 所有子系统**数据完全分离、独立存储**，互不混库。
 
+> **前端架构**：官网首页为 **React / Vite 构建产物**（源码 `portfolio-landing/`，构建后落到 `portfolio-landing/landing/`）；其余系统页面为原生 HTML/CSS/JS，移动优先。
+
 ## ✨ 功能模块
 
 | 模块 | 路径 | 说明 | 数据 |
 |---|---|---|---|
-| 官网首页 | `/` | Hero + 精彩活动轮播 + 关于/架构/风采/荣誉/新闻/招新 | — |
+| 官网首页 | `/` | React 落地页（全屏视频背景 + 招新/展示入口） | — |
 | 招新系统 | `/recruit` | 线上报名、AI 答疑、报名数据管理 | `registrations.db` |
 | 工作端总览 | `/work` | 登录后各子系统入口 | — |
 | 成员信息 | `/work/members` | 员工式录入（学号主键、检索/编辑/导入/导出） | `members.db` |
@@ -36,7 +38,7 @@ python app.py
 #    http://127.0.0.1:8000
 ```
 
-首次启动 `app.py` 会自动创建 6 个独立数据库与所需数据表（空库），无需手动建表。
+首次启动 `app.py` 会自动创建 8 个独立数据库与所需数据表（空库），无需手动建表。
 
 ## 👤 默认账号
 
@@ -64,7 +66,8 @@ python app.py
 ├── app.py                 # Flask 后端（单文件，含全部路由与初始化）
 ├── requirements.txt       # Python 依赖
 ├── content.json          # 官网/招新 文案与群码配置（CMS 编辑）
-├── index.html           # 官网首页
+├── index.html           # ⚠️ 旧首页残留（线上已不用，根路由 / 返回 React 产物）
+├── portfolio-landing/   # ★ 官网首页（React 源码 src/ + 构建产物 landing/）
 ├── recruit.html        # 招新系统页
 ├── login.html          # 登录页
 ├── work.html           # 工作端总览
@@ -85,14 +88,15 @@ python app.py
 └── reference/          # 项目参考文档（招新方案、建设方案等，非运行所需）
 ```
 
-## ⚙️ 配置项（`app.py` 顶部）
+## ⚙️ 配置项（密钥三级加载）
 
-```python
-ADMIN_KEY = "xinghai2026"          # 招新后台 / CMS 密码
-SECRET     = "xinghai-art-troupe-2026"  # Flask session 密钥 + 密码加盐哈希
-```
+读取优先级：**环境变量 > `config.json` > 内置默认值**（`app.py` 顶部实现）。
 
-> 上线前请修改为强口令，并避免硬编码在公开仓库（可改为读取环境变量）。
+- `XINGHAI_ADMIN_KEY`：招新后台 / CMS 密码（URL 参数 `?key=`）
+- `XINGHAI_SECRET`：Flask session 密钥 + 密码加盐哈希
+- 本地配置：复制 `config.example.json` 为 `config.json` 填入强口令（`config.json` 已被 .gitignore 排除，绝不提交）
+
+> 测试账号与默认密码见 `AI_CONTEXT.md` §2。
 
 ## 🗄️ 数据分离
 
@@ -104,6 +108,8 @@ SECRET     = "xinghai-art-troupe-2026"  # Flask session 密钥 + 密码加盐哈
 | 报销 | `reimburse.db` | 自增 id |
 | 预约 | `reserve.db` | 自增 id |
 | 活动通报 | `bulletins.db` | 自增 id |
+| 申请审批 | `apply.db` | 自增 id |
+| 资产管理 | `assets.db` | 自增 id |
 
 各库彼此独立，仅通过后端接口交互，前端无法跨库直读。
 

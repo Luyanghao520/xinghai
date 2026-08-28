@@ -38,3 +38,6 @@ kb.json
 pylibs/
 
 _shot_*.png
+
+# ===== 本地调试产物（headless chrome 截图/转储、ffmpeg、hls 片段等）=====
+.tools/

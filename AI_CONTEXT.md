@@ -1,7 +1,7 @@
 # 星海艺术团官网 · 项目记忆文档（AI 上下文）
 
 > **给未来会话的"交接说明书"。** 新会话只要说"读 `AI_CONTEXT.md`"，即可无缝接手本项目。
-> 最后更新：2026-07-19｜状态：已上线 PythonAnywhere，运行正常。
+> 最后更新：2026-08-27｜状态：已上线 PythonAnywhere，运行正常。
 
 ---
 
@@ -10,7 +10,7 @@
 上海立信会计金融学院 **星海艺术团** 官方网站 + 内部管理「大系统」。官网公开（招新/展示），工作端需登录（成员/干部）。**所有子系统数据完全分离、独立库**。纯 Flask + SQLite，零外部依赖。
 
 - 线上地址：**https://Luyanghao.pythonanywhere.com**
-- GitHub：**https://github.com/Luyanghao520/xinghai**（⚠️ 历史原因曾上传不全，需重新推送完整代码）
+- GitHub：**https://github.com/Luyanghao520/xinghai**（远端 main 已与本地同步）
 
 ---
 
@@ -18,8 +18,8 @@
 
 ### 1.1 技术栈
 - **后端**：Flask 3.1.x（单文件 `app.py`，含全部路由 + 初始化）
-- **前端**：原生 HTML/CSS/JS，移动优先，无框架
-- **数据库**：SQLite（6 个独立 `.db` 文件）
+- **前端**：官网首页 React/Vite（`portfolio-landing/`）；其余 11 个系统页原生 HTML/CSS/JS，移动优先
+- **数据库**：SQLite（8 个独立 `.db` 文件）
 - **部署**：PythonAnywhere（免费版，Manual configuration + WSGI）
 
 ### 1.2 文件结构（/workspace 或 ~/mysite）
@@ -32,7 +32,8 @@ README.md           # 项目说明
 AI_CONTEXT.md       # 本文件
 .gitignore          # 排除 *.db / __pycache__ / registrations.csv
 content.json        # 官网/招新 文案与群码配置（CMS 编辑）
-index.html          # 官网首页（Hero+轮播+关于/架构/风采/荣誉/新闻/招新）
+portfolio-landing/  # ★ 官网首页 React 源码(src/)+构建产物(landing/)
+index.html          # ⚠️ 旧首页残留，线上已不用
 recruit.html        # 招新系统页
 login.html          # 登录页
 work.html           # 工作端总览（模块卡片入口）
@@ -48,7 +49,7 @@ static/uploads/
 reference/          # 参考文档（非运行所需）：招新方案/建设方案/旧招新页
 ```
 
-### 1.3 六个独立数据库（数据不混库）
+### 1.3 八个独立数据库（数据不混库）
 | 子系统 | 文件 | 主键/关键字段 |
 |---|---|---|
 | 招新 | `registrations.db` | 报名记录 |
@@ -57,6 +58,8 @@ reference/          # 参考文档（非运行所需）：招新方案/建设方
 | 报销 | `reimburse.db` | 自增 id，status: 待审/已通过/已驳回 |
 | 预约 | `reserve.db` | 自增 id，status: 待确认/已通过/已驳回 |
 | 活动通报 | `bulletins.db` | 自增 id，pinned/level |
+| 申请审批 | `apply.db` | 自增 id（工作端 /work/approval） |
+| 资产管理 | `assets.db` | 自增 id（工作端 /work/assets，借还/维修/报废） |
 
 > 各库仅通过后端接口交互，前端无法跨库直读。`app.py` 启动时自动建表；`users.db` 空表时仅自动播种管理员（`000000000`）。
 
@@ -192,23 +195,22 @@ c.commit(); print('ok')
 
 ## 6. 待办 / 未完成项
 
-- [ ] **GitHub 仓库需重新推送完整代码**（历史上传不全，clone 会缺 `app.py`）
 - [ ] 换真实**招新咨询群二维码**到 `content.json`（目前是占位图）
 - [ ] 把 `ADMIN_KEY` / `SECRET` 改为读环境变量（公开仓库安全）
-- [ ] 建设中的模块未实现：工作交接、资料库、任务日程、资产管理、通讯录
+- [ ] 建设中的模块未实现：工作交接、资料库、任务日程、通讯录
 - [ ] 首页轮播目前硬编码 8 张，新增照片需同步改 `index.html` 的 `SC` 数组（后续可接 CMS）
 - [ ] 参考文档（`reference/`）里的草坪音乐会策划案、松江舞专主持稿尚未用到，建议后续归入"资料库"模块
 
 ## 7. 关键代码点（改之前看）
-- 轮播数据：`index.html` 底部 `<script>` 里的 `const SC=[...]`（图片路径 + 文案）
-- 获奖数据：写死在 `index.html` 的 `#honor` 区块（如需动态化接 `content.json`）
-- 首页登录按钮：`index.html` 导航里的 `openLogin()`
-- 配置项：`app.py` 顶部 `ADMIN_KEY` / `SECRET`
+- 首页：React 源码 `portfolio-landing/src/`，背景视频组件 `src/components/FixedBackground.tsx`，入口 `src/main.tsx`
+- 首页构图/背景样式：`portfolio-landing/src/index.css`
+- 首页路由：`app.py` 的 `/` 返回 `portfolio-landing/landing/index.html`，`/assets/<path>` 伺服 landing/assets
+- 配置项：`app.py` 顶部（环境变量 > config.json > 内置默认 三级加载）
 - 初始化建表：`app.py` 的 `init_reg/mem/usr/rei/res/bul()`
 
 ## 8. 设计框架 v2「暗夜星海」（2026-08 全站换肤）
 - 全站已从浅色蓝金主题切换为暗色设计系统：背景 #0A0A0A、面板 #141414、文本 #F5F5F5、次文本 #8A8A8A、描边 #1F1F1F/#2A2A2E、强调渐变 linear-gradient(90deg,#89AACC,#4E85BF)；显示字体 Instrument Serif + Noto Serif SC，正文 Inter + Noto Sans SC（Google Fonts CDN）。
 - **共享令牌**：static/css/theme.css（各页 </style> 后引入；旧变量名 --navy/--blue/--gold 等在其中映射为暗色值）。
-- **首页**：index.html 的 <style> 已整体重写（胶囊导航/暗色轮播/数据墙/药丸新闻/描边跑马灯）；?noanim=1 参数可跳过全部入场动画（截图/排查用）。
+- **首页**：现为 React 落地页（`portfolio-landing/`），暗色令牌与全站一致；旧系统页统一背景由 theme.css 的 body::before/after 提供。
 - **加载屏**：static/css/boot.css + static/js/boot.js 配色已从金/深蓝改为蓝灰星海（#89AACC/#4E85BF 系），结构与动画未变。
 - **改样式约定**：页面特有样式仍在各页 <style> 内；颜色一律取 theme.css 令牌；不要再引入金色/浅色面板。
