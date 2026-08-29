@@ -1,7 +1,7 @@
 # 星海艺术团官网 · 项目记忆文档（AI 上下文）
 
 > **给未来会话的"交接说明书"。** 新会话只要说"读 `AI_CONTEXT.md`"，即可无缝接手本项目。
-> 最后更新：2026-08-27｜状态：已上线 PythonAnywhere，运行正常。
+> 最后更新：2026-08-29｜状态：v2 首页已上线，CI 自动部署全绿；有「微信关联 + 部署优化」决策待 owner 拍板（见 §9）。
 
 ---
 
@@ -207,6 +207,27 @@ c.commit(); print('ok')
 - 首页路由：`app.py` 的 `/` 返回 `portfolio-landing/landing/index.html`，`/assets/<path>` 伺服 landing/assets
 - 配置项：`app.py` 顶部（环境变量 > config.json > 内置默认 三级加载）
 - 初始化建表：`app.py` 的 `init_reg/mem/usr/rei/res/bul()`
+
+## 9. 待决事项（2026-08-29 交接，下一个会话从这里继续）
+
+### 9.1 owner 最新需求：网站与微信公众号关联（决策未定）
+- 需求分级（已向 owner 解释，等拍板）：
+  ① 公众号文章/「阅读原文」放链接 → 现状即可，零成本零备案；
+  ② 自定义菜单跳网站/微信分享卡片/网页授权 → **必须备案域名 + 认证公众号**（个人订阅号无法认证，是硬门槛，先确认公众号类型与主体！）；
+  ③ 校园捷径：挂靠校团委申请 `*.lixin.edu.cn` 子域名——学校已备案、免费、国内访问秒开，owner 已表现出兴趣但未确认（已纠正其「学校服务器更卡」的误解）。
+- 部署选项对照（已向 owner 呈现）：现状 PA（慢）/ PA+Cloudflare（略快）/ **阿里云 OSS 放大文件（秒开，改 4 处 URL 即可，推荐先做）** / 整站迁阿里云轻量服务器（需备案 1~3 周）/ 学校域名+服务器（最优解如果能批）。
+- 阿里云操作进度：owner 正在控制台创建 OSS Bucket（名称/地域华东/公共读三项已交代），AccessKey 尚未提供；拿到后即可上传媒体 + 改 4 处 URL + 部署。
+
+### 9.2 近期已完成（详见 git log 6a35dd9 之后）
+- 首页 v2 八块改版（数据驱动 Team 模型、团队全景+校区筛选、我适合哪里三问、标题流光、CardSpread 舒展、卡片悬浮、删二维码）
+- 认证：/reset 密码重置 + pv 会话终止机制；**修复 PA 线上登录**（根因：PA 有手工上传的 config.json 自定义 SECRET，与默认 SECRET 播种的 users.db 错位——已用 PA 真实 SECRET 重算哈希写回）
+- CI：GitHub Actions push→构建→上传 PA→Reload 全绿（.github/workflows/deploy.yml + scripts/pa_deploy.py，限流已适配；**mp4 等二进制仍需手工 multipart 上传**）
+- 背景视频已锐化重编码（CRF21+unsharp，3.42MB）；「播放一段时间静止」已加看门狗自愈（FixedBackground + bg.js）
+
+### 9.3 遗留小尾巴
+- recruit.html 的 emoji 未图标化（营销页，另一次处理）
+- 提醒过 owner：聊天中贴过的 ghp_ GitHub token 建议 revoke
+- 线上 PA config.json 的 ADMIN_KEY ≠ 内置 xinghai2026（work.html 硬编码的 /admin?key=xinghai2026 链接在线上会 403，需 owner 提供真 key 或统一密钥）
 
 ## 8. 设计框架 v3.1「深空玻璃 · Linear 化」（2026-08 全站）
 - **组件库**：static/css/ui.css（theme.css 之后引入）+ static/js/ui.js（`XH.toast/XH.modal/XH.icons/XH.countUp`）。设计语言：中性发丝线、扁平玻璃（面板 74% 填充）、圆角收敛（面板14/控件10/标签6）、状态色点+文字；**禁 emoji，图标一律 Lucide**（本地 static/js/vendor/lucide.min.js，动态内容渲染后调 `XH.icons()`）。
