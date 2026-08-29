@@ -1,0 +1,74 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: portfolio-landing/package-lock.json
+
+      # 构建即门禁：tsc/vite 不过则不部署
+      - name: Build landing (tsc + vite)
+        working-directory: portfolio-landing
+        run: |
+          npm ci
+          npm run build
+
+      - name: Sync dist -> landing/
+        run: |
+          rm -f portfolio-landing/landing/assets/*
+          cp portfolio-landing/dist/index.html portfolio-landing/landing/index.html
+          cp portfolio-landing/dist/assets/* portfolio-landing/landing/assets/
+
+      # 构建产物回写仓库（带 [skip ci] 防流水线自触发死循环）
+      - name: Commit landing build if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add portfolio-landing/landing
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(landing): build [skip ci]"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push build commit
+        if: steps.commit.outputs.changed == 'true'
+        run: git push
+
+      - name: Upload site to PythonAnywhere
+        env:
+          PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+        run: python3 .github/scripts/pa_deploy.py
+
+      - name: Reload webapp
+        env:
+          PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+        run: |
+          if [ -z "$PA_API_TOKEN" ]; then
+            echo "⚠️ PA_API_TOKEN 未配置，跳过 Reload（配置 Secrets 后重跑即可）"
+            exit 0
+          fi
+          curl -sS -X POST \
+            -H "Authorization: Token $PA_API_TOKEN" \
+            -H "Content-Type: application/json" -d '{}' \
+            https://www.pythonanywhere.com/api/v0/user/Luyanghao/webapps/Luyanghao.pythonanywhere.com/reload/
