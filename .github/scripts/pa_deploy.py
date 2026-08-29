@@ -67,7 +67,8 @@ def main() -> int:
     ok, fail = 0, []
     for rel in files:
         content = io.open(rel, encoding="utf-8").read()
-        for attempt in range(4):
+        # PA 免费 API 限流严格：请求间保持节奏，429 时按提示秒数长退避
+        for attempt in range(10):
             try:
                 st = upload(rel, content, token)
                 if st in (200, 201):
@@ -76,17 +77,22 @@ def main() -> int:
                     fail.append((rel, f"HTTP {st}"))
                 break
             except urllib.error.HTTPError as e:
-                if e.code == 429 and attempt < 3:
-                    time.sleep(1.5 * (attempt + 1))
+                body = e.read().decode()[:200]
+                if e.code == 429 and attempt < 9:
+                    m = re.search(r"in (\d+) seconds", body)
+                    wait = min(int(m.group(1)) + 2, 90) if m else 20 * (attempt + 1)
+                    print(f"  429 throttled, sleeping {wait}s ({rel})")
+                    time.sleep(wait)
                     continue
-                fail.append((rel, f"HTTP {e.code} {e.read().decode()[:100]}"))
+                fail.append((rel, f"HTTP {e.code} {body}"))
                 break
             except Exception as e:  # noqa: BLE001
-                if attempt < 3:
-                    time.sleep(1.5 * (attempt + 1))
+                if attempt < 9:
+                    time.sleep(2 * (attempt + 1))
                     continue
                 fail.append((rel, str(e)[:100]))
                 break
+        time.sleep(1.0)  # 请求节奏
     print(f"uploaded: {ok}/{len(files)}")
     for rel, why in fail:
         print("FAIL:", rel, why)
