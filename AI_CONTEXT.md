@@ -212,6 +212,7 @@ c.commit(); print('ok')
 - **组件库**：static/css/ui.css（theme.css 之后引入）+ static/js/ui.js（`XH.toast/XH.modal/XH.icons/XH.countUp`）。设计语言：中性发丝线、扁平玻璃（面板 74% 填充）、圆角收敛（面板14/控件10/标签6）、状态色点+文字；**禁 emoji，图标一律 Lucide**（本地 static/js/vendor/lucide.min.js，动态内容渲染后调 `XH.icons()`）。
 - **顶栏**：`.xh-topbar` 浮动半透明（sticky top:10px + 圆角 + 边距），滚动后 ui.js 加 `.scrolled` 抬升（navbar-12 同语义）。
 - **⚠️ 背景红线**：全站背景 = 首页星云视频组件。首页是 `portfolio-landing/src/components/FixedBackground.tsx` + `src/index.css`（唯一调参源，勿改）；系统页镜像为 static/css/bg.css + static/js/bg.js（同视频/同参数/A-B 交叉淡化移植）。**改构图两处必须同步**；当前系统页取景 205%（`--xh-bg-frame`，应 owner 要求下移），首页仍 185%。改密不影响背景；可读纱浓度调 `bg.css` 的 `--xh-bg-veil`（0.45）。
+- **视频管线（2026-08-29）**：bg-stage.mp4 已锐化重编码（1708×1212、CRF21+unsharp 0.5、faststart、3.42MB、无音轨、9.04s）以抵消 205% 取景放大发虚；原版在 git 历史。**PA 静态服务不支持 Range**（200 非 206）→ 视频为渐进播放，首访缓冲期显示 bg-starfield.jpg 海报层（设计行为，勿删）；304 协商缓存可用。重编码管线：`imageio-ffmpeg`（pip 包自带 ffmpeg.exe）`-crf 21 -vf unsharp=5:5:0.5 -an -movflags +faststart`。mp4 是二进制，CI 只传文本——**改视频后须手工 multipart 上传 PA + Reload**（模式见 .github/scripts/pa_deploy.py）。
 - **认证**：登录页=居中卡+密码可见+保持登录+三方行（占位）；`/reset` 密码重置（匹配校验）；users 表有 `pv` 密码版本列，改密后所有设备会话失效（login_required 与 /api/me 都校验）。本地测试管理员 `000000000/xinghai2026`；注意本地 config.json 的 ADMIN_KEY/SECRET 覆盖内置值。
 - **首页新增**：导航 v2（滚动抬升+移动端下拉）、Hero 标题逐字 staggered（GSAP `.name-char`）、SelectedWorks 顶部 CardSpread 扇形卡组（星光集 6 图，悬停/点按展开）。
 - **admin 后台**：`/admin?key=` 现渲染 admin.html（暗色玻璃），数据走 `/api/admin/rows`（key 鉴权）；CSV 导出逻辑不变。
