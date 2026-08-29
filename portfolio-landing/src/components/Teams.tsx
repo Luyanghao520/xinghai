@@ -51,7 +51,7 @@ function TeamCard({ team, index }: { team: Team; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.7, delay: (index % 4) * 0.06, ease: EASE }}
-      className="group flex flex-col rounded-3xl border border-stroke bg-surface/70 p-6 backdrop-blur-md transition-all duration-300 hover:border-white/15 hover:bg-surface"
+      className="group flex flex-col rounded-3xl border border-stroke bg-surface/70 p-6 shadow-transparent backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-white/15 hover:bg-surface hover:shadow-[0_18px_44px_rgba(0,0,0,0.45)]"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -151,7 +151,7 @@ export default function Teams() {
         >
           <div className="text-center md:text-left">
             <div className="font-display text-2xl italic text-text-primary">
-              演出团 · {perform.length || 7} 支
+              各团 · {perform.length || 7} 支
             </div>
             <div className="mt-1 text-sm text-muted">负责舞台</div>
           </div>

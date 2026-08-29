@@ -17,8 +17,8 @@ export default function CardSpread() {
 
   const n = EXPLORATIONS.length;
   const mid = (n - 1) / 2;
-  const spreadX = isMobile ? 52 : 118;
-  const restX = isMobile ? 10 : 24;
+  const spreadX = isMobile ? 84 : 152;
+  const restX = isMobile ? 30 : 70;
 
   return (
     <div className="relative mb-14 select-none">
@@ -41,7 +41,7 @@ export default function CardSpread() {
               animate={
                 open
                   ? { x: off * spreadX, rotate: off * 3.5, y: Math.abs(off) * -8 }
-                  : { x: off * restX, rotate: off * 9, y: Math.abs(off) * 12 }
+                  : { x: off * restX, rotate: off * 7, y: Math.abs(off) * 14 }
               }
               transition={{ type: "spring", stiffness: 260, damping: 26 }}
             >

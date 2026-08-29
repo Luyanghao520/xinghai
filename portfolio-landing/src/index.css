@@ -243,3 +243,25 @@
   opacity: 1 !important;
   filter: none !important;
 }
+
+/* Hero 标题悬浮：轻微放大 + 柔和渐变流光（舒缓不刺眼） */
+.title-shine{
+  transition: transform .6s cubic-bezier(.22,.61,.36,1);
+}
+.title-shine:hover{
+  transform: scale(1.035);
+  background-image: linear-gradient(90deg,#F5F5F5 30%,#89AACC 45%,#D9E9F6 50%,#89AACC 55%,#F5F5F5 70%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: title-sweep 2.8s ease-in-out infinite;
+}
+@keyframes title-sweep{
+  0%{ background-position: 130% 0; }
+  100%{ background-position: -130% 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .title-shine:hover{ animation: none; }
+}

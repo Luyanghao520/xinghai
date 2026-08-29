@@ -67,10 +67,36 @@ export default function FixedBackground() {
       /* A/B 交叉淡化：A 近尾 → B(垫底)已在播，A 淡出后归位 */
       let active = true; // true=A 在前
       let swapping = false;
+      /* 看门狗：活动视频画面无推进 → 自动恢复播放；仍卡死 → 重载解码器 */
+      let lastT = -1;
+      let lastAdvance = performance.now();
+      let reloads = 0;
       const tick = () => {
         raf = window.requestAnimationFrame(tick);
         if (!b || swapping) return;
         const cur = active ? a : b;
+        /* 看门狗：活动视频意外暂停 → 立即恢复；画面无推进 → 恢复/重载解码器 */
+        if (!document.hidden && cur.paused) {
+          void cur.play().catch(() => {});
+        }
+        if (!document.hidden && cur.readyState >= 2 && !cur.paused) {
+          const t = cur.currentTime;
+          if (Math.abs(t - lastT) > 0.02) {
+            lastT = t;
+            lastAdvance = performance.now();
+            reloads = 0;
+          } else if (performance.now() - lastAdvance > 2200) {
+            /* 2.2s 无推进：先尝试恢复，再次卡死则重载 */
+            if (reloads === 0) {
+              void cur.play().catch(() => {});
+            } else {
+              cur.load();
+              void cur.play().catch(() => {});
+            }
+            reloads++;
+            lastAdvance = performance.now();
+          }
+        }
         const nxt = active ? b : a;
         const dur = cur.duration;
         if (!Number.isFinite(dur) || dur <= 0) return;

@@ -31,7 +31,13 @@ export default function Hero({ ready }: HeroProps) {
       tl.fromTo(
         ".name-char",
         { opacity: 0, y: 90, rotate: 8 },
-        { opacity: 1, y: 0, rotate: 0, duration: 1, stagger: 0.09, ease: "power4.out" },
+        {
+          opacity: 1, y: 0, rotate: 0, duration: 1, stagger: 0.09,
+          ease: "power4.out",
+          /* 入场后清掉内联 transform：span 合成层会让悬浮态的
+             background-clip:text 渐变流光渲染不出来 */
+          clearProps: "transform,will-change", /* 只清 transform：opacity 内联值保留，否则 CSS 预置 opacity:0 会吞掉文字 */
+        },
         0.1
       ).fromTo(
         ".blur-in",
@@ -61,7 +67,7 @@ export default function Hero({ ready }: HeroProps) {
         </p>
 
         <h1
-          className="mb-6 font-display text-6xl italic leading-[0.9] tracking-tight text-text-primary md:text-8xl lg:text-9xl"
+          className="title-shine mb-6 inline-block cursor-default font-display text-6xl italic leading-[0.9] tracking-tight text-text-primary md:text-8xl lg:text-9xl"
           aria-label="星海艺术团"
         >
           {TITLE.map((ch, i) => (

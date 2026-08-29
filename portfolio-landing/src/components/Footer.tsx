@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { CONSULT_QR } from "../lib/data";
 
 const MARQUEE_UNIT = "星海艺术团 · XINGHAI ART TROUPE · 2026 招新进行中";
 
@@ -88,25 +87,12 @@ export default function Footer() {
             舞台已经搭好，只等你来。
           </p>
 
-          {/* 招新咨询群二维码 */}
+          {/* 招新网页入口 */}
           <a
             href="/recruit"
-            className="g-hover group inline-flex flex-col items-center gap-4 rounded-3xl border border-stroke bg-surface/60 p-6 transition-all duration-300 hover:scale-[1.03] hover:border-transparent md:p-8"
+            className="g-hover inline-flex items-center gap-2 rounded-full bg-text-primary px-8 py-4 text-sm font-semibold text-bg transition-all duration-300 hover:scale-105"
           >
-            <span className="rounded-2xl bg-white p-2 shadow-lg shadow-black/30 transition-transform duration-300 group-hover:scale-[1.04]">
-              <img
-                src={CONSULT_QR}
-                alt="2026 招新咨询群二维码"
-                loading="lazy"
-                className="h-36 w-36 object-contain md:h-44 md:w-44"
-              />
-            </span>
-            <span className="text-xs tracking-[0.25em] text-text-primary">
-              扫码进入 2026 招新咨询群
-            </span>
-            <span className="text-[11px] text-muted">
-              或前往招新主页了解全部部门 ↗
-            </span>
+            前往招新网页 <span aria-hidden>↗</span>
           </a>
         </div>
 

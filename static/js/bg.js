@@ -77,10 +77,29 @@
     if (key === 'stage') {
       /* A/B 交叉淡化：A 近尾 → B(垫底)已在播，A 淡出后归位（逻辑与首页逐行对应） */
       var active = true, swapping = false;
+      /* 看门狗：活动视频画面无推进 → 自动恢复播放；仍卡死 → 重载解码器 */
+      var lastT = -1, lastAdvance = performance.now(), reloads = 0;
       var tick = function () {
         raf = window.requestAnimationFrame(tick);
-        if (!b || swapping) return;
         var cur = active ? a : b;
+        if (!swapping && !document.hidden && cur.paused) {
+          var rp = cur.play(); if (rp && rp.catch) rp.catch(function () {});
+        }
+        if (!swapping && !document.hidden && cur.readyState >= 2 && !cur.paused) {
+          var t = cur.currentTime;
+          if (Math.abs(t - lastT) > 0.02) {
+            lastT = t; lastAdvance = performance.now(); reloads = 0;
+          } else if (performance.now() - lastAdvance > 2200) {
+            if (reloads === 0) {
+              var rp2 = cur.play(); if (rp2 && rp2.catch) rp2.catch(function () {});
+            } else {
+              cur.load();
+              var rp3 = cur.play(); if (rp3 && rp3.catch) rp3.catch(function () {});
+            }
+            reloads++; lastAdvance = performance.now();
+          }
+        }
+        if (!b || swapping) return;
         var nxt = active ? b : a;
         var dur = cur.duration;
         if (!Number.isFinite(dur) || dur <= 0) return;
