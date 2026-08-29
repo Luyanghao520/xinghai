@@ -439,9 +439,39 @@
   }
   #nav.solid,#chat{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(12,14,18,.94);}
 }
+
+/* ===== Lucide 图标化（v3.1 禁 emoji）：尺寸与着色 ===== */
+#nav .nav-btn{display:inline-flex;align-items:center;gap:6px;}
+#nav .nav-btn svg{width:15px;height:15px;}
+.qn .e{color:var(--blue);} .qn.ai .e{color:var(--gold);}
+.qn .e svg{width:26px;height:26px;}
+.benefit .ic{color:var(--blue);}
+.benefit .ic svg{width:24px;height:24px;}
+.dept .icon{color:var(--accent);}
+.dept .icon svg{width:26px;height:26px;}
+.moment .e{color:var(--gold-2);}
+.moment .e svg{width:34px;height:34px;}
+.tip svg{width:14px;height:14px;vertical-align:-2px;margin-right:2px;}
+.sec-head p svg{width:13px;height:13px;vertical-align:-2px;}
+#bot .emo{display:flex;}
+#bot .emo svg{width:20px;height:20px;}
+#music .ic{display:flex;}
+#music .ic svg{width:22px;height:22px;}
+#music .ic-vol{display:none;}
+#music.on .ic-music{display:none;}
+#music.on .ic-vol{display:flex;}
+#botHint{display:flex;align-items:center;gap:8px;}
+#botHint svg{width:16px;height:16px;flex-shrink:0;color:var(--gold-2);}
+#chat .ch-head .av svg{width:19px;height:19px;}
+.modal h3{display:flex;align-items:center;gap:8px;}
+.modal h3 svg{width:20px;height:20px;color:var(--gold);}
+.success .big{display:flex;align-items:center;justify-content:center;color:var(--gold-2);}
+.success .big svg{width:54px;height:54px;}
+.note svg{width:1em;height:1em;}
 </style>
 <link rel="stylesheet" href="/static/css/bg.css">
 <script src="/static/js/bg.js" defer></script>
+<script src="/static/js/vendor/lucide.min.js" defer></script>
 </head>
 <body>
 <div id="progress"></div>
@@ -449,7 +479,7 @@
 <nav id="nav">
   <div class="brand">星海艺术团</div>
   <a href="#" onclick="history.back();return false" class="nav-btn" style="text-decoration:none">← 返回</a>
-  <button class="nav-btn" style="background:linear-gradient(135deg,var(--blue),var(--gold));" onclick="openChat()">🤖 AI答疑</button>
+  <button class="nav-btn" style="background:linear-gradient(135deg,var(--blue),var(--gold));" onclick="openChat()"><i data-lucide="bot"></i> AI答疑</button>
   <button class="nav-btn" onclick="document.getElementById('depts').scrollIntoView()">立即报名</button>
 </nav>
 
@@ -478,7 +508,7 @@
     <div class="stats">
       <div class="stat reveal"><div class="num"><span data-count="40">0</span><small>+</small></div><div class="label">近五年国家级/市级奖项</div></div>
       <div class="stat reveal d1"><div class="num"><span data-count="3">0</span><small>届</small></div><div class="label">连续斩获全国大艺展一等奖</div></div>
-      <div class="stat reveal d2"><div class="num"><span data-count="11">0</span></div><div class="label">行政部门 + 表演团队</div></div>
+      <div class="stat reveal d2"><div class="num"><span data-count="10">0</span></div><div class="label">行政部门 + 表演团队</div></div>
       <div class="stat reveal d3"><div class="num"><span data-count="2">0</span><small>校区</small></div><div class="label">浦东 · 松江 同步招新</div></div>
     </div>
   </div>
@@ -495,12 +525,12 @@
       <p>想看什么，点一下就到</p>
     </div>
     <div class="qnav reveal">
-      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e">🎭</div><div class="t">部门一览</div></div>
-      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e">📝</div><div class="t">在线报名</div></div>
-      <div class="qn" onclick="document.getElementById('cd').scrollIntoView()"><div class="e">⏰</div><div class="t">招新倒计时</div></div>
-      <div class="qn ai" onclick="openChat()"><div class="e">🤖</div><div class="t">智能答疑</div></div>
-      <div class="qn" onclick="document.getElementById('moments').scrollIntoView()"><div class="e">✨</div><div class="t">团队风采</div></div>
-      <div class="qn" onclick="document.getElementById('faq').scrollIntoView()"><div class="e">❓</div><div class="t">常见问题</div></div>
+      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e"><i data-lucide="drama"></i></div><div class="t">部门一览</div></div>
+      <div class="qn" onclick="document.getElementById('depts').scrollIntoView()"><div class="e"><i data-lucide="pen-line"></i></div><div class="t">在线报名</div></div>
+      <div class="qn" onclick="document.getElementById('cd').scrollIntoView()"><div class="e"><i data-lucide="alarm-clock"></i></div><div class="t">招新倒计时</div></div>
+      <div class="qn ai" onclick="openChat()"><div class="e"><i data-lucide="bot"></i></div><div class="t">智能答疑</div></div>
+      <div class="qn" onclick="document.getElementById('moments').scrollIntoView()"><div class="e"><i data-lucide="sparkles"></i></div><div class="t">团队风采</div></div>
+      <div class="qn" onclick="document.getElementById('faq').scrollIntoView()"><div class="e"><i data-lucide="help-circle"></i></div><div class="t">常见问题</div></div>
     </div>
   </div>
 </section>
@@ -516,10 +546,10 @@
       <p>不只是一张社团名片，而是一段会被记住的大学时光</p>
     </div>
     <div class="benefits">
-      <div class="benefit reveal"><div class="ic">🎭</div><div><h4>站上更大的舞台</h4><p data-bind="b0">校迎新晚会、十佳歌手大赛、毕业季音乐会……核心活动由我们统筹，聚光灯为你而亮。</p></div></div>
-      <div class="benefit reveal d1"><div class="ic">🤝</div><div><h4>遇见同频的人</h4><p data-bind="b1">来自各学院、却同样热爱艺术的伙伴，会变成并肩作战、也一起玩闹的挚友。</p></div></div>
-      <div class="benefit reveal d2"><div class="ic">📈</div><div><h4>硬核能力进阶</h4><p data-bind="b2">策划、统筹、表达、审美——在一次次实战里，把「想做」变成「能做」。</p></div></div>
-      <div class="benefit reveal d3"><div class="ic">🏆</div><div><h4>国家级荣誉傍身</h4><p data-bind="b3">近五年 40+ 奖项、连续三届全国大学生艺术展演一等奖，这里有拿奖的土壤。</p></div></div>
+      <div class="benefit reveal"><div class="ic"><i data-lucide="spotlight"></i></div><div><h4>站上更大的舞台</h4><p data-bind="b0">校迎新晚会、十佳歌手大赛、毕业季音乐会……核心活动由我们统筹，聚光灯为你而亮。</p></div></div>
+      <div class="benefit reveal d1"><div class="ic"><i data-lucide="handshake"></i></div><div><h4>遇见同频的人</h4><p data-bind="b1">来自各学院、却同样热爱艺术的伙伴，会变成并肩作战、也一起玩闹的挚友。</p></div></div>
+      <div class="benefit reveal d2"><div class="ic"><i data-lucide="trending-up"></i></div><div><h4>硬核能力进阶</h4><p data-bind="b2">策划、统筹、表达、审美——在一次次实战里，把「想做」变成「能做」。</p></div></div>
+      <div class="benefit reveal d3"><div class="ic"><i data-lucide="trophy"></i></div><div><h4>国家级荣誉傍身</h4><p data-bind="b3">近五年 40+ 奖项、连续三届全国大学生艺术展演一等奖，这里有拿奖的土壤。</p></div></div>
     </div>
   </div>
 </section>
@@ -563,28 +593,28 @@
       <h2>招新部门 &amp; 团队</h2>
       <p>点击任意卡片，即可报名对应方向</p>
     </div>
-    <div class="tip reveal">💡 每个方向都可单独报名；表单内也可勾选「服从调剂」</div>
+    <div class="tip reveal"><i data-lucide="lightbulb"></i>每个方向都可单独报名；表单内也可勾选「服从调剂」</div>
 
     <div class="group-block reveal">
       <h4>行政部门 <span>· 组织统筹 · 幕后保障</span></h4>
       <div class="grid">
         <div class="dept" data-dept="办公室" onclick="openForm('办公室','行政部门')">
           <div class="cat">ADMIN</div>
-          <div class="head"><div class="icon">📋</div><div class="name">办公室</div></div>
+          <div class="head"><div class="icon"><i data-lucide="clipboard-list"></i></div><div class="name">办公室</div></div>
           <div class="desc">艺术团运转的「中枢」：统筹排期、会议记录、文书归档与内外联络。适合细心靠谱、喜欢把事情理顺的你。</div>
           <div class="tags"><span>统筹</span><span>文书</span><span>联络</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="资产管理部" onclick="openForm('资产管理部','行政部门')">
           <div class="cat">ADMIN</div>
-          <div class="head"><div class="icon">📦</div><div class="name">资产管理部</div></div>
+          <div class="head"><div class="icon"><i data-lucide="package"></i></div><div class="name">资产管理部</div></div>
           <div class="desc">器材服装、道具与舞台设备的登记、维护与调度，是每场演出背后的「后勤总管」。</div>
           <div class="tags"><span>物资</span><span>装备</span><span>调度</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="企宣部" onclick="openForm('企宣部','行政部门')">
           <div class="cat">ADMIN</div>
-          <div class="head"><div class="icon">📣</div><div class="name">企宣部</div></div>
+          <div class="head"><div class="icon"><i data-lucide="megaphone"></i></div><div class="name">企宣部</div></div>
           <div class="desc">公众号推文、海报视频、活动现场拍摄与品牌包装。审美在线、会点设计或剪辑的同学别错过。</div>
           <div class="tags"><span>推文</span><span>海报</span><span>拍摄</span></div>
           <div class="join">点击报名 →</div>
@@ -597,21 +627,21 @@
       <div class="grid">
         <div class="dept" data-dept="合唱团" onclick="openForm('合唱团','表演团队')">
           <div class="cat">VOICE</div>
-          <div class="head"><div class="icon">🎤</div><div class="name">合唱团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="mic-vocal"></i></div><div class="name">合唱团</div></div>
           <div class="desc">天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径，把热爱唱成奖杯。</div>
           <div class="tags"><span>和声</span><span>声乐</span><span>金奖</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="交响乐团" onclick="openForm('交响乐团','表演团队')">
           <div class="cat">VOICE</div>
-          <div class="head"><div class="icon">🎻</div><div class="name">交响乐团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="piano"></i></div><div class="name">交响乐团</div></div>
           <div class="desc">管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。</div>
           <div class="tags"><span>管弦</span><span>器乐</span><span>编制</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="民乐团" onclick="openForm('民乐团','表演团队')">
           <div class="cat">VOICE</div>
-          <div class="head"><div class="icon">🎵</div><div class="name">民乐团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="guitar"></i></div><div class="name">民乐团</div></div>
           <div class="desc">国风雅韵，丝竹声声。民族乐器爱好者的主场，传统与现代编曲兼修，奏出东方气韵。</div>
           <div class="tags"><span>民乐</span><span>国风</span><span>丝竹</span></div>
           <div class="join">点击报名 →</div>
@@ -624,14 +654,14 @@
       <div class="grid">
         <div class="dept" data-dept="舞蹈团" onclick="openForm('舞蹈团','表演团队')">
           <div class="cat">STAGE</div>
-          <div class="head"><div class="icon">💃</div><div class="name">舞蹈团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="person-standing"></i></div><div class="name">舞蹈团</div></div>
           <div class="desc">翩若惊鸿，力与美并存。街舞、民族、现代多舞种并行，舞台表现力直接拉满。</div>
           <div class="tags"><span>舞蹈</span><span>编排</span><span>舞台</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="话剧团" onclick="openForm('话剧团','表演团队')">
           <div class="cat">STAGE</div>
-          <div class="head"><div class="icon">🎭</div><div class="name">话剧团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="drama"></i></div><div class="name">话剧团</div></div>
           <div class="desc">声台形表，戏梦人生。剧本、表演、舞美全能成长，年度大戏由你撑起台前幕后。</div>
           <div class="tags"><span>表演</span><span>剧本</span><span>舞美</span></div>
           <div class="join">点击报名 →</div>
@@ -644,14 +674,14 @@
       <div class="grid">
         <div class="dept" data-dept="主持团" onclick="openForm('主持团','表演团队')">
           <div class="cat">HOST</div>
-          <div class="head"><div class="icon">🎙️</div><div class="name">主持团</div></div>
+          <div class="head"><div class="icon"><i data-lucide="mic"></i></div><div class="name">主持团</div></div>
           <div class="desc">妙语连珠，控场担当。校级晚会、赛事主持系统训练，让你在镜头前从容不慌。</div>
           <div class="tags"><span>主持</span><span>控场</span><span>表达</span></div>
           <div class="join">点击报名 →</div>
         </div>
         <div class="dept" data-dept="礼仪队" onclick="openForm('礼仪队','表演团队')">
           <div class="cat">HOST</div>
-          <div class="head"><div class="icon">🌸</div><div class="name">礼仪队</div></div>
+          <div class="head"><div class="icon"><i data-lucide="flower-2"></i></div><div class="name">礼仪队</div></div>
           <div class="desc">端庄优雅，形象先锋。大型活动接待、颁奖礼仪，气质与仪态双修，是门面的存在。</div>
           <div class="tags"><span>礼仪</span><span>接待</span><span>仪态</span></div>
           <div class="join">点击报名 →</div>
@@ -721,7 +751,7 @@
     <div class="sec-head reveal">
       <div class="kicker">Moments</div>
       <h2>星海的高光时刻</h2>
-      <p>这些舞台，等你来点亮 ✨</p>
+      <p>这些舞台，等你来点亮 <i data-lucide="sparkles"></i></p>
     </div>
     <div class="marquee reveal">
       <div class="track" id="moments-track"></div>
@@ -786,14 +816,14 @@
 </footer>
 
 <!-- 浮动按钮 -->
-<button id="bot" aria-label="AI智能答疑"><span class="emo">🤖</span><span>AI 答疑</span></button>
-<div id="botHint">👋 我是星海 AI 小星，招新问题随时问我</div>
-<button id="music" aria-label="背景配乐"><span class="ic">🎵</span><span class="mtip">开启配乐</span></button>
+<button id="bot" class="fab" aria-label="AI智能答疑"><span class="emo"><i data-lucide="bot"></i></span><span>AI 答疑</span></button>
+<div id="botHint"><i data-lucide="bot"></i>我是星海 AI 小星，招新问题随时问我</div>
+<button id="music" class="fab" aria-label="背景配乐"><span class="ic ic-music"><i data-lucide="music"></i></span><span class="ic ic-vol"><i data-lucide="volume-2"></i></span><span class="mtip">开启配乐</span></button>
 
 <!-- 聊天面板 -->
 <div id="chat">
   <div class="ch-head">
-    <div class="av">🤖</div>
+    <div class="av"><i data-lucide="bot"></i></div>
     <div><div class="ti">星海智能小助手</div><div class="st">关于招新 · 部门 · 报名，随时问我</div></div>
     <div class="ch-close" onclick="closeChat()">×</div>
   </div>
@@ -811,7 +841,7 @@
   <div class="modal">
     <span class="m-close" onclick="closeForm()">×</span>
     <div id="formView">
-      <h3>📝 新生报名表</h3>
+      <h3><i data-lucide="pen-line"></i>新生报名表</h3>
       <div class="m-sub">你正在报名：<b id="targetName">—</b>（<span id="targetType">—</span>）</div>
       <form id="signupForm" onsubmit="return submitForm(event)">
         <div class="field">
@@ -853,7 +883,7 @@
       </form>
     </div>
     <div id="successView" class="success" style="display:none;">
-      <div class="big">🎉</div>
+      <div class="big"><i data-lucide="party-popper"></i></div>
       <h3>报名成功！</h3>
       <p id="successText">我们已收到你的报名，请留意招新咨询群与短信通知。</p>
       <div id="successQr"></div>
@@ -903,12 +933,16 @@
 
   (function(){
     const hero=document.querySelector('.hero');
-    const glyphs=['🎵','🎶','♪','♫'];
+    /* 音符粒子用内联 SVG（取自 Lucide music/music-2 path），避开 emoji */
+    const glyphs=[
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="18" r="4"/><path d="M12 18V2l7 4"/></svg>'
+    ];
     setInterval(()=>{
       if(document.hidden)return;
       const n=document.createElement('div');
       n.className='note';
-      n.textContent=glyphs[Math.floor(Math.random()*glyphs.length)];
+      n.innerHTML=glyphs[Math.floor(Math.random()*glyphs.length)];
       n.style.left=(Math.random()*100)+'%';
       n.style.setProperty('--dx',(Math.random()*60-30)+'px');
       n.style.fontSize=(15+Math.random()*15)+'px';
@@ -937,12 +971,12 @@
 
   /* 团队风采 滚播 */
   (function(){
-    const data=[['🎤','十佳歌手'],['🎭','毕业大戏'],['🎻','新年音乐会'],['🏆','大艺展金奖'],
-                ['💃','舞蹈专场'],['🎙️','主持风采'],['🌸','礼仪接待'],['🎵','民乐雅韵']];
+    const data=[['mic-vocal','十佳歌手'],['drama','毕业大戏'],['piano','新年音乐会'],['trophy','大艺展金奖'],
+                ['person-standing','舞蹈专场'],['mic','主持风采'],['flower-2','礼仪接待'],['guitar','民乐雅韵']];
     const track=document.getElementById('moments-track');
     function build(){ data.forEach(([e,t])=>{
       const el=document.createElement('div');el.className='moment';
-      el.innerHTML='<div class="e">'+e+'</div><div class="t">'+t+'</div>';track.appendChild(el);
+      el.innerHTML='<div class="e"><i data-lucide="'+e+'"></i></div><div class="t">'+t+'</div>';track.appendChild(el);
     });}
     build();build();
   })();
@@ -1009,22 +1043,21 @@
     return { toggle(){ if(playing){stop();return false;} start(); return true; } };
   })();
 
-  const mb=document.getElementById('music'),mic=mb.querySelector('.ic'),mtip=mb.querySelector('.mtip');
+  const mb=document.getElementById('music'),mtip=mb.querySelector('.mtip');
   mb.addEventListener('click',()=>{
     const on=Music.toggle();
     mb.classList.toggle('on',on);
-    mic.textContent=on?'🔊':'🎵';
     mtip.textContent=on?'配乐已开启':'开启配乐';
   });
 
   /* ===== AI 智能助手 ===== */
   const KB=[
-    {k:['你好','您好','在吗','hi','hello','哈喽','嗨'],a:'你好呀～我是星海艺术团智能小助手 🤖 关于招新、部门、报名的任何问题都可以问我！'},
+    {k:['你好','您好','在吗','hi','hello','哈喽','嗨'],a:'你好呀～我是星海艺术团智能小助手，关于招新、部门、报名的任何问题都可以问我！'},
     {k:['招新时间','什么时候','几号','哪天','9月6','线下','什么时候招新','招新是哪天'],a:'线下正式招新是 <b>2026年9月6日（周六）8:00–17:00</b>，浦东和松江两校区同步进行。线上报名通道现在就开了，扫码进咨询群也能随时问。'},
     {k:['怎么报名','如何报名','报名方式','怎么填','填表','在哪里报名','线上报名'],a:'两种方式：① <b>线上</b>——在本页面点任意部门/团队卡片，直接填表提交；② <b>线下</b>——9月6日到两校区招新摊位现场填表+简短面试。提交后留意咨询群和短信通知。'},
     {k:['零基础','没基础','不会','小白','没有经验','可以吗','能报吗'],a:'完全可以！很多同学入学时零基础，热爱和坚持比起点更重要。表演团队有系统培养路径，行政部门更看责任心与执行力，整体很友好～'},
     {k:['魏老师','魏启旦','指导老师','老师','戴老师','戴旭彤'],a:'艺术团由校团委老师指导。魏启旦老师是团委艺术教育中心副主任、副教授，华东师大音乐学硕士，近五年带队拿了 <b>40 多项国家级/市级奖项</b>，连续三届全国大学生艺术展演一等奖。戴旭彤老师协助魏老师处理日常事务。'},
-    {k:['部门','有哪些部门','行政部门','行政','都有哪些部门'],a:'行政部门 3 个：办公室（统筹文书）、资产管理部（物资装备）（赞助对接）、企宣部（推文海报）。点「部门一览」卡或往下滑就能看每个部门的详细介绍～'},
+    {k:['部门','有哪些部门','行政部门','行政','都有哪些部门'],a:'行政部门 3 个：办公室（统筹文书）、资产管理部（物资装备）、企宣部（推文海报）。点「部门一览」卡或往下滑就能看每个部门的详细介绍～'},
     {k:['团队','表演团队','有哪些团','有什么团','演出团队'],a:'表演团队 7 个：合唱团、交响乐团、民乐团、舞蹈团、话剧团、主持团、礼仪队。点「部门一览」卡可以逐个看介绍和报名入口。'},
     {k:['合唱团'],a:'合唱团——天籁和声，屡获金奖。分声部系统训练，零基础也有完整培养路径，把热爱唱成奖杯。'},
     {k:['交响乐团','交响'],a:'交响乐团——管弦齐鸣，大气磅礴。面向有器乐基础的同学，也欢迎向编曲与指挥方向生长。'},
@@ -1043,7 +1076,7 @@
     {k:['收获','为什么加入','加入好处','能得到什么','意义'],a:'四件珍贵的事：站上更大的舞台、遇见同频的伙伴、硬核能力进阶、国家级荣誉傍身（近五年 40+ 奖项）。'},
     {k:['服从调剂','调剂','调配'],a:'表单里可以勾选「服从调剂」，所报方向满员时可调配到其他方向，提高入选机会。'},
     {k:['联系人','找谁','负责人','主席','副主席','陈嘉豪','郝博雅'],a:'招新由主席团统筹：副主席陈嘉豪（浦东）和郝博雅（松江）共同负责。具体事宜进咨询群问最方便～'},
-    {k:['谢谢','感谢','多谢','辛苦'],a:'不客气～期待在星海遇见你 🎉'}
+    {k:['谢谢','感谢','多谢','辛苦'],a:'不客气～期待在星海遇见你！'}
   ];
   const QUICK=['招新是哪天？','怎么报名？','零基础能报吗？','有哪些部门？','魏老师是谁？'];
   const chat=document.getElementById('chat'),body=document.getElementById('chBody'),
@@ -1061,7 +1094,7 @@
     let best=0,bestA='';
     KB.forEach(it=>{let s=0;it.k.forEach(k=>{if(t.indexOf(k.toLowerCase())>=0)s+=k.length;});if(s>best){best=s;bestA=it.a;}});
     if(best===0){
-      return '这个问题我还在学习中 🤔 你可以试试问我：<br><span class="qchip" onclick="ask(\'招新是哪天？\')">招新时间</span>'+
+      return '这个问题我还在学习中，你可以试试问我：<br><span class="qchip" onclick="ask(\'招新是哪天？\')">招新时间</span>'+
              '<span class="qchip" onclick="ask(\'怎么报名？\')">怎么报名</span>'+
              '<span class="qchip" onclick="ask(\'有哪些部门？\')">有哪些部门</span>'+
              '<span class="qchip" onclick="ask(\'零基础能报吗？\')">零基础能报吗</span>';
@@ -1080,7 +1113,7 @@
     chat.classList.add('open');
     const h=document.getElementById('botHint');if(h)h.classList.remove('show');
     if(!body.childElementCount){
-      addMsg('嗨～我是星海艺术团智能小助手 🤖<br>招新时间、各部门介绍、怎么报名……都可以问我！','bot');
+      addMsg('嗨～我是星海艺术团智能小助手<br>招新时间、各部门介绍、怎么报名……都可以问我！','bot');
       renderQuick();
     }
   }
@@ -1154,7 +1187,7 @@
           const cq=(window.__C&&window.__C.consult_qr)?window.__C.consult_qr:'';
           sq.innerHTML='<div class="qr-cap" style="margin-top:10px">【'+fd.target+'】招新群码待发布，请先加入招新咨询群：</div>'+
             (cq?'<div class="qr-box" style="margin-top:8px"><img src="'+cq+'" style="width:150px;height:150px;border-radius:12px"><div class="qr-cap">招新咨询群</div></div>':'')+
-            '<div class="qr-cap" style="margin-top:6px">提交信息已收到，后续由团秘拉你入群 📨</div>';
+            '<div class="qr-cap" style="margin-top:6px">提交信息已收到，后续由团秘拉你入群</div>';
         }
         document.getElementById('signupForm').reset();
       }else{msg.className='m-msg err';msg.textContent=(data.error||'提交失败，请稍后重试');}
@@ -1185,5 +1218,6 @@
   }).catch(()=>{});
 </script>
 <script src="/static/js/boot.js" defer></script>
+<script src="/static/js/ui.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 # 星海艺术团官网 · 项目记忆文档（AI 上下文）
 
 > **给未来会话的"交接说明书"。** 新会话只要说"读 `AI_CONTEXT.md`"，即可无缝接手本项目。
-> 最后更新：2026-08-29｜状态：v2 首页已上线，CI 自动部署全绿；有「微信关联 + 部署优化」决策待 owner 拍板（见 §9）。
+> 最后更新：2026-08-29｜状态：v2 首页已上线，CI 自动部署全绿；招新页已完成 Lucide 图标化；有「微信关联 + 部署优化」决策待 owner 拍板（见 §9）。
 
 ---
 
@@ -225,7 +225,9 @@ c.commit(); print('ok')
 - 背景视频已锐化重编码（CRF21+unsharp，3.42MB）；「播放一段时间静止」已加看门狗自愈（FixedBackground + bg.js）
 
 ### 9.3 遗留小尾巴
-- recruit.html 的 emoji 未图标化（营销页，另一次处理）
+- ~~recruit.html 的 emoji 未图标化~~ ✅ **已完成（2026-08-29）**：全部换 Lucide（含聊天/滚播/表单等动态内容），顺手修复存量 bug——`#bot`/`#music` 浮动按钮从未带 `class="fab"`（fixed 定位失效，按钮一直卡页脚），已补上并本地截图验收
+- 顺手修正外联部移除（c45ed41）遗留：数据墙「11」→「10」、AI 知识库病句「资产管理部（物资装备）（赞助对接）」、content.json `dept_desc` 残留的「外联部」条目（cms 只回写编辑器现存字段，删除安全）
+- recruit 页脚 `♪` 与首页 Footer `✦` 为排版符号（非 emoji），按 owner 文案保留
 - 提醒过 owner：聊天中贴过的 ghp_ GitHub token 建议 revoke
 - 线上 PA config.json 的 ADMIN_KEY ≠ 内置 xinghai2026（work.html 硬编码的 /admin?key=xinghai2026 链接在线上会 403，需 owner 提供真 key 或统一密钥）
 
@@ -237,5 +239,6 @@ c.commit(); print('ok')
 - **认证**：登录页=居中卡+密码可见+保持登录+三方行（占位）；`/reset` 密码重置（匹配校验）；users 表有 `pv` 密码版本列，改密后所有设备会话失效（login_required 与 /api/me 都校验）。本地测试管理员 `000000000/xinghai2026`；注意本地 config.json 的 ADMIN_KEY/SECRET 覆盖内置值。
 - **首页新增**：导航 v2（滚动抬升+移动端下拉）、Hero 标题逐字 staggered（GSAP `.name-char`）、SelectedWorks 顶部 CardSpread 扇形卡组（星光集 6 图，悬停/点按展开）。
 - **admin 后台**：`/admin?key=` 现渲染 admin.html（暗色玻璃），数据走 `/api/admin/rows`（key 鉴权）；CSV 导出逻辑不变。
+- **recruit 页图标化（2026-08-29）**：引入 `static/js/vendor/lucide.min.js`(defer) + `static/js/ui.js`（与 work.html 同序）。要点：lucide 替换 `<i data-lucide>` 时**元素自身属性优先于 `XH.icons()` 默认 15px**（尺寸主要走 recruit 页内 CSS）；高频动画（Hero 音符粒子）不走 createIcons，用内联 SVG 常量克隆；滚播/聊天等动态 HTML 插入后依赖 DOMContentLoaded 的 `XH.icons()` 或手动调用。配乐开关图标切换用双 span + `.on` class CSS 显隐。
 - **预览约定**：本地预览必须走 `http://127.0.0.1:8000/...`（双击 html 文件是 file://，样式与接口全失效）。
 - **学习参考**：React Bits Pro（pro.reactbits.dev）为付费 registry（需 REACTBITS_LICENSE_KEY，本机无）；本项目相关体验为免费自研同款。参考仓库克隆在 `.tools/ref-ui/`（daisyUI/open-props）。
