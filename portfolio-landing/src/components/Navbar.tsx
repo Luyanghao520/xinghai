@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const LINKS = [
-  { label: "首页", href: "#home" },
-  { label: "风采", href: "#work" },
-  { label: "加入我们", href: "#contact" },
+  { label: "关于星海", href: "#about" },
+  { label: "风采展示", href: "#gallery" },
+  { label: "团队全景", href: "#teams" },
 ];
 
 /* 旧系统入口（Flask 同域部署，保持相对路径） */
@@ -23,7 +23,7 @@ export default function Navbar() {
 
       // Lightweight scrollspy: pick the last section whose top passed mid-viewport
       const probe = window.scrollY + window.innerHeight / 2;
-      let current = "#home";
+      let current = "";
       for (const link of LINKS) {
         const el = document.querySelector(link.href);
         if (el && (el as HTMLElement).offsetTop <= probe) {
@@ -101,7 +101,7 @@ export default function Navbar() {
         >
           <span className="accent-gradient absolute rounded-full opacity-90 transition-opacity duration-300 group-hover:opacity-100" style={{ inset: "0" }} />
           <span className="relative inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-semibold text-white transition-transform duration-200 group-hover:scale-105 sm:px-4 sm:py-2">
-            招新报名
+            招新网页
             <span aria-hidden>↗</span>
           </span>
         </a>
@@ -164,7 +164,7 @@ export default function Navbar() {
               href={RECRUIT_URL}
               className="accent-gradient mt-1 flex items-center justify-center gap-1 rounded-xl px-4 py-3 text-sm font-semibold text-white"
             >
-              招新报名 <span aria-hidden>↗</span>
+              招新网页 <span aria-hidden>↗</span>
             </a>
           </motion.div>
         )}

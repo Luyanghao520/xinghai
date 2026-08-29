@@ -89,7 +89,7 @@ export default function Hero({ ready }: HeroProps) {
 
         <div className="blur-in inline-flex flex-wrap justify-center gap-4">
           <a
-            href="#work"
+            href="#gallery"
             className="g-hover rounded-full bg-text-primary px-7 py-3.5 text-sm text-bg transition-all duration-300 hover:scale-105 hover:bg-bg hover:text-text-primary"
           >
             观看风采

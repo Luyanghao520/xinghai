@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import FixedBackground from "../components/FixedBackground";
 import LoadingScreen from "../components/LoadingScreen";
 import Hero from "../components/Hero";
-import SelectedWorks from "../components/SelectedWorks";
-import Journal from "../components/Journal";
-import Explorations from "../components/Explorations";
 import Stats from "../components/Stats";
+import About from "../components/About";
+import SelectedWorks from "../components/SelectedWorks";
+import Teams from "../components/Teams";
+import FitQuiz from "../components/FitQuiz";
+import Journal from "../components/Journal";
 import Footer from "../components/Footer";
 
 export default function Index() {
@@ -35,11 +37,14 @@ export default function Index() {
       >
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
+        {/* v2 首页八块：Hero(02) → 信任条(03) → 关于(04) → 风采(05) → 团队全景(06) → 我适合哪里(07) → 动态+页脚(08) */}
         <Hero ready={!isLoading} />
-        <SelectedWorks />
-        <Journal />
-        <Explorations />
         <Stats />
+        <About />
+        <SelectedWorks />
+        <Teams />
+        <FitQuiz />
+        <Journal />
         <Footer />
       </main>
     </>

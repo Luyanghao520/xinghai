@@ -41,9 +41,9 @@ export default function Journal() {
           </a>
         </motion.div>
 
-        {/* Entries */}
+        {/* Entries —— 近期 3 条 */}
         <div className="flex flex-col gap-3">
-          {JOURNAL.map((entry, i) => (
+          {JOURNAL.slice(0, 3).map((entry, i) => (
             <motion.a
               key={entry.title}
               href="#contact"
