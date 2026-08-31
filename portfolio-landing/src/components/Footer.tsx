@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useState } from "react";
 
-const MARQUEE_UNIT = "星海艺术团 · XINGHAI ART TROUPE · 2026 招新进行中";
+/**
+ * Footer 8（React Bits Pro blocks/footer/footer-8）同款结构的免费自研版：
+ * 居中极简 —— 品牌块 → 一句 tagline → 主 CTA → 社交图标行 → 链接列 → 底栏。
+ * 旧系统全部入口（Flask 同域部署，相对路径）一个都不删。
+ */
 
-/* 旧系统全部入口（Flask 同域部署，相对路径）—— 一个都不删 */
 const ENTRY_GROUPS = [
   {
     title: "新生入口",
@@ -31,129 +33,161 @@ const ENTRY_GROUPS = [
   },
 ];
 
-const SOCIALS = ["微信公众号", "B站", "小红书", "抖音"];
+/* Lucide 线性图标（本地内联 SVG，沿用全站 v3.1 禁 emoji 约定） */
+const SOCIAL_ICONS: { name: string; label: string; path: React.ReactNode }[] = [
+  {
+    name: "wechat",
+    label: "微信公众号",
+    path: (
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    ),
+  },
+  {
+    name: "bilibili",
+    label: "B站",
+    path: (
+      <>
+        <path d="M21 11.5a5.5 5.5 0 0 0-5.5-5.5h-7A5.5 5.5 0 0 0 3 11.5v3A5.5 5.5 0 0 0 8.5 20h7a5.5 5.5 0 0 0 5.5-5.5Z" />
+        <path d="m7.5 3.5 2.5 2.5M16.5 3.5 14 6M9 13.5v2M15 13.5v2" />
+      </>
+    ),
+  },
+  {
+    name: "xiaohongshu",
+    label: "小红书",
+    path: (
+      <>
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+      </>
+    ),
+  },
+  {
+    name: "douyin",
+    label: "抖音",
+    path: (
+      <>
+        <path d="M9 18V5l12-2v13" />
+        <circle cx="6" cy="18" r="3" />
+        <circle cx="18" cy="16" r="3" />
+      </>
+    ),
+  },
+];
 
 export default function Footer() {
-  const marqueeRef = useRef<HTMLDivElement>(null);
-
-  /* Seamless marquee: two identical halves, track slides -50% */
-  useEffect(() => {
-    const tween = gsap.to(marqueeRef.current, {
-      xPercent: -50,
-      duration: 40,
-      ease: "none",
-      repeat: -1,
-    });
-    return () => {
-      tween.kill();
-    };
-  }, []);
+  const [copied, setCopied] = useState(false);
 
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden bg-gradient-to-b from-transparent to-bg/70 pb-8 pt-16 md:pb-12 md:pt-20"
+      className="relative border-t border-white/10 bg-gradient-to-b from-transparent to-bg/80"
     >
-      <div className="relative z-10">
-        {/* GSAP marquee */}
-        <div
-          className="select-none overflow-hidden whitespace-nowrap"
-          aria-hidden
-        >
-          <div ref={marqueeRef} className="inline-flex will-change-transform">
-            {[0, 1].map((halfIdx) => (
-              <span
-                key={halfIdx}
-                className="pr-4 font-display text-[clamp(2.5rem,8vw,7rem)] italic leading-none text-text-primary/90"
-              >
-                {Array.from({ length: 4 }, () => MARQUEE_UNIT).join(
-                  "  ✦  "
-                )}
-                <span className="mx-6 not-italic text-muted">✦</span>
+      <div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-16 text-center md:py-20">
+        {/* 品牌块 */}
+        <a href="#home" className="group flex flex-col items-center gap-3">
+          <span className="accent-gradient flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110">
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-bg">
+              <span className="font-display text-lg leading-none text-text-primary">
+                星
               </span>
-            ))}
-          </div>
-        </div>
+            </span>
+          </span>
+          <span className="font-display text-2xl italic tracking-wide text-text-primary">
+            星海艺术团
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.35em] text-muted">
+            Xinghai Art Troupe · 校团委指导
+          </span>
+        </a>
 
-        {/* CTA */}
-        <div className="mt-16 flex flex-col items-center px-6 text-center md:mt-24">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-muted">
-            Join Us · 加入我们
-          </p>
+        {/* tagline + 主 CTA */}
+        <p className="mt-6 max-w-md text-sm leading-relaxed text-muted">
+          无论你想唱歌、跳舞、演奏、演戏还是主持——舞台已经搭好，只等你来。
+        </p>
+        <a
+          href="/recruit"
+          className="g-hover mt-7 inline-flex items-center gap-2 rounded-full bg-text-primary px-8 py-3.5 text-sm font-semibold text-bg transition-all duration-300 hover:scale-105"
+        >
+          前往招新网页 <span aria-hidden>↗</span>
+        </a>
 
-          <p className="mb-10 max-w-md text-sm leading-relaxed text-muted md:text-base">
-            无论你想唱歌、跳舞、演奏、演戏还是主持——
-            <br />
-            舞台已经搭好，只等你来。
-          </p>
-
-          {/* 招新网页入口 */}
-          <a
-            href="/recruit"
-            className="g-hover inline-flex items-center gap-2 rounded-full bg-text-primary px-8 py-4 text-sm font-semibold text-bg transition-all duration-300 hover:scale-105"
-          >
-            前往招新网页 <span aria-hidden>↗</span>
-          </a>
-        </div>
-
-        {/* 系统入口 —— 招新 / 注册 / 登录 / 工作台 / 后台，全部保留 */}
-        <div className="mt-16 px-6 md:mt-24">
-          <div className="mx-auto max-w-[960px]">
-            <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted">
-              System Access · 系统入口
-            </p>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {ENTRY_GROUPS.map((group) => (
-                <div
-                  key={group.title}
-                  className="rounded-3xl border border-stroke bg-surface/70 p-6 backdrop-blur-md"
+        {/* 社交图标行 */}
+        <ul className="mt-9 flex items-center gap-3">
+          {SOCIAL_ICONS.map((s) => (
+            <li key={s.name}>
+              <a
+                href="#contact"
+                title={s.label}
+                aria-label={s.label}
+                onClick={() => {
+                  setCopied(true);
+                  window.setTimeout(() => setCopied(false), 1800);
+                }}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke text-muted transition-all duration-300 hover:border-text-primary/60 hover:text-text-primary"
+              >
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
                 >
-                  <p className="text-sm font-semibold text-text-primary">
-                    {group.title}
-                    <span className="ml-2 text-[10px] font-normal uppercase tracking-[0.2em] text-muted">
-                      {group.sub}
-                    </span>
-                  </p>
-                  <ul className="mt-4 flex flex-col gap-2">
-                    {group.items.map((item) => (
-                      <li key={item.label}>
-                        <a
-                          href={item.href}
-                          className="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors duration-200 hover:text-text-primary"
-                        >
-                          <span className="h-px w-3 bg-stroke transition-all duration-200 group-hover:w-5 group-hover:bg-text-primary" />
-                          {item.label}
-                          <span
-                            aria-hidden
-                            className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                          >
-                            ↗
-                          </span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                  {s.path}
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <span
+          aria-live="polite"
+          className={`mt-2 text-[11px] text-muted transition-opacity duration-300 ${
+            copied ? "opacity-70" : "opacity-0"
+          }`}
+        >
+          平台账号即将上线，敬请期待
+        </span>
+
+        {/* 链接列：系统入口（全部保留） */}
+        <div className="mt-12 grid w-full grid-cols-1 gap-8 border-t border-white/10 pt-10 sm:grid-cols-3">
+          {ENTRY_GROUPS.map((group) => (
+            <div key={group.title} className="flex flex-col items-center gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-text-primary">
+                {group.title}
+                <span className="ml-1.5 text-[9px] font-normal tracking-[0.2em] text-muted">
+                  {group.sub}
+                </span>
+              </p>
+              <ul className="flex flex-col items-center gap-2.5">
+                {group.items.map((item) => (
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
+                      className="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors duration-200 hover:text-text-primary"
+                    >
+                      <span className="h-px w-3 bg-stroke transition-all duration-200 group-hover:w-5 group-hover:bg-text-primary" />
+                      {item.label}
+                      <span
+                        aria-hidden
+                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                      >
+                        ↗
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* Footer bar */}
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 px-6 pt-6 text-xs text-muted sm:flex-row md:mt-24 lg:px-16">
-          <ul className="flex items-center gap-5">
-            {SOCIALS.map((social) => (
-              <li key={social}>
-                <a
-                  href="#contact"
-                  className="transition-colors duration-200 hover:text-text-primary"
-                >
-                  {social}
-                </a>
-              </li>
-            ))}
-          </ul>
-
+        {/* 底栏 */}
+        <div className="mt-12 flex w-full flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-muted sm:flex-row">
+          <p className="tabular-nums">© 2026 星海艺术团 · 上海立信会计金融学院</p>
           <p className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
@@ -161,8 +195,6 @@ export default function Footer() {
             </span>
             2026 招新进行中
           </p>
-
-          <p className="tabular-nums">© 2026 星海艺术团 · 上海立信会计金融学院</p>
         </div>
       </div>
     </footer>

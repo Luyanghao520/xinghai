@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Navbar from "./Navbar";
+import GlitchText from "./GlitchText";
 
 const ROLES = ["歌声", "舞步", "琴弦", "戏韵", "妙语"];
 const TITLE = "星海艺术团".split("");
+const TITLE_TEXT = "星海艺术团";
+const TAGLINE_PREFIX = "以 ";
+const TAGLINE_SUFFIX = " 为名，聚合成海。";
+const DESCRIPTION =
+  "迎新晚会、十佳歌手、毕业季音乐会——校园里大大小小的舞台，都有星海人的身影。2026 级的你，要不要成为这束光的一部分？";
 
 interface HeroProps {
   /** Gates the GSAP entrance until the loading screen is gone */
@@ -70,27 +76,49 @@ export default function Hero({ ready }: HeroProps) {
           className="title-shine mb-6 inline-block cursor-default font-display text-6xl italic leading-[0.9] tracking-tight text-text-primary md:text-8xl lg:text-9xl"
           aria-label="星海艺术团"
         >
-          {TITLE.map((ch, i) => (
-            <span key={i} aria-hidden className="name-char inline-block">
-              {ch}
-            </span>
-          ))}
+          <GlitchText
+            text={TITLE_TEXT}
+            delay={1700}
+            strength={1}
+            ambient
+            className="inline-block"
+          >
+            {TITLE.map((ch, i) => (
+              <span key={i} aria-hidden className="name-char inline-block">
+                {ch}
+              </span>
+            ))}
+          </GlitchText>
         </h1>
 
         <p className="blur-in mb-6 text-base text-muted md:text-lg">
-          以{" "}
-          <span
-            key={roleIndex}
-            className="animate-role-fade-in inline-block font-display italic text-text-primary"
+          <GlitchText
+            text={TAGLINE_PREFIX + ROLES[roleIndex] + TAGLINE_SUFFIX}
+            delay={1700}
+            strength={0.5}
+            className="text-muted"
           >
-            {ROLES[roleIndex]}
-          </span>{" "}
-          为名，聚合成海。
+            以{" "}
+            <span
+              key={roleIndex}
+              className="animate-role-fade-in inline-block font-display italic text-text-primary"
+            >
+              {ROLES[roleIndex]}
+            </span>{" "}
+            为名，聚合成海。
+          </GlitchText>
         </p>
 
         <p className="blur-in mb-12 max-w-md text-sm leading-relaxed text-muted md:text-base">
-          迎新晚会、十佳歌手、毕业季音乐会——校园里大大小小的舞台，都有星海人的身影。2026
-          级的你，要不要成为这束光的一部分？
+          <GlitchText
+            text={DESCRIPTION}
+            delay={1700}
+            strength={0.35}
+            className="text-muted"
+          >
+            迎新晚会、十佳歌手、毕业季音乐会——校园里大大小小的舞台，都有星海人的身影。2026
+            级的你，要不要成为这束光的一部分？
+          </GlitchText>
         </p>
 
         <div className="blur-in inline-flex flex-wrap justify-center gap-4">

@@ -1,7 +1,7 @@
 # 星海艺术团官网 · 项目记忆文档（AI 上下文）
 
 > **给未来会话的"交接说明书"。** 新会话只要说"读 `AI_CONTEXT.md`"，即可无缝接手本项目。
-> 最后更新：2026-08-29｜状态：v2 首页已上线，CI 自动部署全绿；招新页已完成 Lucide 图标化；有「微信关联 + 部署优化」决策待 owner 拍板（见 §9）。
+> 最后更新：2026-08-31｜状态：首页三件套（故障字/页脚8/导航15）已自研落地并部署；招新页已图标化；「微信关联 + 部署优化」仍待 owner 拍板（见 §9）。
 
 ---
 
@@ -219,6 +219,10 @@ c.commit(); print('ok')
 - 阿里云操作进度：owner 正在控制台创建 OSS Bucket（名称/地域华东/公共读三项已交代），AccessKey 尚未提供；拿到后即可上传媒体 + 改 4 处 URL + 部署。
 
 ### 9.2 近期已完成（详见 git log 6a35dd9 之后）
+- **首页三件套（2026-08-31，React Bits Pro 文档块同款语义、免费自研）**：
+  - **GlitchText**（`src/components/GlitchText.tsx`）：canvas 光标交互黏性故障字，接入 Hero 标题+副标+描述三处，**字号不变**。DOM 文字原样保留（SEO/无障碍），故障画面由叠层 canvas 绘制；空闲零 rAF、环境脉冲低强度、基线用 `fontBoundingBox` 与 DOM 半行距算法严格对齐；`prefers-reduced-motion` 禁用；入场静默期 1700ms 避开 GSAP 逐字动画。
+  - **Footer 8 同款页脚**：居中极简——品牌块→tagline→主 CTA→社交图标行（微信/B站/小红书/抖音，内联 SVG）→三列系统入口（新生/成员/管理，**入口一个不删**）→底栏。大号 marquee 已移除（minimal 语义）。
+  - **Navigation 15 同款导航**：quiet hairline 全宽条（滚动后玻璃抬升）+ 悬停**游走下划线指示器**（静止停 active）+ 移动端**右侧滑入抽屉**（遮罩+滚动锁+Esc）。⚠️ 抽屉点锚点链接必须先解锁 body 滚动再关抽屉，否则锚点跳转被吞（已修）。
 - 首页 v2 八块改版（数据驱动 Team 模型、团队全景+校区筛选、我适合哪里三问、标题流光、CardSpread 舒展、卡片悬浮、删二维码）
 - 认证：/reset 密码重置 + pv 会话终止机制；**修复 PA 线上登录**（根因：PA 有手工上传的 config.json 自定义 SECRET，与默认 SECRET 播种的 users.db 错位——已用 PA 真实 SECRET 重算哈希写回）
 - CI：GitHub Actions push→构建→上传 PA→Reload 全绿（.github/workflows/deploy.yml + scripts/pa_deploy.py，限流已适配；**mp4 等二进制仍需手工 multipart 上传**）
@@ -241,4 +245,4 @@ c.commit(); print('ok')
 - **admin 后台**：`/admin?key=` 现渲染 admin.html（暗色玻璃），数据走 `/api/admin/rows`（key 鉴权）；CSV 导出逻辑不变。
 - **recruit 页图标化（2026-08-29）**：引入 `static/js/vendor/lucide.min.js`(defer) + `static/js/ui.js`（与 work.html 同序）。要点：lucide 替换 `<i data-lucide>` 时**元素自身属性优先于 `XH.icons()` 默认 15px**（尺寸主要走 recruit 页内 CSS）；高频动画（Hero 音符粒子）不走 createIcons，用内联 SVG 常量克隆；滚播/聊天等动态 HTML 插入后依赖 DOMContentLoaded 的 `XH.icons()` 或手动调用。配乐开关图标切换用双 span + `.on` class CSS 显隐。
 - **预览约定**：本地预览必须走 `http://127.0.0.1:8000/...`（双击 html 文件是 file://，样式与接口全失效）。
-- **学习参考**：React Bits Pro（pro.reactbits.dev）为付费 registry（需 REACTBITS_LICENSE_KEY，本机无）；本项目相关体验为免费自研同款。参考仓库克隆在 `.tools/ref-ui/`（daisyUI/open-props）。
+- **学习参考**：React Bits Pro（pro.reactbits.dev）为付费 registry（**需 REACTBITS_LICENSE_KEY，本机无**——owner 若拿到付费 key 可走 `npx shadcn add @reactbits-*` 原装流程，否则沿用免费自研同款）；本项目 glitch-text/footer-8/navigation-15 均为免费自研同款（2026-08-31）。参考仓库克隆在 `.tools/ref-ui/`（daisyUI/open-props）。
