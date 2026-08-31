@@ -222,7 +222,7 @@ c.commit(); print('ok')
 - **首页三件套（2026-08-31，React Bits Pro 文档块同款语义、免费自研）**：
   - **GlitchText**（`src/components/GlitchText.tsx`）：canvas 光标交互黏性故障字，接入 Hero 标题+副标+描述三处，**字号不变**。DOM 文字原样保留（SEO/无障碍），故障画面由叠层 canvas 绘制；空闲零 rAF、环境脉冲低强度、基线用 `fontBoundingBox` 与 DOM 半行距算法严格对齐；`prefers-reduced-motion` 禁用；入场静默期 1700ms 避开 GSAP 逐字动画。
   - **Footer 8 同款页脚**：居中极简——品牌块→tagline→主 CTA→社交图标行（微信/B站/小红书/抖音，内联 SVG）→三列系统入口（新生/成员/管理，**入口一个不删**）→底栏。大号 marquee 已移除（minimal 语义）。
-  - **Navigation 15 同款导航**：quiet hairline 全宽条（滚动后玻璃抬升）+ 悬停**游走下划线指示器**（静止停 active）+ 移动端**右侧滑入抽屉**（遮罩+滚动锁+Esc）。⚠️ 抽屉点锚点链接必须先解锁 body 滚动再关抽屉，否则锚点跳转被吞（已修）。
+  - **Navigation 15 同款导航**：quiet hairline 全宽条（**⚠️ 永不遮背景**——滚动只加 1px 发丝线 `border-white/10`，不加填充/blur；曾误加 `bg-bg/70 + backdrop-blur` 盖住星云视频被 owner 要求改回）+ 悬停**游走下划线指示器**（静止停 active）+ 移动端**右侧滑入抽屉**（遮罩+滚动锁+Esc）。⚠️ 抽屉点锚点链接必须先解锁 body 滚动再关抽屉，否则锚点跳转被吞（已修）。⚠️ header 上**勿加 transition-colors**：会卡死 border 计算值致发丝线消失（已踩）。
 - 首页 v2 八块改版（数据驱动 Team 模型、团队全景+校区筛选、我适合哪里三问、标题流光、CardSpread 舒展、卡片悬浮、删二维码）
 - 认证：/reset 密码重置 + pv 会话终止机制；**修复 PA 线上登录**（根因：PA 有手工上传的 config.json 自定义 SECRET，与默认 SECRET 播种的 users.db 错位——已用 PA 真实 SECRET 重算哈希写回）
 - CI：GitHub Actions push→构建→上传 PA→Reload 全绿（.github/workflows/deploy.yml + scripts/pa_deploy.py，限流已适配；**mp4 等二进制仍需手工 multipart 上传**）

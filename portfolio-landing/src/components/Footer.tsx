@@ -81,7 +81,7 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="relative border-t border-white/10 bg-gradient-to-b from-transparent to-bg/80"
+      className="relative border-t border-white/10 bg-gradient-to-b from-transparent to-bg/70"
     >
       <div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-16 text-center md:py-20">
         {/* 品牌块 */}
