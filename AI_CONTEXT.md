@@ -352,6 +352,8 @@ dd34ae6 fix(app): 紧急安全 + 性能小修——密钥启动检测 / session 
 
 ### 10.8 待办（下一个会话从这里继续）
 
+> **⚠️ 2026-09-03 更新：施工依据已升级为《施工总案·招新冲刺与内容编辑-2026-09-03.md》**（项目根）——它合并了《需求规格·官网内容编辑与二次加密》与《官网问题清单与解决方案-2026-09-03》（含 3 处事实修正），配《施工进度.md》勾选表。下一个会话先读施工总案 §2 排期与施工进度，不要按本节旧清单开工。
+
 - [ ] **owner 验收 PA 线上首页 + 工作端登录**（session cookie Secure 改完后强制重新登录 admin，验证 chair_required 是否误伤普通成员 CRUD）
 - [ ] **PA 独有 3 条 bg 修复是否需要重新 cherry-pick**（`8916383` 视频放大 185% / `41fcca2` 黑场根治 / `5a581d1` star ping-pong）—— owner 决定是否恢复视觉效果
 - [ ] **后续阶段二优化**（未在本会话内完成）：密码哈希迁移 `werkzeug.security.generate_password_hash` + 3 用户密码重置 / schema FK + CHECK + 索引 / CSRF token（flask-wtf）/ `/api/content` `/api/kb` 鉴权加严
