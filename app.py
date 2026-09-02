@@ -42,11 +42,24 @@ if os.path.exists(_cfg_path):
     except Exception:
         _cfg = {}
 
-ADMIN_KEY = os.environ.get("XINGHAI_ADMIN_KEY", _cfg.get("ADMIN_KEY", "xinghai2026"))  # 招新后台 / CMS 密码
-SECRET = os.environ.get("XINGHAI_SECRET", _cfg.get("SECRET", "xinghai-art-troupe-2026"))  # Flask session 密钥
+ADMIN_KEY = os.environ.get("XINGHAI_ADMIN_KEY") or _cfg.get("ADMIN_KEY")  # 招新后台 / CMS 密码
+SECRET = os.environ.get("XINGHAI_SECRET") or _cfg.get("SECRET")  # Flask session 密钥
+if not ADMIN_KEY or not SECRET:
+    raise RuntimeError(
+        "XINGHAI_ADMIN_KEY 和 XINGHAI_SECRET 必须配置（环境变量或 config.json）"
+    )
 
 app = Flask(__name__, static_folder=STATIC, static_url_path="/static")
 app.secret_key = SECRET
+
+# Session cookie 安全：开发环境允许 HTTP，生产强制 HTTPS
+SECURE_COOKIE = os.environ.get("FLASK_ENV") != "development"
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=SECURE_COOKIE,
+    SESSION_COOKIE_SAMESITE="Lax",
+    MAX_CONTENT_LENGTH=10 * 1024 * 1024,  # 10 MB 上传上限
+)
 
 # ============ 工具 ============
 def db(path):
@@ -467,7 +480,7 @@ def api_me():
     return jsonify({"ok": True, "name": session.get("name"),
                     "role": session.get("role"), "uid": session.get("uid")})
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET", "POST"])  # POST 优先（防 <img src> CSRF），GET 兼容现有前端链接
 def logout():
     session.clear()
     return redirect("/login")
@@ -527,13 +540,13 @@ def api_members_save():
     return jsonify({"ok": True})
 
 @app.route("/api/members/<xh>", methods=["DELETE"])
-@login_required
+@chair_required
 def api_members_del(xh):
     cx = db(DB_MEM); cx.execute("DELETE FROM members WHERE xh=?", (xh,)); cx.commit(); cx.close()
     return jsonify({"ok": True})
 
 @app.route("/api/members/import", methods=["POST"])
-@login_required
+@chair_required
 def api_members_import():
     f = request.files.get("file")
     if not f:
@@ -725,7 +738,7 @@ def api_bulletin():
     return jsonify([dict(r) for r in rows])
 
 @app.route("/api/bulletin", methods=["POST"])
-@login_required
+@chair_required
 def api_bulletin_save():
     d = request.get_json(force=True, silent=True) or {}
     title = (d.get("title") or "").strip()
@@ -1128,7 +1141,7 @@ def api_signup_status(rid):
     return jsonify({"ok": True})
 
 @app.route("/api/signup/<int:rid>/enroll", methods=["POST"])
-@login_required
+@chair_required
 def api_signup_enroll(rid):
     cx = db(DB_REG)
     row = cx.execute("SELECT * FROM registrations WHERE id=?", (rid,)).fetchone()
