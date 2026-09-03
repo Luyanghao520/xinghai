@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>官网内容 · 星海工作端</title>
+<link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+<style>
+  .gate{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;
+        backdrop-filter:blur(14px);background:rgba(8,10,18,.72);}
+  .gate-box{width:min(92vw,420px)}
+  .gate input{width:100%;margin:12px 0}
+  .lockbar{position:sticky;top:10px;z-index:20;display:flex;gap:10px;align-items:center;
+           padding:10px 14px;border-radius:10px;background:rgba(137,170,204,.10);
+           border:1px solid rgba(137,170,204,.28);font-size:13px;margin-bottom:16px}
+  .lockbar .sp{flex:1}
+  .audit{width:100%;font-size:12px;border-collapse:collapse}
+  .audit td,.audit th{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 8px;text-align:left}
+  .sec{margin-top:18px}
+  .sec h3{font-size:14px;margin:0 0 10px;color:var(--xh-text)}
+  .sec .hint{font-size:11.5px;color:var(--xh-muted);margin:-6px 0 10px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12px;color:var(--xh-muted);margin-bottom:4px}
+  .field textarea,.field input[type=text]{width:100%;min-height:60px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .qr-item{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .qr-item img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--xh-stroke-2)}
+  .carousel-item{border:1px solid var(--xh-stroke);border-radius:10px;padding:12px;margin-bottom:10px}
+  .carousel-item .ops{display:flex;gap:6px;margin-top:8px}
+  .mini{font-size:11px;max-height:52px;min-height:52px;width:auto;padding:4px 10px}
+</style>
+</head>
+<body>
+<header class="xh-topbar">
+  <a class="xh-topbar-brand" href="/work"><img src="/static/uploads/logo.png" alt="">星海<em>工作端</em></a>
+  <a class="xh-btn xh-btn-ghost xh-btn-sm" href="/work">← 返回工作台</a>
+  <div class="xh-topbar-spacer"></div>
+  <div class="xh-topbar-user">你好，<b id="uname">—</b><span class="xh-role" id="urole">—</span><a class="xh-btn-text" href="/logout">登出</a></div>
+</header>
+
+<main class="xh-page xh-page-wide" id="editor" style="display:none">
+  <div class="xh-kicker">星海艺术团 · 内部管理系统</div>
+  <h1 class="welcome">官网<em> · 内容编辑</em></h1>
+
+  <div class="lockbar" id="lockbar">
+    <span id="lockMsg">已解锁，剩余 <b id="left">—</b></span>
+    <span class="sp"></span>
+    <button class="xh-btn xh-btn-ghost xh-btn-sm" onclick="doLock()">立即上锁</button>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="xh-panel" style="margin-top:20px">
+    <div class="xh-panel-bd">
+      <button class="xh-btn xh-btn-primary" id="saveBtn">保存全部修改</button>
+      <span id="status" style="margin-left:12px;font-size:13px"></span>
+    </div>
+  </div>
+
+  <div class="xh-panel" style="margin-top:20px">
+    <div class="xh-panel-hd">版本与审计</div>
+    <div class="xh-panel-bd">
+      <div class="xh-mod-ds" style="margin-bottom:8px">保存前自动备份，最多保留 30 份；回滚前会再备份当前状态</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="bkSel" class="xh-input" style="max-width:340px"></select>
+        <button class="xh-btn xh-btn-ghost xh-btn-sm" id="bkBtn">回滚到此版本</button>
+      </div>
+      <table class="audit" id="auditTbl" style="margin-top:14px"></table>
+    </div>
+  </div>
+</main>
+
+<!-- 解锁遮罩 -->
+<div class="gate" id="gate">
+  <div class="gate-box xh-panel">
+    <div class="xh-panel-hd">二次验证</div>
+    <div class="xh-panel-bd">
+      <p class="xh-page-sub" id="gateMsg" style="margin:0 0 6px">修改官网内容需再次输入编辑口令（30 分钟有效）。</p>
+      <input id="pwd" class="xh-input" type="password" placeholder="编辑口令" autocomplete="off">
+      <button class="xh-btn xh-btn-primary" style="width:100%" id="gateBtn">解锁</button>
+      <div id="gateErr" style="color:#ff8080;font-size:13px;margin-top:8px"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/vendor/lucide.min.js" defer></script>
+<script src="/static/js/ui.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let CONTENT = {}, TIMER = null;
+
+async function api(url, opt) {
+  const r = await fetch(url, Object.assign({
+    credentials: 'same-origin',
+    headers: opt && opt.body ? {'Content-Type': 'application/json'} : {}
+  }, opt || {}));
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401) { location.href = '/login'; return {__gone: true}; }
+  if (r.status === 403 && d.code === 'STEP_UP_REQUIRED') { showGate(); return {__gate: true}; }
+  return d;
+}
+
+function showGate(msg) {
+  $('editor').style.display = 'none';
+  $('gate').style.display = 'flex';
+  if (msg) $('gateErr').textContent = msg;
+  $('pwd').value = '';
+  clearInterval(TIMER);
+}
+
+async function unlock() {
+  const pwd = $('pwd').value;
+  $('pwd').value = '';
+  $('gateErr').textContent = '';
+  const d = await api('/api/site/unlock', {method: 'POST', body: JSON.stringify({pwd})});
+  if (d && d.ok) { loadAll(); }
+  else { $('gateErr').textContent = (d && d.error) || '解锁失败'; }
+}
+
+async function doLock() { await api('/api/site/lock', {method: 'POST'}); showGate('已上锁'); }
+
+function tick(sec) {
+  $('left').textContent = Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒';
+}
+
+async function status() {
+  const d = await api('/api/site/status');
+  if (!d || d.__gate || d.__gone) return d;
+  if (!d.can_edit) { showGate('仅主席 / 副主席可进入。'); return d; }
+  if (d.locked_for > 0) { showGate('尝试过于频繁，请 ' + Math.ceil(d.locked_for / 60) + ' 分钟后再试。'); return d; }
+  if (!d.configured) { showGate('编辑口令未配置：请在 config.json 添加 SITE_EDIT_KEY 后重启服务。'); return d; }
+  if (!d.unlocked) { showGate(); return d; }
+  $('gate').style.display = 'none';
+  $('editor').style.display = 'block';
+  tick(d.expires_in);
+  clearInterval(TIMER);
+  TIMER = setInterval(async () => {
+    const s = await api('/api/site/status');
+    if (s && !s.__gate && !s.__gone) { if (!s.unlocked) showGate('已超时自动上锁'); else tick(s.expires_in); }
+  }, 30000);
+  return d;
+}
+
+async function loadAll() {
+  const s = await status();
+  if (!s || !s.unlocked) return;
+  const c = await api('/api/site/content');
+  if (c && c.ok) { CONTENT = c.data; render(); loadBackups(); loadAudit(); }
+}
+
+/* ===== 固定文本字段（顶层确定存在的键）===== */
+const TEXT_FIELDS = [
+  ["hero_welcome", "首页主视觉欢迎语", "支持 <br> <b> 标签"],
+  ["b0", "加入理由 · 一", ""], ["b1", "加入理由 · 二", ""],
+  ["b2", "加入理由 · 三", ""], ["b3", "加入理由 · 四", ""],
+  ["t_wei", "指导老师 · 魏启旦", ""], ["t_dai", "指导老师 · 戴旭彤", ""],
+  ["footer", "页脚文案", ""],
+];
+
+function ta(id, label, hint, val) {
+  return '<div class="field"><label>' + label + (hint ? '（' + hint + '）' : '') + '</label>' +
+         '<textarea class="xh-input" id="f_' + id + '">' + escHtml(val == null ? '' : val) + '</textarea></div>';
+}
+function escHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function render() {
+  let h = '<div class="xh-panel sec"><div class="xh-panel-hd">基础文案</div><div class="xh-panel-bd">';
+  TEXT_FIELDS.forEach(([k, label, hint]) => { h += ta(k, label, hint, CONTENT[k]); });
+  h += '</div></div>';
+
+  /* 咨询群码 */
+  h += '<div class="xh-panel sec"><div class="xh-panel-hd">咨询群码</div><div class="xh-panel-bd">' +
+       qrItem('consult_qr', CONTENT.consult_qr || '') + '</div></div>';
+
+  /* 分团群码（派生：运行时遍历键，永不漂移） */
+  const tq = CONTENT.team_qr || {};
+  const tqKeys = Object.keys(tq);
+  h += '<div class="xh-panel sec"><div class="xh-panel-hd">分团群码</div><div class="xh-panel-bd">' +
+       '<div class="hint">每团一个键（如「合唱团」），值为图片路径；可新增键</div><div id="tqList">';
+  tqKeys.forEach(k => { h += qrItem('tq_' + k, tq[k], k); });
+  h += '</div><div style="display:flex;gap:8px;margin-top:6px">' +
+       '<input class="xh-input" id="tqNewKey" placeholder="新团队键名" style="max-width:180px">' +
+       '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="addTq()">新增键</button></div></div></div>';
+
+  /* 部门/团队介绍（派生） */
+  const dd = CONTENT.dept_desc || {};
+  h += '<div class="xh-panel sec"><div class="xh-panel-hd">部门 / 团队介绍</div><div class="xh-panel-bd"><div id="ddList">';
+  Object.keys(dd).forEach(k => { h += ta('dd_' + k, k, '', dd[k]); });
+  h += '</div></div></div>';
+
+  /* 轮播图 */
+  const car = CONTENT.carousel || [];
+  h += '<div class="xh-panel sec"><div class="xh-panel-hd">轮播图（' + car.length + ' 项）</div><div class="xh-panel-bd"><div class="hint">img 为图片路径，desc 为说明文字</div><div id="carList">';
+  car.forEach((it, i) => { h += carItem(it, i); });
+  h += '</div><button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="addCar()">新增一项</button></div></div>';
+
+  /* 组织架构 */
+  const org = CONTENT.org || {};
+  h += '<div class="xh-panel sec"><div class="xh-panel-hd">组织架构</div><div class="xh-panel-bd"><div class="hint">主席团三人：name=姓名 desc=职责 ico=图标（Lucide 名或 emoji）</div>';
+  ["chairman", "vice_pudong", "vice_songjiang"].forEach(k => {
+    const o = org[k] || {};
+    h += '<div class="field"><label>' + k + '</label><div class="row2">' +
+         '<input class="xh-input" id="f_org_' + k + '_name" value="' + escHtml(o.name || '') + '" placeholder="name">' +
+         '<input class="xh-input" id="f_org_' + k + '_ico" value="' + escHtml(o.ico || '') + '" placeholder="ico"></div>' +
+         '<textarea class="xh-input" id="f_org_' + k + '_desc" style="margin-top:6px">' + escHtml(o.desc || '') + '</textarea></div>';
+  });
+  [["perform_teams", "表演团队"], ["admin_teams", "行政部门"]].forEach(([key, label]) => {
+    const arr = org[key] || [];
+    h += '<div class="field"><label>' + label + '（' + arr.length + ' 项）</label><div id="' + key + 'List">';
+    arr.forEach((m, i) => { h += orgTeamItem(m, key, i); });
+    h += '</div><button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="addOrgTeam(\'' + key + '\')">新增</button></div>';
+  });
+  h += '</div></div>';
+
+  $('sections').innerHTML = h;
+}
+
+function qrItem(id, val, keyLabel) {
+  const url = val ? val : '';
+  return '<div class="qr-item">' +
+    (url ? '<img src="' + escHtml(url) + '" onerror="this.style.opacity=.2">' : '<img src="" style="opacity:.1">') +
+    '<div style="flex:1;min-width:200px"><label style="font-size:12px;color:var(--xh-muted)">' +
+    (keyLabel ? escHtml(keyLabel) : '图片路径') + '</label>' +
+    '<input class="xh-input" id="f_' + id + '" value="' + escHtml(url) + '" placeholder="/static/uploads/xxx.png 或上传后回填"></div>' +
+    '<span class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="pickImg(\'' + id + '\')">上传</span></div>';
+}
+
+function carItem(it, i) {
+  return '<div class="carousel-item" data-i="' + i + '">' +
+    '<div class="row2">' +
+    '<input class="xh-input" id="f_car_' + i + '_img" value="' + escHtml(it.img || '') + '" placeholder="img 路径">' +
+    '<input class="xh-input" id="f_car_' + i + '_desc" value="' + escHtml(it.desc || '') + '" placeholder="desc 说明"></div>' +
+    '<div class="ops">' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="moveCar(' + i + ',-1)">上移</button>' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="moveCar(' + i + ',1)">下移</button>' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="delCar(' + i + ')">删除</button>' +
+    '<span class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="pickImg(\'car_' + i + '_img\')">上传图</span></div></div>';
+}
+
+function orgTeamItem(m, key, i) {
+  return '<div class="carousel-item" data-okey="' + key + '" data-oi="' + i + '">' +
+    '<div class="row2">' +
+    '<input class="xh-input" id="f_' + key + '_' + i + '_name" value="' + escHtml(m.name || '') + '" placeholder="名称">' +
+    '<input class="xh-input" id="f_' + key + '_' + i + '_ico" value="' + escHtml(m.ico || '') + '" placeholder="ico"></div>' +
+    '<textarea class="xh-input" id="f_' + key + '_' + i + '_desc" style="margin-top:6px;min-height:44px">' + escHtml(m.desc || '') + '</textarea>' +
+    '<div class="ops">' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="moveOrg(\'' + key + '\',' + i + ',-1)">上移</button>' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="moveOrg(\'' + key + '\',' + i + ',1)">下移</button>' +
+    '<button class="xh-btn xh-btn-ghost xh-btn-sm mini" onclick="delOrg(\'' + key + '\',' + i + ')">删除</button></div></div>';
+}
+
+/* 图片选择：本地 file → /api/site/upload → 回填路径 */
+function pickImg(targetId) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const fd = new FormData();
+    fd.append('file', inp.files[0]);
+    const r = await fetch('/api/site/upload', {method: 'POST', credentials: 'same-origin', body: fd});
+    const d = await r.json().catch(() => ({}));
+    if (d.ok) { const el = $('f_' + targetId); if (el) el.value = d.url; XH.toast('已上传', 'ok'); }
+    else XH.toast(d.error || '上传失败', 'bad');
+  };
+  inp.click();
+}
+
+/* 分团群码 / 轮播 / 组织团队的增删移（操作 CONTENT 后整段重渲染） */
+function addTq() {
+  const k = ($('tqNewKey').value || '').trim();
+  if (!k) return XH.toast('请输入键名', 'warn');
+  if (!CONTENT.team_qr) CONTENT.team_qr = {};
+  if (k in CONTENT.team_qr) return XH.toast('键已存在', 'warn');
+  CONTENT.team_qr[k] = ''; render();
+}
+function addCar() { (CONTENT.carousel = CONTENT.carousel || []).push({img: '', desc: ''}); render(); }
+function delCar(i) { CONTENT.carousel.splice(i, 1); render(); }
+function moveCar(i, d) {
+  const a = CONTENT.carousel, j = i + d;
+  if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]]; render();
+}
+function addOrgTeam(key) { (CONTENT.org[key] = CONTENT.org[key] || []).push({name: '', desc: '', ico: ''}); render(); }
+function delOrg(key, i) { CONTENT.org[key].splice(i, 1); render(); }
+function moveOrg(key, i, d) {
+  const a = CONTENT.org[key], j = i + d;
+  if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]]; render();
+}
+
+/* 收集：只提交被改动过的字段（服务端做旧值比对与审计） */
+function collectForm() {
+  const payload = {};
+  const changed = (k, v) => { if (JSON.stringify(CONTENT[k]) !== JSON.stringify(v)) payload[k] = v; };
+
+  const tv = {};
+  TEXT_FIELDS.forEach(([k]) => { tv[k] = $('f_' + k).value; });
+  Object.keys(tv).forEach(k => changed(k, tv[k]));
+
+  changed('consult_qr', $('f_consult_qr').value.trim());
+
+  const tq = {};
+  Object.keys(CONTENT.team_qr || {}).forEach(k => {
+    const el = $('f_tq_' + k);
+    if (el) tq[k] = el.value.trim();
+  });
+  changed('team_qr', tq);
+
+  const dd = {};
+  Object.keys(CONTENT.dept_desc || {}).forEach(k => {
+    const el = $('f_dd_' + k);
+    if (el) dd[k] = el.value;
+  });
+  changed('dept_desc', dd);
+
+  const car = [];
+  (CONTENT.carousel || []).forEach((_, i) => {
+    car.push({img: $('f_car_' + i + '_img').value.trim(), desc: $('f_car_' + i + '_desc').value});
+  });
+  changed('carousel', car);
+
+  const org = {};
+  ["chairman", "vice_pudong", "vice_songjiang"].forEach(k => {
+    org[k] = {
+      name: $('f_org_' + k + '_name').value.trim(),
+      desc: $('f_org_' + k + '_desc').value,
+      ico: $('f_org_' + k + '_ico').value.trim(),
+    };
+  });
+  ["perform_teams", "admin_teams"].forEach(key => {
+    org[key] = (CONTENT.org[key] || []).map((_, i) => ({
+      name: $('f_' + key + '_' + i + '_name').value.trim(),
+      desc: $('f_' + key + '_' + i + '_desc').value,
+      ico: $('f_' + key + '_' + i + '_ico').value.trim(),
+    }));
+  });
+  changed('org', org);
+
+  return payload;
+}
+
+async function saveAll() {
+  const payload = collectForm();
+  const n = Object.keys(payload).length;
+  if (!n) return XH.toast('没有改动', 'ok');
+  if (!confirm('确认保存 ' + n + ' 项修改？将覆盖线上内容并自动生成备份。')) return;
+  const d = await api('/api/site/content', {method: 'POST', body: JSON.stringify(payload)});
+  if (d && d.ok) {
+    $('status').textContent = '已保存，变更 ' + (d.changed || 0) + ' 项';
+    XH.toast('保存成功', 'ok');
+    Object.assign(CONTENT, payload);  // 同步基线，避免重复提交
+    loadBackups(); loadAudit();
+  } else if (d && !d.__gate) {
+    XH.toast(d.error || '保存失败', 'bad');
+  }
+}
+
+async function loadBackups() {
+  const d = await api('/api/site/backups');
+  if (d && d.ok) {
+    $('bkSel').innerHTML = (d.files || []).map(f => '<option value="' + escHtml(f) + '">' + escHtml(f) + '</option>').join('') || '<option value="">暂无备份</option>';
+  }
+}
+
+async function rollback() {
+  const f = $('bkSel').value;
+  if (!f) return;
+  if (!confirm('确认回滚到 ' + f + '？当前内容会先自动备份。')) return;
+  const d = await api('/api/site/rollback', {method: 'POST', body: JSON.stringify({file: f})});
+  if (d && d.ok) { XH.toast('已回滚', 'ok'); loadAll(); }
+  else if (d && !d.__gate) XH.toast(d.error || '回滚失败', 'bad');
+}
+
+async function loadAudit() {
+  const d = await api('/api/site/audit');
+  const t = $('auditTbl');
+  if (d && d.ok) {
+    const rows = d.rows || [];
+    t.innerHTML = '<tr><th>时间</th><th>人</th><th>动作</th><th>对象</th><th>详情</th></tr>' +
+      rows.map(r => '<tr><td>' + escHtml(r.ts || '') + '</td><td>' + escHtml(r.name || '') +
+        '</td><td>' + escHtml(r.action || '') + '</td><td>' + escHtml((r.target || '').slice(0, 40)) +
+        '</td><td class="wrap-cell">' + escHtml((r.detail || '').slice(0, 80)) + '</td></tr>').join('') ||
+      '<tr><td colspan="5" class="xh-empty">暂无审计记录</td></tr>';
+  }
+}
+
+$('gateBtn').onclick = unlock;
+$('pwd').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+$('saveBtn').onclick = saveAll;
+$('bkBtn').onclick = rollback;
+
+fetch('/api/me').then(r => r.json()).then(d => {
+  if (!d.ok) { location.href = '/login'; return; }
+  $('uname').textContent = d.name; $('urole').textContent = d.role;
+  loadAll();
+});
+</script>
+</body>
+</html>

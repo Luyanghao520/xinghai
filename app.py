@@ -8,10 +8,15 @@
 """
 import csv
 import hashlib
+import hmac
 import io
 import json
 import os
+import re
+import shutil
 import sqlite3
+import threading
+import time
 from datetime import datetime
 from html import escape
 
@@ -77,6 +82,123 @@ def xh_headers(resp):
     resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     resp.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
     return resp
+
+# ===== 官网内容编辑子系统（施工总案 A6 · site.db 独立库 + 二次口令）=====
+SITE_EDIT_KEY = os.environ.get("XINGHAI_SITE_EDIT_KEY") or _cfg.get("SITE_EDIT_KEY")
+# 优雅降级：未配置时不崩溃，相关接口返回提示（部署后 owner 在 config.json 补 SITE_EDIT_KEY 即启用）
+DB_SITE = os.path.join(BASE, "site.db")
+SITE_BACKUP_DIR = os.path.join(BASE, "data", "content_backups")
+SITE_EDIT_TTL = 30 * 60      # 解锁有效期 30 分钟
+SITE_MAX_FAIL = 5            # 连续失败上限
+SITE_LOCK_SEC = 15 * 60      # 锁定 15 分钟
+SITE_BACKUP_KEEP = 30        # 保留最近 30 份备份
+_site_lock = threading.Lock()
+_pub_cache = {"ts": 0.0, "data": None}
+
+def site_audit(action, target="", detail=""):
+    try:
+        cx = db(DB_SITE)
+        cx.execute(
+            "INSERT INTO site_audit(ts,uid,name,ip,action,target,detail) VALUES(?,?,?,?,?,?,?)",
+            (datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+             session.get("uid", ""), session.get("name", ""), _client_ip(),
+             action, target, (detail or "")[:2000]))
+        cx.commit(); cx.close()
+    except Exception:
+        pass
+
+def _client_ip():
+    return request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
+
+def _brief(v, n=120):
+    s = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
+    return s[:n] + ("..." if len(s) > n else "")
+
+def _guard_key():
+    return "g:%s:%s" % (session.get("uid", "anon"), _client_ip())
+
+def _guard_state():
+    cx = db(DB_SITE)
+    row = cx.execute("SELECT fails, locked_until FROM site_guard WHERE k=?", (_guard_key(),)).fetchone()
+    cx.close()
+    if not row:
+        return 0.0, 0
+    return float(row["locked_until"] or 0), int(row["fails"] or 0)
+
+def _guard_fail():
+    k = _guard_key(); now = time.time()
+    cx = db(DB_SITE)
+    row = cx.execute("SELECT fails FROM site_guard WHERE k=?", (k,)).fetchone()
+    n = 1 if not row else int(row["fails"] or 0) + 1
+    if not row:
+        cx.execute("INSERT INTO site_guard(k,fails,first_fail,locked_until) VALUES(?,?,?,?)", (k, n, now, 0))
+    else:
+        cx.execute("UPDATE site_guard SET fails=? WHERE k=?", (n, k))
+    if n >= SITE_MAX_FAIL:
+        cx.execute("UPDATE site_guard SET locked_until=?, fails=0 WHERE k=?", (now + SITE_LOCK_SEC, k))
+        cx.commit(); cx.close()
+        site_audit("LOCK", "", "连续 %d 次口令错误，锁定 %d 分钟" % (n, SITE_LOCK_SEC // 60))
+        return n, True
+    cx.commit(); cx.close()
+    site_audit("UNLOCK_FAIL", "", "第 %d 次失败" % n)
+    return n, False
+
+def _guard_reset():
+    cx = db(DB_SITE)
+    cx.execute("DELETE FROM site_guard WHERE k=?", (_guard_key(),))
+    cx.commit(); cx.close()
+
+def _site_unlocked():
+    uid = session.get("uid")
+    if not uid:
+        return False
+    if session.get("site_edit_uid") != uid:
+        return False
+    return float(session.get("site_edit_until", 0) or 0) > time.time()
+
+def site_edit_required(f):
+    """第三层鉴权：二次口令（须与 @login_required 串联，@app.route 最上）"""
+    from functools import wraps
+    @wraps(f)
+    def w(*a, **k):
+        if "uid" not in session:
+            return jsonify({"ok": False, "error": "未登录"}), 401
+        if not SITE_EDIT_KEY:
+            return jsonify({"ok": False, "error": "编辑口令未配置（config.json 缺 SITE_EDIT_KEY）"}), 503
+        if not _site_unlocked():
+            return jsonify({"ok": False, "error": "需要二次验证",
+                            "code": "STEP_UP_REQUIRED"}), 403
+        session["site_edit_until"] = time.time() + SITE_EDIT_TTL  # 滑动续期
+        return f(*a, **k)
+    return w
+
+def _backup_content(path):
+    if not os.path.exists(path):
+        return None
+    os.makedirs(SITE_BACKUP_DIR, exist_ok=True)
+    prefix = os.path.basename(path).replace(".json", "") + "-"
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")  # 微秒级，防同秒互覆
+    dst = os.path.join(SITE_BACKUP_DIR, prefix + ts + ".json")
+    shutil.copy2(path, dst)
+    try:
+        fs = sorted([f for f in os.listdir(SITE_BACKUP_DIR) if f.startswith(prefix)], reverse=True)
+        for old in fs[SITE_BACKUP_KEEP:]:
+            os.remove(os.path.join(SITE_BACKUP_DIR, old))
+    except Exception:
+        pass
+    return dst
+
+def save_content_atomic(path, obj):
+    """写临时文件 + os.replace 原子替换，避免写一半崩溃导致 JSON 损坏"""
+    with _site_lock:
+        _backup_content(path)
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(obj, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+        _pub_cache["ts"] = 0.0  # 清运行时缓存
 
 # ============ 工具 ============
 def db(path):
@@ -1272,7 +1394,191 @@ def api_alumni():
     return jsonify([dict(r) for r in rows])
 
 # ============ 启动 ============
+def init_site():
+    cx = db(DB_SITE)
+    cx.execute("""CREATE TABLE IF NOT EXISTS site_audit(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts TEXT, uid TEXT, name TEXT, ip TEXT,
+        action TEXT, target TEXT, detail TEXT)""")
+    cx.execute("""CREATE TABLE IF NOT EXISTS site_guard(
+        k TEXT PRIMARY KEY, fails INTEGER DEFAULT 0,
+        first_fail REAL, locked_until REAL)""")
+    cx.commit(); cx.close()
+init_site()
+
 init_reg(); init_mem(); init_usr(); init_rei(); init_res(); init_bul(); export_csv()
+
+# ============ 官网内容编辑（二次口令体系，施工总案 A6）============
+SITE_CONTENT = os.path.join(BASE, "site_content.json")  # 二期运行时内容（预留）
+
+@app.route("/work/site")
+@login_required
+def work_site_page():
+    return send_file(os.path.join(BASE, "site.html"))
+
+@app.route("/api/site/status")
+@login_required
+def api_site_status():
+    ok = _site_unlocked()
+    locked_until, fails = _guard_state()
+    return jsonify({
+        "ok": True,
+        "unlocked": ok,
+        "configured": bool(SITE_EDIT_KEY),
+        "expires_in": int(max(0, float(session.get("site_edit_until", 0)) - time.time())) if ok else 0,
+        "locked_for": int(max(0, locked_until - time.time())),
+        "fails": fails,
+        "max_fail": SITE_MAX_FAIL,
+        "role": session.get("role", ""),
+        "can_edit": session.get("role") in ("主席", "副主席"),
+    })
+
+@app.route("/api/site/unlock", methods=["POST"])
+@login_required
+def api_site_unlock():
+    if session.get("role") not in ("主席", "副主席"):
+        return jsonify({"ok": False, "error": "仅主席/副主席可进入官网内容编辑"}), 403
+    if not SITE_EDIT_KEY:
+        return jsonify({"ok": False, "error": "编辑口令未配置（config.json 缺 SITE_EDIT_KEY）"}), 503
+    locked_until, _ = _guard_state()
+    if locked_until and time.time() < locked_until:
+        mins = int(locked_until - time.time()) // 60 + 1
+        return jsonify({"ok": False, "error": "尝试过于频繁，请 %d 分钟后再试" % mins}), 429
+    data = request.get_json(silent=True) or {}
+    pwd = str(data.get("pwd") or "")
+    # 恒定时间比较，防时序侧信道
+    if not pwd or not hmac.compare_digest(pwd, SITE_EDIT_KEY):
+        n, locked = _guard_fail()
+        if locked:
+            return jsonify({"ok": False,
+                            "error": "连续 %d 次错误，已锁定 %d 分钟" % (SITE_MAX_FAIL, SITE_LOCK_SEC // 60)}), 429
+        return jsonify({"ok": False,
+                        "error": "口令错误，还可尝试 %d 次" % (SITE_MAX_FAIL - n)}), 403
+    _guard_reset()
+    session["site_edit_until"] = time.time() + SITE_EDIT_TTL
+    session["site_edit_uid"] = session.get("uid")
+    site_audit("UNLOCK", "", "二次验证通过")
+    return jsonify({"ok": True, "expires_in": SITE_EDIT_TTL})
+
+@app.route("/api/site/lock", methods=["POST"])
+@login_required
+def api_site_lock():
+    session.pop("site_edit_until", None)
+    session.pop("site_edit_uid", None)
+    site_audit("LOCK_MANUAL", "", "主动上锁")
+    return jsonify({"ok": True})
+
+# 字段白名单：content.json 顶层可编辑键（防任意键注入污染）
+SITE_CONTENT_KEYS = {"hero_welcome", "b0", "b1", "b2", "b3", "t_wei", "t_dai",
+                     "footer", "consult_qr", "team_qr", "dept_desc", "carousel", "org"}
+SITE_CONTENT_TYPES = {"team_qr": dict, "dept_desc": dict, "carousel": list, "org": dict}
+
+@app.route("/api/site/content")
+@login_required
+@site_edit_required
+def api_site_content_get():
+    return jsonify({"ok": True, "data": load_content()})
+
+@app.route("/api/site/content", methods=["POST"])
+@login_required
+@site_edit_required
+def api_site_content_set():
+    data = request.get_json(force=True, silent=True) or {}
+    for k in list(data.keys()):
+        if k.startswith("_"):
+            data.pop(k); continue
+        if k not in SITE_CONTENT_KEYS:
+            return jsonify({"ok": False, "error": "未知字段: " + k}), 400
+        if k in SITE_CONTENT_TYPES and not isinstance(data[k], SITE_CONTENT_TYPES[k]):
+            return jsonify({"ok": False, "error": "字段类型错误: " + k}), 400
+    cur = load_content()
+    changes = []
+    for k, v in data.items():
+        old = cur.get(k)
+        if old != v:
+            changes.append({"field": k, "old": _brief(old), "new": _brief(v)})
+    if not changes:
+        return jsonify({"ok": True, "changed": 0})
+    cur.update(data)
+    save_content_atomic(CONTENT, cur)
+    site_audit("SAVE", ",".join(c["field"] for c in changes)[:200],
+               json.dumps(changes, ensure_ascii=False))
+    return jsonify({"ok": True, "changed": len(changes)})
+
+@app.route("/api/site/upload", methods=["POST"])
+@login_required
+@site_edit_required
+def api_site_upload():
+    f = request.files.get("file")
+    if not f:
+        return jsonify({"ok": False, "error": "未收到文件"}), 400
+    parts = (f.filename or "img.png").rsplit(".", 1)
+    ext = (parts[-1] if len(parts) > 1 else "png").lower()
+    if ext not in ("png", "jpg", "jpeg", "gif", "webp"):
+        return jsonify({"ok": False, "error": "仅支持 png/jpg/jpeg/gif/webp"}), 400
+    raw = f.read()
+    if len(raw) > 5 * 1024 * 1024:
+        return jsonify({"ok": False, "error": "图片不能超过 5MB"}), 400
+    if not sniff_image(raw):
+        return jsonify({"ok": False, "error": "文件内容不是有效图片"}), 400
+    f.stream = io.BytesIO(raw)
+
+    slot = request.form.get("slot")  # 首页槽位覆盖（保留文件名=免 build 生效）
+    if slot:
+        if not re.fullmatch(r"sc\d{2}", slot):
+            return jsonify({"ok": False, "error": "槽位名非法（应为 sc01~sc99）"}), 400
+        dst_dir = os.path.join(STATIC, "uploads", "showcase")
+        os.makedirs(dst_dir, exist_ok=True)
+        dst = os.path.join(dst_dir, slot + ".jpg")
+        if os.path.abspath(dst) != os.path.join(os.path.abspath(dst_dir), slot + ".jpg"):
+            return jsonify({"ok": False, "error": "路径非法"}), 400
+        if os.path.exists(dst):  # 覆盖前自动备份原图
+            sb = os.path.join(BASE, "data", "showcase_backups")
+            os.makedirs(sb, exist_ok=True)
+            shutil.copy2(dst, os.path.join(sb, "%s-%s.jpg" % (slot, datetime.now().strftime("%Y%m%d-%H%M%S"))))
+        f.save(dst)
+        site_audit("UPLOAD_SLOT", slot, "覆盖首页图片槽位")
+        return jsonify({"ok": True, "url": "/showcase/" + slot + ".jpg"})
+
+    safe = "u" + datetime.now().strftime("%Y%m%d%H%M%S") + "_" + os.urandom(4).hex() + "." + ext
+    f.save(os.path.join(STATIC, "uploads", safe))
+    site_audit("UPLOAD", safe, "")
+    return jsonify({"ok": True, "url": "/static/uploads/" + safe})
+
+@app.route("/api/site/backups")
+@login_required
+@site_edit_required
+def api_site_backups():
+    os.makedirs(SITE_BACKUP_DIR, exist_ok=True)
+    fs = sorted([f for f in os.listdir(SITE_BACKUP_DIR) if f.startswith("content-")], reverse=True)
+    return jsonify({"ok": True, "files": fs[:SITE_BACKUP_KEEP]})
+
+@app.route("/api/site/rollback", methods=["POST"])
+@login_required
+@site_edit_required
+def api_site_rollback():
+    data = request.get_json(silent=True) or {}
+    fn = str(data.get("file") or "")
+    if not fn.startswith("content-") or "/" in fn or "\\" in fn or ".." in fn:
+        return jsonify({"ok": False, "error": "文件名非法"}), 400
+    src = os.path.join(SITE_BACKUP_DIR, os.path.basename(fn))
+    if not os.path.isfile(src):
+        return jsonify({"ok": False, "error": "备份不存在"}), 404
+    if _backup_content(CONTENT) is None:  # 回滚前先备份当前状态
+        return jsonify({"ok": False, "error": "当前内容文件缺失，拒绝盲回滚"}), 500
+    shutil.copy2(src, CONTENT)
+    _pub_cache["ts"] = 0.0
+    site_audit("ROLLBACK", os.path.basename(fn), "回滚到历史版本")
+    return jsonify({"ok": True})
+
+@app.route("/api/site/audit")
+@login_required
+@chair_required
+def api_site_audit():
+    cx = db(DB_SITE)
+    rows = cx.execute("SELECT * FROM site_audit ORDER BY id DESC LIMIT 200").fetchall()
+    cx.close()
+    return jsonify({"ok": True, "rows": [dict(r) for r in rows]})
 
 # ===== 错误页（施工总案 A5 / 413 归 A1）=====
 @app.errorhandler(413)

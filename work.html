@@ -95,11 +95,18 @@
       <div class="xh-mod-st ok">已可用</div>
     </a>
 
-    <a class="xh-mod" href="/cms" target="_blank">
-      <div class="xh-mod-ic"><i data-lucide="sliders-horizontal"></i></div>
-      <div class="xh-mod-tt">内容管理</div>
-      <div class="xh-mod-ds">官网 / 招新 文案与群码（招新子系统 CMS）</div>
-      <div class="xh-mod-st ok">已可用</div>
+    <a class="xh-mod" href="/work/site" id="siteMod" style="display:none">
+      <div class="xh-mod-ic"><i data-lucide="layout-template"></i></div>
+      <div class="xh-mod-tt">官网内容</div>
+      <div class="xh-mod-ds">首页 / 招新页文案与图片，二次口令进入，自动备份可回滚</div>
+      <div class="xh-mod-st acc">主席团</div>
+    </a>
+
+    <a class="xh-mod" href="/work/site" id="siteDeny" style="display:none">
+      <div class="xh-mod-ic"><i data-lucide="lock"></i></div>
+      <div class="xh-mod-tt">官网内容</div>
+      <div class="xh-mod-ds">仅主席 / 副主席可用</div>
+      <div class="xh-mod-st warn">无权限</div>
     </a>
 
     <a class="xh-mod wip" href="#" onclick="return false">
@@ -146,7 +153,10 @@
 <script>
   fetch('/api/me').then(r=>r.json()).then(d=>{
     if(d.ok){document.getElementById('uname').textContent=d.name;document.getElementById('urole').textContent=d.role;
-      if(d.role==='主席'||d.role==='副主席')document.getElementById('approvalMod').style.display='flex';}
+      const isChair=(d.role==='主席'||d.role==='副主席');
+      if(isChair)document.getElementById('approvalMod').style.display='flex';
+      document.getElementById('siteMod').style.display=isChair?'flex':'none';
+      document.getElementById('siteDeny').style.display=isChair?'none':'flex';}
     else{location.href='/login';}
   });
   // 加载实时统计
