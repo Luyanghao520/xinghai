@@ -44,11 +44,24 @@ export default function FixedBackground() {
     sessionStorage.setItem("xh-bg", key);
     const src = BG_VARIANTS[key];
 
+    /* 弱网/省流量降级（施工总案 B3）：2g/3g 或 saveData 时不加载视频，仅海报层；
+       ?bg= 参数可强制绕过，便于验收对照 */
+    const conn = (
+      navigator as Navigator & { connection?: { effectiveType?: string; saveData?: boolean } }
+    ).connection;
+    const slow = conn && /(^|-)2g$|slow-2g|^3g$/.test(conn.effectiveType || "");
+    if (slow || conn?.saveData) {
+      if (!new URLSearchParams(window.location.search).has("bg")) {
+        setReady(true);
+        return;
+      }
+    }
+
     /* ---- 原生注入：与已验证可播的裸标签完全同构 ---- */
     if (key === "stage") {
-      /* A 先行；B 垫底，交叉窗时升上来。两条均为原生 autoplay muted */
+      /* A 先行；B 垫底，交叉窗时升上来。B 用 metadata 减首屏带宽（施工总案 B2） */
       host.innerHTML =
-        `<video id="bg-b" class="bg-video" src="` + src + `" autoplay muted playsinline preload="auto"></video>` +
+        `<video id="bg-b" class="bg-video" src="` + src + `" autoplay muted playsinline preload="metadata"></video>` +
         `<video id="bg-a" class="bg-video on" src="` + src + `" autoplay muted playsinline preload="auto"></video>`;
     } else {
       host.innerHTML =
@@ -86,15 +99,16 @@ export default function FixedBackground() {
             lastAdvance = performance.now();
             reloads = 0;
           } else if (performance.now() - lastAdvance > 2200) {
-            /* 2.2s 无推进：先尝试恢复，再次卡死则重载 */
-            if (reloads === 0) {
+            /* 2.2s 无推进：前 2 次只续播，第 3-4 次才重载，之后彻底放弃停在海报层
+               （施工总案 B1：限次+退避，杜绝弱网下 load() 反复重下 3.4MB 的自伤死循环） */
+            if (reloads < 2) {
               void cur.play().catch(() => {});
-            } else {
+            } else if (reloads < 4) {
               cur.load();
               void cur.play().catch(() => {});
             }
             reloads++;
-            lastAdvance = performance.now();
+            lastAdvance = performance.now() + reloads * 4000;
           }
         }
         const nxt = active ? b : a;
