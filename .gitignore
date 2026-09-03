@@ -46,3 +46,7 @@ _shot_*.png
 .zcode/
 node_modules/
 dist/
+
+# 站点编辑子系统（施工总案 A6/A8）
+site.db
+data/

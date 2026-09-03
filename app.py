@@ -61,10 +61,31 @@ app.config.update(
     MAX_CONTENT_LENGTH=10 * 1024 * 1024,  # 10 MB 上传上限
 )
 
+# ===== 响应头：分级缓存 + 安全四件套（施工总案 A1）=====
+@app.after_request
+def xh_headers(resp):
+    p = request.path
+    if p.startswith("/assets/"):
+        # 构建产物文件名带 hash，可永久缓存
+        resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif p.startswith("/static/") or p.startswith("/showcase/") or p.startswith("/u2026"):
+        resp.headers["Cache-Control"] = "public, max-age=604800"  # 7 天
+    else:
+        resp.headers["Cache-Control"] = "no-cache"  # HTML 保持实时
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    resp.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+    return resp
+
 # ============ 工具 ============
 def db(path):
-    cx = sqlite3.connect(path)
+    """SQLite 连接（施工总案 A2：WAL + busy_timeout，招新高峰并发写不炸）"""
+    cx = sqlite3.connect(path, timeout=15)
     cx.row_factory = sqlite3.Row
+    cx.execute("PRAGMA journal_mode=WAL")
+    cx.execute("PRAGMA busy_timeout=15000")
+    cx.execute("PRAGMA synchronous=NORMAL")
     return cx
 
 def hx(s):  # 学号哈希（加盐）
@@ -102,6 +123,21 @@ def chair_required(f):
             return jsonify({"ok": False, "error": "仅主席/副主席可操作"}), 403
         return f(*a, **k)
     return w
+
+# 图片内容嗅探（施工总案 A4：零依赖 magic-bytes，拒绝改名伪装的假图片）
+_IMG_MAGIC = (
+    ("jpeg", b"\xff\xd8\xff"),
+    ("png",  b"\x89PNG\r\n\x1a\n"),
+    ("gif",  b"GIF87a"),
+    ("gif",  b"GIF89a"),
+)
+def sniff_image(raw):
+    if raw[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        return "webp"
+    for fmt, m in _IMG_MAGIC:
+        if raw.startswith(m):
+            return fmt
+    return None
 
 
 # ============ 初始化 ============
@@ -159,9 +195,12 @@ def init_usr():
     except sqlite3.OperationalError: pass  # 列已存在则跳过
     cx.commit()
     if cx.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"] == 0:
+        import secrets as _secrets
+        _tmp = _secrets.token_urlsafe(12)  # 施工总案 A7：初始密码随机化，消除硬编码后门
         cx.execute("INSERT INTO users (xh,name,role,pwd,campus,status) VALUES (?,?,?,?,?,?)",
-                   ("000000000", "系统管理员", "主席", hx("xinghai2026"), "", "在团"))
+                   ("000000000", "系统管理员", "主席", hx(_tmp), "", "在团"))
         cx.commit()
+        print("[INIT] 已创建初始管理员 000000000，临时密码：%s  ⚠️ 请立即登录后修改" % _tmp)
     cx.close()
 
 # ============ 报销子系统（员工式，独立库） ============
@@ -316,9 +355,9 @@ def signup():
     return jsonify({"ok": True, "count": total})
 
 @app.route("/api/delete", methods=["POST"])
+@login_required
+@chair_required
 def delete():
-    if request.args.get("key") != ADMIN_KEY and (request.get_json(silent=True) or {}).get("key") != ADMIN_KEY:
-        return jsonify({"ok": False, "error": "无权限"}), 403
     rid = (request.get_json(silent=True) or {}).get("id") or request.args.get("id")
     if not rid:
         return jsonify({"ok": False, "error": "缺少 id"}), 400
@@ -337,7 +376,15 @@ def all_rows(q=None):
     cx.close()
     return [dict(r) for r in rows]
 
-def export_csv():
+_LAST_CSV = 0.0
+
+def export_csv(force=False):
+    """节流：报名/删除触发的调用 30s 内最多写一次；导出给用户看时传 force=True"""
+    global _LAST_CSV
+    import time as _t
+    if not force and _t.time() - _LAST_CSV < 30:
+        return
+    _LAST_CSV = _t.time()
     rows = all_rows()
     path = os.path.join(BASE, "registrations.csv")
     with open(path, "w", encoding="utf-8-sig", newline="") as f:
@@ -348,20 +395,20 @@ def export_csv():
             w.writerow({k: r.get(k, "") for k in w.fieldnames})
 
 @app.route("/admin")
+@login_required
+@chair_required
 def admin():
-    if request.args.get("key") != ADMIN_KEY:
-        return Response("无权限：key 错误", status=403)
     if request.args.get("export") == "csv":
-        export_csv()
+        export_csv(force=True)  # 导出给用户看，必须全量最新
         return send_file(os.path.join(BASE, "registrations.csv"), mimetype="text/csv",
                          as_attachment=True, download_name="星海艺术团报名.csv")
     return send_file(os.path.join(BASE, "admin.html"))
 
 @app.route("/api/admin/rows")
+@login_required
+@chair_required
 def api_admin_rows():
-    """招新后台数据接口（key 鉴权）：统计 + 明细一次拉取"""
-    if request.args.get("key") != ADMIN_KEY:
-        return jsonify({"ok": False, "error": "无权限"}), 403
+    """招新后台数据接口（会话 + 主席团鉴权）：统计 + 明细一次拉取"""
     q = (request.args.get("q") or "").strip()
     rows = all_rows(q if q else None)
     cx = db(DB_REG)
@@ -411,6 +458,12 @@ def api_upload():
     ext = (name[-1] if len(name) > 1 else "png").lower()
     if ext not in ("png", "jpg", "jpeg", "gif", "webp"):
         return jsonify({"ok": False, "error": "仅支持图片文件"}), 400
+    raw = f.read()
+    if len(raw) > 5 * 1024 * 1024:
+        return jsonify({"ok": False, "error": "图片不能超过 5MB"}), 400
+    if not sniff_image(raw):
+        return jsonify({"ok": False, "error": "文件内容不是有效图片"}), 400
+    f.stream = io.BytesIO(raw)  # sniff 消耗了流，重置后再 save
     safe = "u" + datetime.now().strftime("%Y%m%d%H%M%S") + "_" + os.urandom(4).hex() + "." + ext
     f.save(os.path.join(STATIC, "uploads", safe))
     return jsonify({"ok": True, "url": "/static/uploads/" + safe})
@@ -1220,6 +1273,35 @@ def api_alumni():
 
 # ============ 启动 ============
 init_reg(); init_mem(); init_usr(); init_rei(); init_res(); init_bul(); export_csv()
+
+# ===== 错误页（施工总案 A5 / 413 归 A1）=====
+@app.errorhandler(413)
+def e413(e):
+    return jsonify({"ok": False, "error": "上传内容超过 10MB 上限"}), 413
+
+@app.errorhandler(404)
+def e404(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"ok": False, "error": "接口不存在"}), 404
+    try:
+        return send_file(os.path.join(BASE, "404.html")), 404
+    except Exception:
+        return "404 页面不存在", 404
+
+@app.errorhandler(500)
+def e500(e):
+    app.logger.exception(e)
+    if request.path.startswith("/api/"):
+        return jsonify({"ok": False, "error": "服务器内部错误"}), 500
+    try:
+        return send_file(os.path.join(BASE, "500.html")), 500
+    except Exception:
+        return "500 服务器内部错误", 500
+
+@app.errorhandler(FileNotFoundError)
+def e_fnf(e):
+    # send_file 对缺失文件抛 FileNotFoundError（非 HTTPException），按 404 语义处理
+    return e404(e)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

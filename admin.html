@@ -57,15 +57,12 @@
 <script src="/static/js/vendor/lucide.min.js" defer></script>
 <script src="/static/js/ui.js"></script>
 <script>
-const params=new URLSearchParams(location.search);
-const KEY=params.get('key')||'';
 const $=id=>document.getElementById(id);
 const cols=["time","target","name","gender","birth","campus","college","major","phone","wechat","email","skill","motive","adjust"];
 const labels={"time":"提交时间","target":"意向方向","name":"姓名","gender":"性别","birth":"出生年月",
   "campus":"校区","college":"院系","major":"专业/班级","phone":"手机号","wechat":"微信",
   "email":"邮箱","skill":"特长/经历","motive":"报名动机","adjust":"服从调剂"};
-if(!KEY){document.body.innerHTML='<main class="xh-page"><div class="xh-panel"><div class="xh-empty">缺少 key 参数，请从工作端进入</div></div></main>';}
-$('exportBtn').href='?key='+encodeURIComponent(KEY)+'&export=csv';
+$('exportBtn').href='/admin?export=csv';
 
 function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 let timer=null;
@@ -73,8 +70,8 @@ function debLoad(){clearTimeout(timer);timer=setTimeout(load,300);}
 
 function load(){
   const q=$('q').value.trim();
-  fetch('/api/admin/rows?key='+encodeURIComponent(KEY)+'&q='+encodeURIComponent(q))
-    .then(r=>{if(r.status===403)throw new Error('无权限：key 错误');return r.json();})
+  fetch('/api/admin/rows?q='+encodeURIComponent(q))
+    .then(r=>{if(r.status===401)location.href='/login';if(r.status===403)throw new Error('无权限：仅主席/副主席可进');return r.json();})
     .then(d=>{
       if(!d.ok)throw new Error(d.error||'加载失败');
       $('sTotal').textContent=d.total;
@@ -98,7 +95,7 @@ function load(){
 }
 function del(id){
   if(!confirm('确认删除该报名记录？此操作不可撤销。'))return;
-  fetch('/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,key:KEY})})
+  fetch('/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})})
     .then(r=>r.json()).then(d=>{if(d.ok){XH.toast('已删除','ok');load();}else XH.toast('删除失败：'+(d.error||''),'bad');});
 }
 load();
