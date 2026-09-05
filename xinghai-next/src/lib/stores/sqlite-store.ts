@@ -9,7 +9,10 @@ import { randomUUID } from "node:crypto";
 
 import { SCHEMA_SQL } from "../schema";
 import {
+  DuplicateApplyError,
   DuplicateRegistrationError,
+  type ApplyAuthRow,
+  type ApplyCreateInput,
   type ApplyRecord,
   type ApplyStats,
   type AlumniRecord,
@@ -286,6 +289,45 @@ export async function createSqliteStore(): Promise<DataStore> {
           "UPDATE applies SET status = @status, updated = @updated WHERE id = @id",
         )
         .run({ id, status, updated: new Date().toISOString() });
+      return res.changes > 0;
+    },
+
+    async createApply(input: ApplyCreateInput): Promise<ApplyRecord> {
+      const dup = db
+        .prepare("SELECT 1 FROM applies WHERE xh = @xh LIMIT 1")
+        .get({ xh: input.xh });
+      if (dup) throw new DuplicateApplyError();
+      const now = new Date().toISOString();
+      const record = {
+        id: randomUUID(),
+        xh: input.xh,
+        name: input.name,
+        campus: input.campus,
+        status: "待审",
+        created: now,
+        updated: now,
+        source: "new",
+      };
+      db.prepare(
+        `INSERT INTO applies (id, xh, pwd, name, campus, status, created, updated, source)
+         VALUES (@id, @xh, @pwd, @name, @campus, @status, @created, @updated, @source)`,
+      ).run({ ...record, pwd: input.pwdHash });
+      return record;
+    },
+
+    async findApplyAuthByXh(xh: string): Promise<ApplyAuthRow | null> {
+      const row = db
+        .prepare("SELECT * FROM applies WHERE xh = @xh LIMIT 1")
+        .get({ xh });
+      return row ? (row as ApplyAuthRow) : null;
+    },
+
+    async updateApplyPassword(xh: string, pwdHash: string) {
+      const res = db
+        .prepare(
+          "UPDATE applies SET pwd = @pwd, updated = @updated WHERE xh = @xh",
+        )
+        .run({ xh, pwd: pwdHash, updated: new Date().toISOString() });
       return res.changes > 0;
     },
 

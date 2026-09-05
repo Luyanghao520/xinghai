@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import AuthNav from "@/components/auth/AuthNav";
 
 /** 全站导航信息架构（与旧栈页面一一对应，后续增删只改这个数组） */
 const NAV_LINKS = [
@@ -42,35 +43,40 @@ export default function Navbar() {
           星海艺术团
         </Link>
 
-        {/* 桌面端导航 */}
-        <ul className="hidden items-center gap-6 md:flex">
-          {NAV_LINKS.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                aria-current={isActive(pathname, href) ? "page" : undefined}
-                className={
-                  isActive(pathname, href)
-                    ? "font-medium text-primary"
-                    : "text-muted-foreground transition-colors hover:text-foreground"
-                }
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-4">
+          {/* 桌面端导航 */}
+          <ul className="hidden items-center gap-6 md:flex">
+            {NAV_LINKS.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  aria-current={isActive(pathname, href) ? "page" : undefined}
+                  className={
+                    isActive(pathname, href)
+                      ? "font-medium text-primary"
+                      : "text-muted-foreground transition-colors hover:text-foreground"
+                  }
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-        {/* 移动端菜单开关（图标待设计阶段替换为汉堡图标） */}
-        <button
-          type="button"
-          className="rounded-lg border border-border px-3 py-1.5 text-sm md:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          {menuOpen ? "关闭" : "菜单"}
-        </button>
+          {/* 登录态（未登录=登录按钮 / 已登录=我的报名+退出） */}
+          <AuthNav />
+
+          {/* 移动端菜单开关（图标待设计阶段替换为汉堡图标） */}
+          <button
+            type="button"
+            className="rounded-lg border border-border px-3 py-1.5 text-sm md:hidden"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? "关闭" : "菜单"}
+          </button>
+        </div>
       </nav>
 
       {/* 移动端导航面板 */}

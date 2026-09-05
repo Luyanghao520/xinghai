@@ -66,6 +66,37 @@ export interface ApplyRecord {
   source: string;
 }
 
+/** 申请账号的认证行（内部使用，含密码哈希；严禁出库到接口/页面） */
+export interface ApplyAuthRow {
+  id: string;
+  xh: string;
+  name: string;
+  campus: string | null;
+  status: string;
+  created: string | null;
+  updated: string | null;
+  source: string;
+  pwd: string;
+}
+
+/** 学生自己可见的申请信息（/me 页与 /api/auth/me 返回） */
+export interface ApplySelfView {
+  xh: string;
+  name: string;
+  campus: string | null;
+  status: string;
+  created: string | null;
+  updated: string | null;
+}
+
+/** 新建申请账号的入参（pwd 为**哈希后**的值，调用方先 hashPassword） */
+export interface ApplyCreateInput {
+  xh: string;
+  name: string;
+  campus: string;
+  pwdHash: string;
+}
+
 /** 成员记录（公开页只展示 name/grade/dept/position/skill 等非联系方式字段） */
 export interface MemberRecord {
   id: string;
@@ -171,6 +202,13 @@ export interface DataStore {
   /** 更新申请审核状态（'待审'/'已通过'/'已驳回'），同时刷新 updated */
   setApplyStatus(id: string, status: string): Promise<boolean>;
 
+  /** 新建申请账号（学号重复抛 DuplicateApplyError） */
+  createApply(input: ApplyCreateInput): Promise<ApplyRecord>;
+  /** 按学号查申请账号（含密码哈希，仅供认证流程内部使用） */
+  findApplyAuthByXh(xh: string): Promise<ApplyAuthRow | null>;
+  /** 更新申请账号密码哈希（登录升级旧格式 / 重置密码），同时刷新 updated */
+  updateApplyPassword(xh: string, pwdHash: string): Promise<boolean>;
+
   listMembers(): Promise<MemberRecord[]>;
   listAlumni(): Promise<AlumniRecord[]>;
 }
@@ -188,5 +226,13 @@ export class DuplicateRegistrationError extends Error {
     super(`该${what}已提交过报名，请勿重复提交`);
     this.name = "DuplicateRegistrationError";
     this.keys = keys;
+  }
+}
+
+/** 学号已被注册（申请账号） */
+export class DuplicateApplyError extends Error {
+  constructor() {
+    super("该学号已申请过账号");
+    this.name = "DuplicateApplyError";
   }
 }

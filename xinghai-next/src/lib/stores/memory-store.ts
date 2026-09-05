@@ -5,8 +5,11 @@
  */
 
 import {
+  DuplicateApplyError,
   DuplicateRegistrationError,
   type AlumniRecord,
+  type ApplyAuthRow,
+  type ApplyCreateInput,
   type ApplyRecord,
   type ApplyStats,
   type DataStore,
@@ -20,6 +23,7 @@ import {
 export function createMemoryStore(): DataStore {
   const registrations: RegistrationRecord[] = [];
   const applies: ApplyRecord[] = [];
+  const applyAuth = new Map<string, string>(); // xh → 密码哈希
   const members: MemberRecord[] = [];
 
   return {
@@ -176,6 +180,40 @@ export function createMemoryStore(): DataStore {
       const row = applies.find((a) => a.id === id);
       if (!row) return false;
       row.status = status;
+      row.updated = new Date().toISOString();
+      return true;
+    },
+
+    async createApply(input: ApplyCreateInput): Promise<ApplyRecord> {
+      if (applies.some((a) => a.xh === input.xh)) {
+        throw new DuplicateApplyError();
+      }
+      const now = new Date().toISOString();
+      const record: ApplyRecord = {
+        id: crypto.randomUUID(),
+        xh: input.xh,
+        name: input.name,
+        campus: input.campus,
+        status: "待审",
+        created: now,
+        updated: now,
+        source: "new",
+      };
+      applies.unshift(record);
+      applyAuth.set(input.xh, input.pwdHash);
+      return record;
+    },
+
+    async findApplyAuthByXh(xh: string): Promise<ApplyAuthRow | null> {
+      const row = applies.find((a) => a.xh === xh);
+      if (!row) return null;
+      return { ...row, pwd: applyAuth.get(xh) ?? "" };
+    },
+
+    async updateApplyPassword(xh: string, pwdHash: string) {
+      const row = applies.find((a) => a.xh === xh);
+      if (!row) return false;
+      applyAuth.set(xh, pwdHash);
       row.updated = new Date().toISOString();
       return true;
     },

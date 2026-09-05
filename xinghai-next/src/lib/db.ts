@@ -13,6 +13,8 @@
 import { createMemoryStore } from "./stores/memory-store";
 import {
   type AlumniRecord,
+  type ApplyAuthRow,
+  type ApplyCreateInput,
   type ApplyRecord,
   type ApplyStats,
   type DataStore,
@@ -86,6 +88,23 @@ export async function admitRegistration(id: string): Promise<MemberRecord | null
 /** 更新申请审核状态（'待审'/'已通过'/'已驳回'） */
 export async function setApplyStatus(id: string, status: string): Promise<boolean> {
   return (await getStore()).setApplyStatus(id, status);
+}
+
+/* ---------- 申请账号认证（阶段1：成员登录） ---------- */
+
+/** 新建申请账号（学号重复抛 DuplicateApplyError；pwdHash 须先经 hashPassword） */
+export async function createApply(input: ApplyCreateInput): Promise<ApplyRecord> {
+  return (await getStore()).createApply(input);
+}
+
+/** 认证流程内部使用：按学号取申请账号（含密码哈希，严禁对外返回） */
+export async function findApplyAuthByXh(xh: string): Promise<ApplyAuthRow | null> {
+  return (await getStore()).findApplyAuthByXh(xh);
+}
+
+/** 更新申请账号密码（登录升级旧格式 / 重置密码） */
+export async function updateApplyPassword(xh: string, pwdHash: string): Promise<boolean> {
+  return (await getStore()).updateApplyPassword(xh, pwdHash);
 }
 
 /* ---------- 招新申请（旧栈 applies 审核体系，只读展示） ---------- */

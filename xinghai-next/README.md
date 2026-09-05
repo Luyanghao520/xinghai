@@ -58,10 +58,12 @@ npm run fixtures   # 生成假旧库夹具（仅用于验证迁移管道）
 | `/members` | 成员/校友名单（读库；只展示姓名/届别/部门/职务/特长，**不公开联系方式**） |
 | `/contact` | 联系我们（占位） |
 | `/admin` | 后台看板：报名统计/搜索/筛选 + 归档/删除/录取 + 申请审核 + CSV 导出（需口令） |
+| `/register` `/login` `/me` `/reset` | **成员登录（阶段1）**：申请账号注册/登录/查审核进度/重置密码 |
 | `POST /api/register` | 报名提交（字段校验 + 手机号/邮箱防重复，重复返回 409） |
+| `POST /api/auth/register|login|logout` `GET /api/auth/me` `POST /api/auth/reset` | 申请账号认证（scrypt 密码哈希 + 签名会话 Cookie；旧栈格式密码登录时自动升级） |
 | `POST /api/admin/login` / `logout` | 后台口令登录 / 退出 |
 | `POST /api/admin/registrations/action` | 报名写操作：archive/restore/delete/admit |
-| `POST /api/admin/applies/action` | 申请审核：approve/reject/pending |
+| `POST /api/admin/applies/action` | 申请管理：approve/reject/pending/reset_pwd（临时密码） |
 | `GET /api/admin/registrations/export` | 报名导出 CSV（UTF-8 BOM，Excel 直接打开不乱码） |
 
 ### 报名接口示例
@@ -102,6 +104,19 @@ PythonAnywhere 线上。迁移管道已建好并验证（幂等、只读旧库�
   `applies` → `applies`（**pwd 列仅保留在库内，任何接口/页面永不返回**）、
   `members`/`alumni` → `members`/`alumni`；
 - 可用 `npm run fixtures && LEGACY_DIR=.fixtures npm run migrate` 在本地无真实数据时验证管道。
+
+## 成员登录（申请账号体系，阶段1）
+
+学生从"只能填表"升级为"有账号、能跟踪进度"：
+
+- **注册** `/register`：学号（9 位数字）+ 姓名 + 校区 + 密码（≥6 位含字母数字）→ 状态「待审」；
+  注册 ≠ 录取，账号创建后即可登录；
+- **登录** `/login` → **我的报名** `/me`：实时显示审核状态（待审/已通过/未通过）与时间线；
+- **重置密码** `/reset`：验证旧密码后设置新密码；忘记旧密码由主席团在后台
+  「重置密码」生成 8 位临时密码线下转告；
+- **安全**：密码 scrypt 加盐哈希；会话为 HMAC 签名的 HttpOnly Cookie（7 天），
+  签名密钥 `AUTH_SECRET`；旧栈 sha256 格式密码配置 `LEGACY_SECRET` 后登录时自动升级；
+- 导航栏右侧动态显示「登录 / 我的报名 / 退出」。
 
 ## 后台 /admin
 
@@ -177,8 +192,10 @@ PythonAnywhere 线上。迁移管道已建好并验证（幂等、只读旧库�
 
 - [x] ~~数据迁移管道~~（已验证；真实数据已于 2026-09-05 导入：2 条报名）
 - [x] ~~后台写操作~~（归档/删除/录取/申请审核/CSV 导出）
+- [x] ~~阶段1 成员登录~~（申请账号注册/登录/查进度/重置 + 旧密码兼容升级 + 后台临时密码重置）
+- [ ] **阶段2**：干部账号（users.db 接入）+ /work 工作端总览 + 登录限速
 - [ ] **设计阶段**：配色/字体/汉堡图标/动效（含 OG 分享卡片图）、内容填充（首页文案/社团介绍/演出作品）
-- [ ] **报名体验**：意向方向改为后台可配置选项、提交后确认页、（可选）通知
+- [ ] **报名体验**：意向方向改为后台可配置选项（content.json 的 10 个部门介绍已备好）、提交后确认页
 - [ ] **成员维护**：成员信息编辑页（目前录取后如需修正需直接改库）
 - [ ] **正式上线**：平台选型确认后绑定域名、设置 `NEXT_PUBLIC_SITE_URL`、HTTPS 与监控、旧链接 301
 - [ ] **测试加固**：报名提交端到端测试、后台登录限速、（上线后）自动备份 SQLite
