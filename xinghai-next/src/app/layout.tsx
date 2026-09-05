@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "@/styles/globals.css";
 
 /**
@@ -8,11 +9,24 @@ import "@/styles/globals.css";
  * 所有页面自动继承，无需每页重复引入（App Router 模板继承能力）。
  */
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "星海艺术团",
-    template: "%s | 星海艺术团",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "星海艺术团官方网站——社团介绍、招新报名、演出作品与成员风采（新版建设中）",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "zh_CN",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

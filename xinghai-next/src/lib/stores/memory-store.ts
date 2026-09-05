@@ -19,6 +19,8 @@ import {
 
 export function createMemoryStore(): DataStore {
   const registrations: RegistrationRecord[] = [];
+  const applies: ApplyRecord[] = [];
+  const members: MemberRecord[] = [];
 
   return {
     async createRegistration(input: RegistrationInput) {
@@ -83,6 +85,11 @@ export function createMemoryStore(): DataStore {
       const q = query.q?.toLowerCase();
       return registrations
         .filter((r) => (query.source ? r.source === query.source : true))
+        .filter((r) => {
+          if (!query.status) return true;
+          if (query.status === "pending") return r.status == null;
+          return r.status === query.status;
+        })
         .filter((r) =>
           q
             ? [r.name, r.phone, r.target, r.college]
@@ -108,14 +115,72 @@ export function createMemoryStore(): DataStore {
       };
     },
 
+    async updateRegistrationStatus(id: string, status: string | null) {
+      const row = registrations.find((r) => r.id === id);
+      if (!row) return false;
+      row.status = status;
+      row.archivedAt = status === null ? null : new Date().toISOString();
+      return true;
+    },
+
+    async deleteRegistration(id: string) {
+      const idx = registrations.findIndex((r) => r.id === id);
+      if (idx < 0) return false;
+      registrations.splice(idx, 1);
+      return true;
+    },
+
+    async admitRegistration(id: string): Promise<MemberRecord | null> {
+      const row = registrations.find((r) => r.id === id);
+      if (!row || row.status === "已录取") return null;
+      const now = new Date().toISOString();
+      const member: MemberRecord = {
+        id: crypto.randomUUID(),
+        xh: null,
+        name: row.name,
+        gender: row.gender,
+        campus: row.campus,
+        college: row.college,
+        major: row.major,
+        phone: row.phone,
+        wechat: row.wechat,
+        email: row.email,
+        role: "成员",
+        dept: row.target || null,
+        joinDate: now.slice(0, 10),
+        grade: String(new Date().getFullYear()),
+        status: "成员",
+        skill: row.skill,
+        note: `来自招新报名（${row.time}）`,
+        position: "队员",
+        updated: now,
+        source: "admit",
+      };
+      members.unshift(member);
+      row.status = "已录取";
+      row.archivedAt = now;
+      return member;
+    },
+
     async listApplies(): Promise<ApplyRecord[]> {
-      return [];
+      return [...applies];
     },
     async applyStats(): Promise<ApplyStats> {
-      return { total: 0, byStatus: {}, pending: 0 };
+      const byStatus: Record<string, number> = {};
+      for (const a of applies) {
+        byStatus[a.status] = (byStatus[a.status] ?? 0) + 1;
+      }
+      return { total: applies.length, byStatus, pending: byStatus["待审"] ?? 0 };
+    },
+    async setApplyStatus(id: string, status: string) {
+      const row = applies.find((a) => a.id === id);
+      if (!row) return false;
+      row.status = status;
+      row.updated = new Date().toISOString();
+      return true;
     },
     async listMembers(): Promise<MemberRecord[]> {
-      return [];
+      return [...members];
     },
     async listAlumni(): Promise<AlumniRecord[]> {
       return [];

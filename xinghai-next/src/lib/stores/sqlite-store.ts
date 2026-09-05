@@ -161,6 +161,15 @@ export async function createSqliteStore(): Promise<DataStore> {
         where.push("source = @source");
         params.source = query.source;
       }
+      if (query.status) {
+        // 'pending' 是语义别名（未处理 = status 为空），其余按原值精确匹配
+        if (query.status === "pending") {
+          where.push("status IS NULL");
+        } else {
+          where.push("status = @status");
+          params.status = query.status;
+        }
+      }
       const sql = `SELECT * FROM registrations
         ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
         ORDER BY time DESC LIMIT @limit`;
@@ -188,6 +197,71 @@ export async function createSqliteStore(): Promise<DataStore> {
       return { total, today, byTarget };
     },
 
+    async updateRegistrationStatus(id: string, status: string | null) {
+      const res = db
+        .prepare(
+          "UPDATE registrations SET status = @status, archived_at = @archivedAt WHERE id = @id",
+        )
+        .run({
+          id,
+          status,
+          archivedAt: status === null ? null : new Date().toISOString(),
+        });
+      return res.changes > 0;
+    },
+
+    async deleteRegistration(id: string) {
+      const res = db
+        .prepare("DELETE FROM registrations WHERE id = @id")
+        .run({ id });
+      return res.changes > 0;
+    },
+
+    async admitRegistration(id: string): Promise<MemberRecord | null> {
+      const admit = db.transaction((regId: string): MemberRecord | null => {
+        const row = db
+          .prepare("SELECT * FROM registrations WHERE id = ?")
+          .get(regId);
+        if (!row || row.status === "已录取") return null;
+        const now = new Date().toISOString();
+        const member: MemberRecord = {
+          id: randomUUID(),
+          xh: null,
+          name: row.name,
+          gender: row.gender,
+          campus: row.campus,
+          college: row.college,
+          major: row.major,
+          phone: row.phone,
+          wechat: row.wechat,
+          email: row.email,
+          role: "成员",
+          dept: row.target || null, // 意向方向 → 部门，后台可后续修正
+          joinDate: now.slice(0, 10),
+          grade: String(new Date().getFullYear()), // 届别=录取年份
+          status: "成员",
+          skill: row.skill,
+          note: `来自招新报名（${row.time}）`,
+          position: "队员",
+          updated: now,
+          source: "admit",
+        };
+        db.prepare(
+          `INSERT INTO members
+             (id, xh, name, gender, campus, college, major, phone, wechat,
+              email, role, dept, join_date, grade, status, skill, note, position, updated, source)
+           VALUES
+             (@id, @xh, @name, @gender, @campus, @college, @major, @phone, @wechat,
+              @email, @role, @dept, @joinDate, @grade, @status, @skill, @note, @position, @updated, @source)`,
+        ).run(member);
+        db.prepare(
+          "UPDATE registrations SET status = '已录取', archived_at = @at WHERE id = @id",
+        ).run({ id: regId, at: now });
+        return member;
+      });
+      return admit(id);
+    },
+
     async listApplies(): Promise<ApplyRecord[]> {
       return db
         .prepare(`SELECT ${APPLY_COLS} FROM applies ORDER BY created DESC`)
@@ -204,6 +278,15 @@ export async function createSqliteStore(): Promise<DataStore> {
         byStatus[row.status || "未知"] = row.c;
       }
       return { total, byStatus, pending: byStatus["待审"] ?? 0 };
+    },
+
+    async setApplyStatus(id: string, status: string) {
+      const res = db
+        .prepare(
+          "UPDATE applies SET status = @status, updated = @updated WHERE id = @id",
+        )
+        .run({ id, status, updated: new Date().toISOString() });
+      return res.changes > 0;
     },
 
     async listMembers(): Promise<MemberRecord[]> {

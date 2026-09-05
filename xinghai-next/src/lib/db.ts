@@ -63,6 +63,31 @@ export async function registrationStats(): Promise<RegistrationStats> {
   return (await getStore()).registrationStats();
 }
 
+/* ---------- 后台写操作 ---------- */
+
+/** 更新报名状态：'已归档'/'已录取'（同时写 archived_at）或 null（恢复未处理） */
+export async function updateRegistrationStatus(
+  id: string,
+  status: string | null,
+): Promise<boolean> {
+  return (await getStore()).updateRegistrationStatus(id, status);
+}
+
+/** 删除一条报名记录（仅建议用于垃圾/测试数据） */
+export async function deleteRegistration(id: string): Promise<boolean> {
+  return (await getStore()).deleteRegistration(id);
+}
+
+/** 录取：报名 → 成员（部门=意向方向，届别=当前年份），报名标记为已录取 */
+export async function admitRegistration(id: string): Promise<MemberRecord | null> {
+  return (await getStore()).admitRegistration(id);
+}
+
+/** 更新申请审核状态（'待审'/'已通过'/'已驳回'） */
+export async function setApplyStatus(id: string, status: string): Promise<boolean> {
+  return (await getStore()).setApplyStatus(id, status);
+}
+
 /* ---------- 招新申请（旧栈 applies 审核体系，只读展示） ---------- */
 
 export async function listApplies(): Promise<ApplyRecord[]> {

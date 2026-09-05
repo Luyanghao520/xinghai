@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AdminLogin from "@/components/admin/AdminLogin";
 import AdminLogout from "@/components/admin/AdminLogout";
+import ApplyActions from "@/components/admin/ApplyActions";
+import RegistrationActions from "@/components/admin/RegistrationActions";
 import { Card } from "@/components/ui/Card";
+import { buttonStyles } from "@/components/ui/Button";
 import { adminAuthed, adminEnabled } from "@/lib/admin-auth";
 import {
   applyStats,
@@ -27,13 +30,22 @@ const SOURCE_LABELS: Record<string, string> = {
   "legacy-archive": "归档导入",
 };
 
-/** 后台查询页：报名统计/搜索 + 招新申请列表 + 成员/校友概览（脚手架级，只读） */
+/** 报名状态筛选签：s 参数 → 数据层 status 语义 */
+const STATUS_TABS = [
+  { key: "all", label: "全部", status: undefined },
+  { key: "pending", label: "未处理", status: "pending" },
+  { key: "archived", label: "已归档", status: "已归档" },
+  { key: "admitted", label: "已录取", status: "已录取" },
+] as const;
+
+/** 后台看板：报名统计/搜索/筛选/写操作 + 招新申请审核 + 成员概览 */
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; s?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, s } = await searchParams;
+  const activeTab = STATUS_TABS.find((t) => t.key === s) ?? STATUS_TABS[0];
 
   if (!adminEnabled()) {
     return (
@@ -61,12 +73,20 @@ export default async function AdminPage({
 
   const [stats, rows, aStats, applies, members, alumni] = await Promise.all([
     registrationStats(),
-    listRegistrations({ q: q || undefined }),
+    listRegistrations({ q: q || undefined, status: activeTab.status }),
     applyStats(),
     listApplies(),
     listMembers(),
     listAlumni(),
   ]);
+
+  const chipHref = (key: string) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (key !== "all") params.set("s", key);
+    const qs = params.toString();
+    return `/admin${qs ? `?${qs}` : ""}`;
+  };
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
@@ -108,30 +128,51 @@ export default async function AdminPage({
         </div>
       </Card>
 
-      {/* 报名列表（支持搜索，回车提交） */}
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">报名列表（{rows.length} 条{q ? `，搜索“${q}”` : ""}）</h2>
-        <form action="/admin" method="get" className="flex gap-2">
-          <input
-            name="q"
-            defaultValue={q ?? ""}
-            placeholder="搜索姓名 / 手机号 / 方向 / 院系"
-            className="w-56 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm outline-none focus:border-primary"
-          />
-          <button
-            type="submit"
-            className="rounded-lg bg-primary px-3 py-1.5 text-sm text-white transition-colors hover:bg-primary-strong"
-          >
-            搜索
-          </button>
-        </form>
+      {/* 报名列表：筛选签 + 搜索 + 导出 */}
+      <div className="mt-10 flex flex-wrap items-center gap-3">
+        <h2 className="text-lg font-semibold">报名列表</h2>
+        <div className="flex flex-wrap gap-1">
+          {STATUS_TABS.map((tab) => (
+            <Link
+              key={tab.key}
+              href={chipHref(tab.key)}
+              className={
+                tab.key === activeTab.key
+                  ? "rounded-full bg-primary px-3 py-1 text-sm text-white"
+                  : "rounded-full border border-border px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              }
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </div>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <form action="/admin" method="get" className="flex gap-2">
+            {activeTab.key !== "all" && <input type="hidden" name="s" value={activeTab.key} />}
+            <input
+              name="q"
+              defaultValue={q ?? ""}
+              placeholder="搜姓名 / 手机号 / 方向 / 院系"
+              className="w-52 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm outline-none focus:border-primary"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-primary px-3 py-1.5 text-sm text-white transition-colors hover:bg-primary-strong"
+            >
+              搜索
+            </button>
+          </form>
+          <a href="/api/admin/registrations/export" className={buttonStyles("outline", "sm")}>
+            导出 CSV
+          </a>
+        </div>
       </div>
 
       <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
-        <table className="w-full min-w-[900px] text-left text-sm">
+        <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="border-b border-border text-muted-foreground">
             <tr>
-              {["时间", "意向方向", "姓名", "性别", "校区", "院系", "专业/班级", "手机号", "微信", "邮箱", "特长", "动机", "调剂", "来源"].map(
+              {["时间", "意向方向", "姓名", "性别", "校区", "院系", "专业/班级", "手机号", "微信", "邮箱", "特长", "动机", "调剂", "来源", "操作"].map(
                 (h) => (
                   <th key={h} className="whitespace-nowrap px-3 py-2 font-medium">
                     {h}
@@ -143,8 +184,8 @@ export default async function AdminPage({
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={14} className="px-3 py-8 text-center text-muted-foreground">
-                  暂无报名数据（招新开始后，新提交会实时出现在这里）
+                <td colSpan={15} className="px-3 py-8 text-center text-muted-foreground">
+                  当前筛选下暂无报名数据
                 </td>
               </tr>
             )}
@@ -174,23 +215,25 @@ export default async function AdminPage({
                     {SOURCE_LABELS[r.source] ?? r.source}
                   </span>
                 </td>
+                <td className="px-3 py-2">
+                  <RegistrationActions id={r.id} status={r.status} />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* 招新申请（旧栈 applies 审核体系，只读概览；pwd 字段永不展示） */}
+      {/* 招新申请：审核操作（pwd 字段永不展示） */}
       <h2 className="mt-10 text-lg font-semibold">招新申请（{aStats.total} 条）</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        状态分布：{Object.entries(aStats.byStatus).map(([s, c]) => `${s} ${c}`).join(" · ") || "暂无数据"}
-        。审核操作暂在旧栈后台进行，后续迭代迁移。
+        状态分布：{Object.entries(aStats.byStatus).map(([s2, c]) => `${s2} ${c}`).join(" · ") || "暂无数据"}
       </p>
       <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
-        <table className="w-full min-w-[640px] text-left text-sm">
+        <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-border text-muted-foreground">
             <tr>
-              {["学号", "姓名", "校区", "状态", "申请时间", "更新时间"].map((h) => (
+              {["学号", "姓名", "校区", "状态", "申请时间", "更新时间", "审核"].map((h) => (
                 <th key={h} className="whitespace-nowrap px-3 py-2 font-medium">
                   {h}
                 </th>
@@ -200,7 +243,7 @@ export default async function AdminPage({
           <tbody>
             {applies.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">
+                <td colSpan={7} className="px-3 py-8 text-center text-muted-foreground">
                   暂无申请数据
                 </td>
               </tr>
@@ -213,6 +256,9 @@ export default async function AdminPage({
                 <td className="whitespace-nowrap px-3 py-2">{a.status}</td>
                 <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{a.created ?? "—"}</td>
                 <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{a.updated ?? "—"}</td>
+                <td className="px-3 py-2">
+                  <ApplyActions id={a.id} status={a.status} />
+                </td>
               </tr>
             ))}
           </tbody>

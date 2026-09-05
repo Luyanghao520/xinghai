@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 
 export type ButtonVariant = "primary" | "outline" | "ghost";
-export type ButtonSize = "md" | "lg";
+export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-strong",
@@ -11,6 +11,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
+  sm: "px-2.5 py-1 text-xs",
   md: "px-4 py-2 text-sm",
   lg: "px-6 py-3 text-base",
 };

@@ -118,6 +118,11 @@ export interface RegistrationQuery {
   q?: string;
   /** 只看某数据来源（如 'new'） */
   source?: string;
+  /**
+   * 按状态筛选：'pending'=未处理（status 为空）、'archived'=已归档、
+   * 'admitted'=已录取；其余值按原样精确匹配；不传=全部
+   */
+  status?: string;
   limit?: number;
 }
 
@@ -147,8 +152,24 @@ export interface DataStore {
   listRegistrations(query?: RegistrationQuery): Promise<RegistrationRecord[]>;
   registrationStats(): Promise<RegistrationStats>;
 
+  /**
+   * 更新报名状态（后台写操作）。
+   * status 传 '已归档'/'已录取' 等会同时写入 archived_at；传 null 恢复为未处理。
+   * @returns 是否确实更新了一行（id 不存在返回 false）
+   */
+  updateRegistrationStatus(id: string, status: string | null): Promise<boolean>;
+  /** 硬删除一条报名记录（仅建议用于垃圾/测试数据） */
+  deleteRegistration(id: string): Promise<boolean>;
+  /**
+   * 录取：把一条报名转成成员记录（部门=意向方向、届别=当前年份），
+   * 并把报名标记为 '已录取'。报名不存在或已是录取态时返回 null。
+   */
+  admitRegistration(id: string): Promise<MemberRecord | null>;
+
   listApplies(): Promise<ApplyRecord[]>;
   applyStats(): Promise<ApplyStats>;
+  /** 更新申请审核状态（'待审'/'已通过'/'已驳回'），同时刷新 updated */
+  setApplyStatus(id: string, status: string): Promise<boolean>;
 
   listMembers(): Promise<MemberRecord[]>;
   listAlumni(): Promise<AlumniRecord[]>;
