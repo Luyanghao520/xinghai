@@ -5,17 +5,18 @@ import type { FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 
 /**
- * 报名表单（占位组件）
- *
- * 行为：把 { name, email, phone, message } 以 JSON 提交到 /api/register，
- * 并把后端返回的提示展示给用户。样式与字段集合为占位版本，
- * 正式招新字段（年级/专业/意向组别等）待数据迁移后在此扩展。
+ * 招新报名表单（字段与旧栈 recruit.html 一致）。
+ * 提交目标 POST /api/register；重复手机号/邮箱会得到 409 提示。
+ * 样式为占位版本，正式视觉待设计阶段精修。
  */
 
 type Status = "idle" | "submitting" | "success" | "error";
 
 const INPUT_CLASS =
   "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary";
+const LABEL_CLASS = "mb-1 block font-medium";
+const RADIO_CLASS =
+  "rounded-lg border border-border bg-surface px-3 py-1.5 text-sm transition-colors has-checked:border-primary has-checked:bg-primary-soft has-checked:text-primary";
 
 export default function RegisterForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -33,10 +34,19 @@ export default function RegisterForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          target: data.get("target"),
           name: data.get("name"),
-          email: data.get("email"),
+          gender: data.get("gender"),
+          birth: data.get("birth") || undefined,
+          campus: data.get("campus"),
+          college: data.get("college"),
+          major: data.get("major"),
           phone: data.get("phone"),
-          message: data.get("message"),
+          wechat: data.get("wechat") || undefined,
+          email: data.get("email") || undefined,
+          skill: data.get("skill") || undefined,
+          motive: data.get("motive") || undefined,
+          adjust: data.get("adjust") === "on",
         }),
       });
       const result = (await res.json()) as { success?: boolean; message?: string };
@@ -56,58 +66,123 @@ export default function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate={false}>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <label className="block text-sm">
+        <span className={LABEL_CLASS}>
+          意向方向 <span aria-hidden className="text-accent">*</span>
+        </span>
+        <input
+          name="target"
+          required
+          placeholder="如：声乐 / 舞蹈 / 器乐 / 主持（正式选项待内容确认）"
+          className={INPUT_CLASS}
+        />
+      </label>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm">
-          <span className="mb-1 block font-medium">
+          <span className={LABEL_CLASS}>
             姓名 <span aria-hidden className="text-accent">*</span>
           </span>
+          <input name="name" required autoComplete="name" placeholder="你的姓名" className={INPUT_CLASS} />
+        </label>
+
+        <fieldset className="text-sm">
+          <legend className={LABEL_CLASS}>
+            性别 <span aria-hidden className="text-accent">*</span>
+          </legend>
+          <div className="flex gap-2">
+            {["男", "女"].map((g) => (
+              <label key={g} className={RADIO_CLASS}>
+                <input type="radio" name="gender" value={g} required className="hidden" />
+                {g}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm">
+          <span className={LABEL_CLASS}>
+            校区 <span aria-hidden className="text-accent">*</span>
+          </span>
+          <div className="flex gap-2">
+            {["浦东", "松江"].map((c) => (
+              <label key={c} className={RADIO_CLASS}>
+                <input type="radio" name="campus" value={c} required className="hidden" />
+                {c}
+              </label>
+            ))}
+          </div>
+        </label>
+
+        <label className="block text-sm">
+          <span className={LABEL_CLASS}>出生年月（选填）</span>
+          <input name="birth" type="month" className={INPUT_CLASS} />
+        </label>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm">
+          <span className={LABEL_CLASS}>
+            院系 <span aria-hidden className="text-accent">*</span>
+          </span>
+          <input name="college" required placeholder="如：音乐学院" className={INPUT_CLASS} />
+        </label>
+
+        <label className="block text-sm">
+          <span className={LABEL_CLASS}>
+            专业 / 班级 <span aria-hidden className="text-accent">*</span>
+          </span>
+          <input name="major" required placeholder="如：音乐学 2401" className={INPUT_CLASS} />
+        </label>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm">
+          <span className={LABEL_CLASS}>
+            手机号 <span aria-hidden className="text-accent">*</span>
+          </span>
           <input
-            name="name"
+            name="phone"
+            type="tel"
             required
-            autoComplete="name"
-            placeholder="你的姓名"
+            pattern="1[3-9]\d{9}"
+            title="11 位大陆手机号"
+            autoComplete="tel"
+            placeholder="13800000000"
             className={INPUT_CLASS}
           />
         </label>
 
         <label className="block text-sm">
-          <span className="mb-1 block font-medium">
-            邮箱 <span aria-hidden className="text-accent">*</span>
-          </span>
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="name@example.com"
-            className={INPUT_CLASS}
-          />
+          <span className={LABEL_CLASS}>微信号（选填）</span>
+          <input name="wechat" autoComplete="off" placeholder="方便联系的微信号" className={INPUT_CLASS} />
         </label>
       </div>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium">电话（选填）</span>
-        <input
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="方便联系的手机号"
-          className={INPUT_CLASS}
-        />
+        <span className={LABEL_CLASS}>邮箱（选填）</span>
+        <input name="email" type="email" autoComplete="email" placeholder="name@example.com" className={INPUT_CLASS} />
       </label>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium">留言（选填）</span>
-        <textarea
-          name="message"
-          rows={4}
-          placeholder="想加入的组别、特长、想对社团说的话……"
-          className={INPUT_CLASS}
-        />
+        <span className={LABEL_CLASS}>特长 / 才艺 / 相关经历（选填）</span>
+        <textarea name="skill" rows={2} placeholder="考级、演出、比赛经历等" className={INPUT_CLASS} />
       </label>
 
-      <div className="flex items-center gap-4">
+      <label className="block text-sm">
+        <span className={LABEL_CLASS}>报名动机 / 自我介绍（选填）</span>
+        <textarea name="motive" rows={3} placeholder="想加入的原因、期望的舞台……" className={INPUT_CLASS} />
+      </label>
+
+      <label className="flex items-start gap-2 text-sm text-muted-foreground">
+        <input name="adjust" type="checkbox" className="mt-0.5 accent-[var(--primary)]" />
+        服从调剂（所报方向满员时可调配到其他方向）
+      </label>
+
+      <div className="flex flex-wrap items-center gap-4">
         <Button type="submit" size="lg" disabled={status === "submitting"}>
           {status === "submitting" ? "提交中……" : "提交报名"}
         </Button>
@@ -125,6 +200,10 @@ export default function RegisterForm() {
           </p>
         )}
       </div>
+
+      <p className="text-xs leading-5 text-muted-foreground">
+        提交即表示同意社团通过所填联系方式与你沟通招新事宜；同一手机号/邮箱仅可提交一次。
+      </p>
     </form>
   );
 }
