@@ -15,8 +15,9 @@ type Status = "idle" | "submitting" | "success" | "error";
 const INPUT_CLASS =
   "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary";
 const LABEL_CLASS = "mb-1 block font-medium";
+/** 原生可见单选 pill：隐藏控件会让浏览器校验静默拦截提交（已踩坑，勿改回 hidden） */
 const RADIO_CLASS =
-  "rounded-lg border border-border bg-surface px-3 py-1.5 text-sm transition-colors has-checked:border-primary has-checked:bg-primary-soft has-checked:text-primary";
+  "flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm transition-colors has-checked:border-primary has-checked:bg-primary-soft has-checked:text-primary";
 
 export default function RegisterForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -94,7 +95,13 @@ export default function RegisterForm() {
           <div className="flex gap-2">
             {["男", "女"].map((g) => (
               <label key={g} className={RADIO_CLASS}>
-                <input type="radio" name="gender" value={g} required className="hidden" />
+                <input
+                  type="radio"
+                  name="gender"
+                  value={g}
+                  required
+                  className="accent-[var(--primary)]"
+                />
                 {g}
               </label>
             ))}
@@ -110,7 +117,13 @@ export default function RegisterForm() {
           <div className="flex gap-2">
             {["浦东", "松江"].map((c) => (
               <label key={c} className={RADIO_CLASS}>
-                <input type="radio" name="campus" value={c} required className="hidden" />
+                <input
+                  type="radio"
+                  name="campus"
+                  value={c}
+                  required
+                  className="accent-[var(--primary)]"
+                />
                 {c}
               </label>
             ))}

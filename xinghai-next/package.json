@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "migrate": "node scripts/migrate-legacy.ts",
-    "fixtures": "node scripts/make-fixtures.ts"
+    "fixtures": "node scripts/make-fixtures.ts",
+    "seed:demo": "node scripts/seed-demo.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
