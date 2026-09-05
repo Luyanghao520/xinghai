@@ -144,7 +144,7 @@ export default function HeroVideo() {
       if (!canParallax) return;
       curX += (targetX - curX) * 0.055;
       curY += (targetY - curY) * 0.055;
-      host.style.transform = `scale(1.08) translate3d(${(-curX * 1.4).toFixed(3)}%, ${(-curY * 1.1).toFixed(3)}%, 0)`;
+      host.style.transform = `translate3d(${(-curX * 1.4).toFixed(3)}%, ${(3 - curY * 1.1).toFixed(3)}%, 0) scale(1.14)`;
     };
 
     return () => {
@@ -211,14 +211,14 @@ export default function HeroVideo() {
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/50 to-transparent" />
 
       <style>{`
-        /* 放大下移构图（旧站调参）：185% 高度 + 顶部取景——
-           屏幕任意比例下底边都落在源片上段纹理带内，漩涡占满视口、黑边裁出画外 */
+        /* 放大下移构图（旧站调参再加大）：高度 195% + 顶部取景 + 宿主下沉 3%——
+           漩涡更满、构图下沉，黑边与空洞全部裁出画外 */
         .bg-video {
           position: absolute;
           left: 0;
           top: 0;
           width: 100%;
-          height: 185%;
+          height: 195%;
           object-fit: cover;
           object-position: center top;
           opacity: 0;
@@ -230,9 +230,9 @@ export default function HeroVideo() {
         .bg-video.on {
           opacity: 1;
         }
-        /* 视差宿主：scale(1.08) 常驻留出位移余量，防止轻移露边 */
+        /* 视差宿主：scale(1.14)+下沉3% 常驻，位移余量充足不露边 */
         .bg-video-host {
-          transform: scale(1.08);
+          transform: translate3d(0, 3%, 0) scale(1.14);
           will-change: transform;
         }
         .bg-nebula {
