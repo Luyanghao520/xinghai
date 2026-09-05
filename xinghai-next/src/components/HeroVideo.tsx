@@ -72,7 +72,7 @@ export default function HeroVideo() {
       // 水珠小点：7 颗发光小水滴从点击处随机方向飞散、减速淡出（像溅起的水花）
       for (let i = 0; i < 7; i++) {
         const angle = (Math.PI * 2 * i) / 7 + Math.random() * 0.9;
-        const dist = 48 + Math.random() * 115;
+        const dist = 36 + Math.random() * 74;
         const dot = document.createElement("div");
         dot.className = "bg-drop";
         dot.style.left = `${cx}px`;
@@ -317,29 +317,29 @@ export default function HeroVideo() {
         @media (prefers-reduced-motion: reduce) {
           .bg-nebula { animation: none; }
         }
-        /* 点击涟漪：双圈蓝色光环，荡开 + 淡出 */
+        /* 点击涟漪：双圈蓝色光环，小而精致——终径约 430px */
         .bg-ripple {
           position: absolute;
-          width: 140px;
-          height: 140px;
-          margin: -70px 0 0 -70px;
+          width: 120px;
+          height: 120px;
+          margin: -60px 0 0 -60px;
           border-radius: 9999px;
           border: 2px solid rgba(147, 197, 253, 0.7);
-          box-shadow: 0 0 26px rgba(96, 165, 250, 0.4),
-            inset 0 0 20px rgba(147, 197, 253, 0.28);
+          box-shadow: 0 0 22px rgba(96, 165, 250, 0.35),
+            inset 0 0 16px rgba(147, 197, 253, 0.25);
           opacity: 0;
           transform: scale(0.3);
-          animation: bg-ripple 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+          animation: bg-ripple 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
           pointer-events: none;
         }
         .bg-ripple-2 {
           border-color: rgba(129, 140, 248, 0.55);
-          animation-duration: 1.45s;
+          animation-duration: 1.3s;
         }
         @keyframes bg-ripple {
           0% { opacity: 0; transform: scale(0.3); }
-          14% { opacity: 0.9; }
-          100% { opacity: 0; transform: scale(8.5); }
+          14% { opacity: 0.85; }
+          100% { opacity: 0; transform: scale(3.6); }
         }
         /* 水珠小点：向外飞散的发光小水滴 */
         .bg-drop {
