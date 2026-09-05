@@ -149,18 +149,68 @@ export default function HeroVideo() {
       {/* 视频层：内容由 effect 原生注入（A/B 交叉淡化） */}
       <div ref={hostRef} className="absolute inset-0" />
 
+      {/* 蓝色星云辉光：screen 混合把光晕“加”进视频暗部，消除死黑 + 持续脉动
+          （移植旧站 .bg-nebula n1/n2 的构图） */}
+      <div
+        className="bg-nebula"
+        style={{
+          top: "-20%",
+          left: "-12%",
+          width: "62%",
+          height: "56%",
+          background: "radial-gradient(closest-side, rgba(59,130,246,0.55), transparent)",
+        }}
+      />
+      <div
+        className="bg-nebula"
+        style={{
+          bottom: "-16%",
+          right: "-14%",
+          width: "58%",
+          height: "58%",
+          background: "radial-gradient(closest-side, rgba(99,102,241,0.45), transparent)",
+          animationDelay: "-4.5s",
+        }}
+      />
+
+      {/* 顶/底轻渐变：只保导航与页脚文字可读 */}
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/50 to-transparent" />
+
       <style>{`
+        /* 放大下移构图（旧站调参）：185% 高度 + 顶部取景——
+           屏幕任意比例下底边都落在源片上段纹理带内，漩涡占满视口、黑边裁出画外 */
         .bg-video {
           position: absolute;
-          inset: 0;
+          left: 0;
+          top: 0;
           width: 100%;
-          height: 100%;
+          height: 185%;
           object-fit: cover;
+          object-position: center top;
           opacity: 0;
           transition: opacity 1.1s ease;
+          /* 亮度/饱和提升：把源片固有近黑像素抬成可见深蓝纹理，
+             消除源片自身明度分布造成的「空洞感」（旧站 data-bg=stage 同款） */
+          filter: brightness(1.5) contrast(1.06) saturate(1.22);
         }
         .bg-video.on {
           opacity: 1;
+        }
+        .bg-nebula {
+          position: absolute;
+          pointer-events: none;
+          mix-blend-mode: screen;
+          border-radius: 9999px;
+          filter: blur(64px);
+          animation: nebula-pulse 9s ease-in-out infinite;
+        }
+        @keyframes nebula-pulse {
+          0%, 100% { opacity: 0.38; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.12); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bg-nebula { animation: none; }
         }
       `}</style>
     </div>
