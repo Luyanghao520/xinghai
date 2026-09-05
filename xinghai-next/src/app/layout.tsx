@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HeroVideo from "@/components/HeroVideo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -35,6 +36,12 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
+        {/* 全站固定背景：星云漩涡视频（fixed，所有页面共用，内容浮于其上）。
+            暗纱统一压暗视频，保证各页普通文字的可读性 */}
+        <div className="fixed inset-0 -z-10">
+          <HeroVideo />
+          <div className="absolute inset-0 bg-[#050810]/45" />
+        </div>
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

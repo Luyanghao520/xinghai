@@ -6,26 +6,27 @@
  * ✔ 全站主题相关值（颜色/字体/间距）全部收敛为这里的 CSS 变量，
  *   正式视觉设计阶段只需修改本文件，全站自动生效——
  *   解决旧栈「改一处、全站乱」的问题。
+ * ✔ 主题为「深色玻璃」：全站共用固定背景视频（layout 中的 HeroVideo），
+ *   卡片/导航/页脚使用半透明 surface + 毛玻璃，内容浮在视频之上。
  * ✔ Tailwind v4 用 @theme 生成工具类（bg-primary / text-foreground 等），
  *   因此无需 tailwind.config.ts。
- * ✔ 暗色模式暂不启用，占位阶段保持单一浅色基调，待设计阶段统一补充。
  */
 :root {
-  /* 页面与容器 */
-  --background: #f5f7fb;        /* 页面底色 */
-  --surface: #ffffff;           /* 卡片 / 导航 / 页脚底色 */
-  --foreground: #111827;        /* 正文主色 */
-  --muted-foreground: #6b7280;  /* 次要文字 */
-  --border: #e5e7eb;            /* 分隔线 */
+  /* 页面与容器（surface 为半透明玻璃色，配合 backdrop-blur 使用） */
+  --background: #050810;         /* 兜底底色（背景视频加载前的 html 底色） */
+  --surface: rgba(13, 20, 38, 0.6);
+  --foreground: #e8eefc;         /* 正文主色（浅） */
+  --muted-foreground: #93a2c4;   /* 次要文字 */
+  --border: rgba(148, 163, 204, 0.22);
 
   /* 主题色（占位色板：星海蓝 + 星光琥珀，正式设计阶段在此精修） */
-  --primary: #1d4ed8;           /* 主色 */
-  --primary-strong: #1e3a8a;    /* 主色-深（标题 / hover） */
-  --primary-soft: #e4edfd;      /* 主色-浅底（标签 / ghost hover） */
-  --accent: #f59e0b;            /* 强调色 */
+  --primary: #5b8cff;            /* 主色（深色页面上作文字/按钮底均可读） */
+  --primary-strong: #a5c3ff;     /* 主色-亮（标题 / hover） */
+  --primary-soft: rgba(91, 140, 255, 0.16); /* 主色-浅底（标签 / ghost hover） */
+  --accent: #fbbf24;             /* 强调色 */
 
   /* 焦点色（键盘可达性） */
-  --ring: #1d4ed8;
+  --ring: #5b8cff;
 }
 
 /* 将变量映射为 Tailwind 工具类 */
@@ -48,8 +49,22 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+/* body 背景保持透明：让 layout 中 fixed 的全站背景视频透出 */
 body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* 视口兜底色（过卷动区域/视频未加载时） */
+html {
+  background: var(--background);
+}
+
+/* 视频背景上的文字保护：柔和投影让普通段落压在亮部也可读
+   （卡片内为深色玻璃底，投影几乎不可见，无副作用） */
+main :is(h1, h2, h3, h4, p, li, a) {
+  text-shadow:
+    0 1px 2px rgba(3, 7, 18, 0.6),
+    0 0 16px rgba(3, 7, 18, 0.4);
 }

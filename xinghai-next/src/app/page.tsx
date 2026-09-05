@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import HeroVideo from "@/components/HeroVideo";
 import { Card } from "@/components/ui/Card";
 import { buttonStyles } from "@/components/ui/Button";
 import {
@@ -24,9 +23,8 @@ export default function HomePage() {
     <>
       {/* ===== 全屏首屏（100vh，无内容模块） ===== */}
       <section className="relative h-[calc(100vh-4rem)] min-h-[560px] w-full overflow-hidden">
-        {/* 背景视频（旧站 bg-stage.mp4 星云漩涡，A/B 无缝循环 + 海报兜底 + 弱网降级） */}
-        <HeroVideo />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
+        {/* 背景由 layout 的全站固定视频透出（已含全局暗纱）；此处仅轻加深色渐变保证文字可读 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/55" />
 
         <div className="relative mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center gap-6 px-4 text-center text-white sm:px-6">
           <span className="rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm backdrop-blur">
