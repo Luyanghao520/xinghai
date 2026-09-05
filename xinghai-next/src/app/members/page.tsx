@@ -1,38 +1,34 @@
 import type { Metadata } from "next";
-import MemberExplorer, { type MemberView } from "@/components/MemberExplorer";
+import MemberRoster, { type MemberView } from "@/components/MemberRoster";
 import { Card } from "@/components/ui/Card";
 import { listMembers } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "成员",
-  description: "星海艺术团在线成员——按团队查看各团成员与在线状态",
+  description: "星海艺术团在籍成员名册——趣味姓氏图与全团成员一览",
 };
 
 // 成员数据来自数据库，迁移/更新后无需重新构建即可生效
 export const dynamic = "force-dynamic";
 
-/** 成员页：在线成员风格浏览（按团队分组 + 姓氏筛选）。
- * 公开页只展示姓名/团队/届别/职务/特长，不展示任何联系方式。 */
+/** 成员页：在籍成员总览（趣味姓氏图 + 全团名册，不分团队）。
+ * 公开页只展示姓名/届别/职务/特长，不展示任何联系方式。 */
 export default async function MembersPage() {
   const rows = await listMembers();
-  // 在册成员优先（录取/迁移），演示数据排后；联系方式字段绝不进入视图层
-  const members: MemberView[] = rows
-    .map((m) => ({
-      id: m.id,
-      name: m.name,
-      dept: m.dept ?? "未分组",
-      grade: m.grade ?? "—",
-      position: m.position ?? "成员",
-      skill: m.skill ?? "",
-    }))
-    .sort((a, b) => (a.dept < b.dept ? -1 : 1));
+  const members: MemberView[] = rows.map((m) => ({
+    id: m.id,
+    name: m.name,
+    grade: m.grade ?? "—",
+    position: m.position ?? "成员",
+    skill: m.skill ?? "",
+  }));
 
   if (members.length === 0) {
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <h1 className="text-3xl font-bold">成员</h1>
+        <h1 className="text-3xl font-bold">在籍成员</h1>
         <p className="mt-2 text-muted-foreground">
-          星海艺术团的现任成员与毕业校友（联系方式仅限后台可见，不在官网公开）。
+          星海艺术团的现任成员名单（联系方式仅限后台可见，不在官网公开）。
         </p>
         <Card className="mt-8">
           <h2 className="font-semibold">成员数据待迁移</h2>
@@ -47,14 +43,13 @@ export default async function MembersPage() {
     );
   }
 
-  const hasDemo = members.some((m) => rows.find((r) => r.id === m.id)?.source === "demo");
+  const hasDemo = rows.some((r) => r.source === "demo");
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold">在线成员</h1>
+      <h1 className="text-3xl font-bold">在籍成员</h1>
       <p className="mt-2 text-muted-foreground">
-        按团队浏览星海现役成员：点击团队卡片查看团内详情，支持按姓氏筛选
-        （联系方式仅限后台可见，不在官网公开）。
+        星海艺术团全体在籍成员一览（联系方式仅限后台可见，不在官网公开）。
       </p>
 
       {hasDemo && (
@@ -64,7 +59,7 @@ export default async function MembersPage() {
         </p>
       )}
 
-      <MemberExplorer members={members} />
+      <MemberRoster members={members} />
     </section>
   );
 }
