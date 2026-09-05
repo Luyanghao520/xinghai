@@ -11,7 +11,9 @@ import { useEffect, useRef, useState } from "react";
  * - 动效减弱：prefers-reduced-motion 时仅显示海报；
  * - 看门狗（限次+退避）：画面无推进 → 先续播、再重载解码器、最后放弃停在海报层，
  *   杜绝弱网下 load() 反复重下 3.5MB 的自伤循环；
- * - 标签页隐藏时暂停，回来续播。
+ * - 标签页隐藏时暂停，回来续播；
+ * - 指针视差：光标位置驱动视频层反向轻移（桌面精确指针 + 未减动效时）；
+ * - 点击涟漪：在背景空白处点击，从点击处荡开两圈蓝色光环。
  *
  * 实现注意（旧站实测结论）：video 元素在 effect 里用原生标签注入，不经 React 属性管理——
  * React 受控 video 在部分环境下解码器启动被搁置（满缓冲却不出帧），原生标签无此问题。
@@ -23,7 +25,49 @@ const CROSSFADE_S = 1.1;
 
 export default function HeroVideo() {
   const hostRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const rippleLayerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+
+  /* 点击涟漪：背景空白处点击 → 两圈蓝色光环荡开（减动效时自动禁用）。
+     与视频播放解耦的独立 effect：弱网海报模式下也能响应。 */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = rootRef.current;
+    const layer = rippleLayerRef.current;
+    if (!root || !layer) return;
+
+    const onRippleDown = (e: PointerEvent) => {
+      const rect = root.getBoundingClientRect();
+      if (
+        e.clientY < rect.top ||
+        e.clientY > rect.bottom ||
+        e.clientX < rect.left ||
+        e.clientX > rect.right
+      ) {
+        return;
+      }
+      // 按钮/链接/输入控件上的点击不涟漪
+      const target = e.target as Element | null;
+      if (target?.closest?.("a,button,input,textarea,select")) return;
+
+      for (const [delay, cls] of [
+        [0, "bg-ripple"],
+        [160, "bg-ripple bg-ripple-2"],
+      ] as const) {
+        window.setTimeout(() => {
+          const ring = document.createElement("div");
+          ring.className = cls;
+          ring.style.left = `${e.clientX - rect.left}px`;
+          ring.style.top = `${e.clientY - rect.top}px`;
+          layer.appendChild(ring);
+          window.setTimeout(() => ring.remove(), 1500);
+        }, delay);
+      }
+    };
+    window.addEventListener("pointerdown", onRippleDown);
+    return () => window.removeEventListener("pointerdown", onRippleDown);
+  }, []);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -158,7 +202,7 @@ export default function HeroVideo() {
   }, []);
 
   return (
-    <div aria-hidden className="absolute inset-0 overflow-hidden bg-[#0a0a0a]">
+    <div ref={rootRef} aria-hidden className="absolute inset-0 overflow-hidden bg-[#0a0a0a]">
       {/* 海报兜底层：视频可播后淡出 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -206,6 +250,9 @@ export default function HeroVideo() {
         }}
       />
 
+      {/* 涟漪图层：点击光环画在这里（在最上层，pointer-events 关闭） */}
+      <div ref={rippleLayerRef} className="pointer-events-none absolute inset-0 overflow-hidden" />
+
       {/* 顶/底轻渐变：只保导航与页脚文字可读 */}
       <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/50 to-transparent" />
@@ -249,6 +296,30 @@ export default function HeroVideo() {
         }
         @media (prefers-reduced-motion: reduce) {
           .bg-nebula { animation: none; }
+        }
+        /* 点击涟漪：双圈蓝色光环，荡开 + 淡出 */
+        .bg-ripple {
+          position: absolute;
+          width: 140px;
+          height: 140px;
+          margin: -70px 0 0 -70px;
+          border-radius: 9999px;
+          border: 2px solid rgba(147, 197, 253, 0.7);
+          box-shadow: 0 0 26px rgba(96, 165, 250, 0.4),
+            inset 0 0 20px rgba(147, 197, 253, 0.28);
+          opacity: 0;
+          transform: scale(0.3);
+          animation: bg-ripple 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+          pointer-events: none;
+        }
+        .bg-ripple-2 {
+          border-color: rgba(129, 140, 248, 0.55);
+          animation-duration: 1.45s;
+        }
+        @keyframes bg-ripple {
+          0% { opacity: 0; transform: scale(0.3); }
+          14% { opacity: 0.9; }
+          100% { opacity: 0; transform: scale(8.5); }
         }
       `}</style>
     </div>
