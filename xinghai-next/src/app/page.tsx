@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import HeroVideo from "@/components/HeroVideo";
 import { Card } from "@/components/ui/Card";
 import { buttonStyles } from "@/components/ui/Button";
 import {
@@ -23,14 +24,8 @@ export default function HomePage() {
     <>
       {/* ===== 全屏首屏（100vh，无内容模块） ===== */}
       <section className="relative h-[calc(100vh-4rem)] min-h-[560px] w-full overflow-hidden">
-        <Image
-          src="/uploads/bg-starfield.jpg"
-          alt="星海艺术团舞台背景"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
+        {/* 背景视频（旧站 bg-stage.mp4 星云漩涡，A/B 无缝循环 + 海报兜底 + 弱网降级） */}
+        <HeroVideo />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
 
         <div className="relative mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center gap-6 px-4 text-center text-white sm:px-6">
