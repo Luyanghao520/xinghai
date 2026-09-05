@@ -1,0 +1,28 @@
+# Render.com 部署蓝图（任务书第六节方案 A：传统托管平台，支持持久文件系统）
+#
+# 使用方式：登录 Render → New → Blueprint → 选择本仓库，
+# 并把 Blueprint Instance Directory 指到 xinghai-next（本文件所在目录）。
+#
+# ⚠ SQLite 持久化说明：
+#   免费档（free）实例没有持久磁盘，每次重新部署 data/ 都会清空；
+#   需要报名数据跨部署保留时，切换到付费实例并启用下方 disk 配置，
+#   或尽快迁移到方案 B（Supabase Postgres）。
+services:
+  - type: web
+    name: xinghai-next
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # 挂载持久磁盘后，把 SQLite 文件指到磁盘挂载点：
+      # - key: XINGHAI_DB_PATH
+      #   value: /var/data/xinghai.db
+    # 持久磁盘（免费档不支持，启用时需同时打开上面的 XINGHAI_DB_PATH）：
+    # disk:
+    #   name: xinghai-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
