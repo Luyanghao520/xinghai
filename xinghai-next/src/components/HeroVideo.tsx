@@ -62,6 +62,7 @@ export default function HeroVideo() {
 
     const tick = () => {
       raf = window.requestAnimationFrame(tick);
+      applyParallax(); // 视差缓动独立于视频状态，始终运行
       if (!b || swapping || document.hidden) return;
       const cur = active ? a : b;
       if (cur.paused) void cur.play().catch(() => {});
@@ -125,8 +126,30 @@ export default function HeroVideo() {
     };
     document.addEventListener("visibilitychange", onVisibility);
 
+    /* ---- 指针视差（可交互背景）：光标位置 → 视频层反向轻移（惯性缓动） ----
+       仅桌面精确指针 + 未开启减动效时启用；scale(1.08) 留出位移余量防露边 */
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    const canParallax = finePointer && !reducedMotion;
+    let targetX = 0;
+    let targetY = 0;
+    let curX = 0;
+    let curY = 0;
+    const onPointerMove = (e: PointerEvent) => {
+      targetX = (e.clientX / window.innerWidth - 0.5) * 2; // -1..1
+      targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    if (canParallax) window.addEventListener("pointermove", onPointerMove);
+
+    const applyParallax = () => {
+      if (!canParallax) return;
+      curX += (targetX - curX) * 0.055;
+      curY += (targetY - curY) * 0.055;
+      host.style.transform = `scale(1.08) translate3d(${(-curX * 1.4).toFixed(3)}%, ${(-curY * 1.1).toFixed(3)}%, 0)`;
+    };
+
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      if (canParallax) window.removeEventListener("pointermove", onPointerMove);
       window.cancelAnimationFrame(raf);
       a.removeEventListener("playing", onPlaying);
       a.pause();
@@ -146,8 +169,18 @@ export default function HeroVideo() {
         }`}
       />
 
-      {/* 视频层：内容由 effect 原生注入（A/B 交叉淡化） */}
-      <div ref={hostRef} className="absolute inset-0" />
+      {/* 视频层：内容由 effect 原生注入（A/B 交叉淡化）；整层随指针视差轻移 */}
+      <div ref={hostRef} className="bg-video-host absolute inset-0" />
+
+      {/* 全幅深蓝 screen 洗色：screen 混合数学上保证画面不存在纯黑像素，
+          源片残余的暗斑一律被抬成深蓝纹理 */}
+      <div
+        className="absolute inset-0 mix-blend-screen"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(30,64,175,0.18) 0%, rgba(8,47,73,0.15) 55%, rgba(30,64,175,0.12) 100%)",
+        }}
+      />
 
       {/* 蓝色星云辉光：screen 混合把光晕“加”进视频暗部，消除死黑 + 持续脉动
           （移植旧站 .bg-nebula n1/n2 的构图） */}
@@ -197,6 +230,11 @@ export default function HeroVideo() {
         .bg-video.on {
           opacity: 1;
         }
+        /* 视差宿主：scale(1.08) 常驻留出位移余量，防止轻移露边 */
+        .bg-video-host {
+          transform: scale(1.08);
+          will-change: transform;
+        }
         .bg-nebula {
           position: absolute;
           pointer-events: none;
@@ -206,8 +244,8 @@ export default function HeroVideo() {
           animation: nebula-pulse 9s ease-in-out infinite;
         }
         @keyframes nebula-pulse {
-          0%, 100% { opacity: 0.38; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(1.12); }
+          0%, 100% { opacity: 0.45; transform: scale(1); }
+          50% { opacity: 0.68; transform: scale(1.12); }
         }
         @media (prefers-reduced-motion: reduce) {
           .bg-nebula { animation: none; }
