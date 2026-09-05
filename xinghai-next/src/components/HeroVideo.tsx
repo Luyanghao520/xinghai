@@ -51,6 +51,10 @@ export default function HeroVideo() {
       const target = e.target as Element | null;
       if (target?.closest?.("a,button,input,textarea,select")) return;
 
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+
+      // 双圈光环
       for (const [delay, cls] of [
         [0, "bg-ripple"],
         [160, "bg-ripple bg-ripple-2"],
@@ -58,11 +62,27 @@ export default function HeroVideo() {
         window.setTimeout(() => {
           const ring = document.createElement("div");
           ring.className = cls;
-          ring.style.left = `${e.clientX - rect.left}px`;
-          ring.style.top = `${e.clientY - rect.top}px`;
+          ring.style.left = `${cx}px`;
+          ring.style.top = `${cy}px`;
           layer.appendChild(ring);
           window.setTimeout(() => ring.remove(), 1500);
         }, delay);
+      }
+
+      // 水珠小点：7 颗发光小水滴从点击处随机方向飞散、减速淡出（像溅起的水花）
+      for (let i = 0; i < 7; i++) {
+        const angle = (Math.PI * 2 * i) / 7 + Math.random() * 0.9;
+        const dist = 48 + Math.random() * 115;
+        const dot = document.createElement("div");
+        dot.className = "bg-drop";
+        dot.style.left = `${cx}px`;
+        dot.style.top = `${cy}px`;
+        dot.style.setProperty("--dx", `${(Math.cos(angle) * dist).toFixed(0)}px`);
+        dot.style.setProperty("--dy", `${(Math.sin(angle) * dist).toFixed(0)}px`);
+        dot.style.setProperty("--s", `${(3 + Math.random() * 3).toFixed(1)}px`);
+        dot.style.animationDelay = `${Math.round(Math.random() * 110)}ms`;
+        layer.appendChild(dot);
+        window.setTimeout(() => dot.remove(), 1200);
       }
     };
     window.addEventListener("pointerdown", onRippleDown);
@@ -320,6 +340,24 @@ export default function HeroVideo() {
           0% { opacity: 0; transform: scale(0.3); }
           14% { opacity: 0.9; }
           100% { opacity: 0; transform: scale(8.5); }
+        }
+        /* 水珠小点：向外飞散的发光小水滴 */
+        .bg-drop {
+          position: absolute;
+          width: var(--s, 4px);
+          height: var(--s, 4px);
+          margin: calc(var(--s, 4px) / -2) 0 0 calc(var(--s, 4px) / -2);
+          border-radius: 9999px;
+          background: radial-gradient(circle at 35% 35%, #dbeafe, #60a5fa 62%, rgba(59, 130, 246, 0.2));
+          box-shadow: 0 0 9px rgba(147, 197, 253, 0.85);
+          opacity: 0;
+          animation: bg-drop 0.95s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+          pointer-events: none;
+        }
+        @keyframes bg-drop {
+          0% { opacity: 0; transform: translate(0, 0) scale(0.4); }
+          16% { opacity: 1; }
+          100% { opacity: 0; transform: translate(var(--dx, 60px), var(--dy, 60px)) scale(0.55); }
         }
       `}</style>
     </div>
