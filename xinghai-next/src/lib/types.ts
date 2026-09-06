@@ -97,6 +97,36 @@ export interface ApplyCreateInput {
   pwdHash: string;
 }
 
+/** 管理员角色：super=超级管理员（可管理其他管理员） / admin=普通管理人员 */
+export type AdminRole = "super" | "admin";
+
+/** 管理员账号（公开形态，pwd 永不包含） */
+export interface AdminUser {
+  id: string;
+  username: string;
+  name: string;
+  role: AdminRole;
+  campus: string | null;
+  status: string; // active / disabled
+  created: string;
+  updated: string;
+  source: string;
+}
+
+/** 管理员认证行（内部使用，含密码哈希；严禁出库到接口/页面） */
+export interface AdminUserAuthRow extends AdminUser {
+  pwd: string;
+}
+
+/** 新建管理员的入参（pwd 为**哈希后**的值） */
+export interface AdminUserCreateInput {
+  username: string;
+  name: string;
+  role: AdminRole;
+  campus?: string;
+  pwdHash: string;
+}
+
 /** 成员记录（公开页只展示 name/grade/dept/position/skill 等非联系方式字段） */
 export interface MemberRecord {
   id: string;
@@ -209,6 +239,23 @@ export interface DataStore {
   /** 更新申请账号密码哈希（登录升级旧格式 / 重置密码），同时刷新 updated */
   updateApplyPassword(xh: string, pwdHash: string): Promise<boolean>;
 
+  /* ---------- 管理员账号（阶段2：多管理人员 + 角色） ---------- */
+
+  /** 按用户名查管理员认证行（含密码哈希，仅供登录内部使用） */
+  findAdminUserAuthByUsername(username: string): Promise<AdminUserAuthRow | null>;
+  /** 全部管理员账号（不含 pwd），超管的用户管理页使用 */
+  listAdminUsers(): Promise<AdminUser[]>;
+  /** 按 id 查管理员（不含 pwd），会话有效性校验使用 */
+  findAdminUserById(id: string): Promise<AdminUser | null>;
+  /** 新建管理员（用户名重复抛 DuplicateAdminUserError） */
+  createAdminUser(input: AdminUserCreateInput): Promise<AdminUser>;
+  /** 更新管理员密码哈希（重置/自行改密） */
+  updateAdminUserPassword(id: string, pwdHash: string): Promise<boolean>;
+  /** 停用 / 启用管理员 */
+  setAdminUserStatus(id: string, status: "active" | "disabled"): Promise<boolean>;
+  /** 调整管理员角色（super / admin） */
+  setAdminUserRole(id: string, role: AdminRole): Promise<boolean>;
+
   listMembers(): Promise<MemberRecord[]>;
   listAlumni(): Promise<AlumniRecord[]>;
 }
@@ -234,5 +281,13 @@ export class DuplicateApplyError extends Error {
   constructor() {
     super("该学号已申请过账号");
     this.name = "DuplicateApplyError";
+  }
+}
+
+/** 用户名已存在（管理员账号） */
+export class DuplicateAdminUserError extends Error {
+  constructor() {
+    super("该用户名已存在");
+    this.name = "DuplicateAdminUserError";
   }
 }

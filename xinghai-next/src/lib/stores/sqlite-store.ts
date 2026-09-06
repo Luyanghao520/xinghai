@@ -8,9 +8,14 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 
 import { SCHEMA_SQL } from "../schema";
+import { hashPassword } from "../auth";
 import {
   DuplicateApplyError,
+  DuplicateAdminUserError,
   DuplicateRegistrationError,
+  type AdminUser,
+  type AdminUserAuthRow,
+  type AdminUserCreateInput,
   type ApplyAuthRow,
   type ApplyCreateInput,
   type ApplyRecord,
@@ -71,6 +76,19 @@ export async function createSqliteStore(): Promise<DataStore> {
   const db: Database = new Database(DB_PATH);
   db.pragma("journal_mode = WAL"); // 提升并发读写表现（与旧栈优化一致）
   db.exec(SCHEMA_SQL);
+
+  // 种子：默认站长超级管理员（仅首次创建；登录后请立即在后台「修改密码」中更改）
+  const seeded = db.prepare("SELECT 1 FROM users WHERE username = 'admin'").get();
+  if (!seeded) {
+    const now = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO users (id, username, pwd, name, role, campus, status, created, updated, source)
+       VALUES (?, 'admin', ?, '站长', 'super', NULL, 'active', ?, ?, 'new')`,
+    ).run(randomUUID(), hashPassword("Xinghai@2026"), now, now);
+    console.warn(
+      "[db] 已创建默认超级管理员：admin / Xinghai@2026 —— 请立即登录后台修改密码！",
+    );
+  }
 
   const isDuplicateConstraint = (err: unknown): boolean =>
     typeof err === "object" &&
@@ -328,6 +346,79 @@ export async function createSqliteStore(): Promise<DataStore> {
           "UPDATE applies SET pwd = @pwd, updated = @updated WHERE xh = @xh",
         )
         .run({ xh, pwd: pwdHash, updated: new Date().toISOString() });
+      return res.changes > 0;
+    },
+
+    /* ---------- 管理员账号（阶段2） ---------- */
+
+    async findAdminUserAuthByUsername(username: string) {
+      const row = db
+        .prepare("SELECT * FROM users WHERE username = @username LIMIT 1")
+        .get({ username });
+      return row ? (row as AdminUserAuthRow) : null;
+    },
+
+    async listAdminUsers() {
+      return db
+        .prepare(
+          `SELECT id, username, name, role, campus, status, created, updated, source
+           FROM users ORDER BY role = 'super' DESC, created`,
+        )
+        .all() as AdminUser[];
+    },
+
+    async findAdminUserById(id: string) {
+      const row = db
+        .prepare(
+          `SELECT id, username, name, role, campus, status, created, updated, source
+           FROM users WHERE id = @id`,
+        )
+        .get({ id });
+      return row ? (row as AdminUser) : null;
+    },
+
+    async createAdminUser(input: AdminUserCreateInput) {
+      const dup = db
+        .prepare("SELECT 1 FROM users WHERE username = @username LIMIT 1")
+        .get({ username: input.username });
+      if (dup) throw new DuplicateAdminUserError();
+      const now = new Date().toISOString();
+      const record: AdminUser = {
+        id: randomUUID(),
+        username: input.username,
+        name: input.name,
+        role: input.role,
+        campus: input.campus ?? null,
+        status: "active",
+        created: now,
+        updated: now,
+        source: "new",
+      };
+      db.prepare(
+        `INSERT INTO users (id, username, pwd, name, role, campus, status, created, updated, source)
+         VALUES (@id, @username, @pwd, @name, @role, @campus, @status, @created, @updated, @source)`,
+      ).run({ ...record, pwd: input.pwdHash });
+      return record;
+    },
+
+    async updateAdminUserPassword(id: string, pwdHash: string) {
+      const res = db
+        .prepare("UPDATE users SET pwd = @pwd, updated = @updated WHERE id = @id")
+        .run({ id, pwd: pwdHash, updated: new Date().toISOString() });
+      return res.changes > 0;
+    },
+
+    async setAdminUserStatus(id: string, status: "active" | "disabled") {
+      const res = db
+        .prepare("UPDATE users SET status = @status, updated = @updated WHERE id = @id")
+        .run({ id, status, updated: new Date().toISOString() });
+      return res.changes > 0;
+    },
+
+    async setAdminUserRole(id: string, role: "super" | "admin") {
+      const res = db
+        .prepare("UPDATE users SET role = @role, updated = @updated WHERE id = @id")
+        .run({ id, role, updated: new Date().toISOString() });
       return res.changes > 0;
     },
 

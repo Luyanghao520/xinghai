@@ -5,8 +5,11 @@
  */
 
 import {
+  DuplicateAdminUserError,
   DuplicateApplyError,
   DuplicateRegistrationError,
+  type AdminUser,
+  type AdminUserCreateInput,
   type AlumniRecord,
   type ApplyAuthRow,
   type ApplyCreateInput,
@@ -24,6 +27,8 @@ export function createMemoryStore(): DataStore {
   const registrations: RegistrationRecord[] = [];
   const applies: ApplyRecord[] = [];
   const applyAuth = new Map<string, string>(); // xh → 密码哈希
+  const adminUsers = new Map<string, AdminUser>(); // username → 账号
+  const adminAuth = new Map<string, string>(); // username → 密码哈希
   const members: MemberRecord[] = [];
 
   return {
@@ -216,6 +221,77 @@ export function createMemoryStore(): DataStore {
       applyAuth.set(xh, pwdHash);
       row.updated = new Date().toISOString();
       return true;
+    },
+
+    /* ---------- 管理员账号（阶段2） ---------- */
+
+    async findAdminUserAuthByUsername(username: string) {
+      const row = adminUsers.get(username);
+      if (!row) return null;
+      return { ...row, pwd: adminAuth.get(username) ?? "" };
+    },
+
+    async listAdminUsers() {
+      return [...adminUsers.values()].sort((a) =>
+        a.role === "super" ? -1 : 1,
+      );
+    },
+
+    async findAdminUserById(id: string) {
+      for (const u of adminUsers.values()) if (u.id === id) return { ...u };
+      return null;
+    },
+
+    async createAdminUser(input: AdminUserCreateInput) {
+      if (adminUsers.has(input.username)) throw new DuplicateAdminUserError();
+      const now = new Date().toISOString();
+      const record: AdminUser = {
+        id: crypto.randomUUID(),
+        username: input.username,
+        name: input.name,
+        role: input.role,
+        campus: input.campus ?? null,
+        status: "active",
+        created: now,
+        updated: now,
+        source: "new",
+      };
+      adminUsers.set(input.username, record);
+      adminAuth.set(input.username, input.pwdHash);
+      return { ...record };
+    },
+
+    async updateAdminUserPassword(id: string, pwdHash: string) {
+      for (const [username, u] of adminUsers) {
+        if (u.id === id) {
+          adminAuth.set(username, pwdHash);
+          u.updated = new Date().toISOString();
+          return true;
+        }
+      }
+      return false;
+    },
+
+    async setAdminUserStatus(id: string, status: "active" | "disabled") {
+      for (const u of adminUsers.values()) {
+        if (u.id === id) {
+          u.status = status;
+          u.updated = new Date().toISOString();
+          return true;
+        }
+      }
+      return false;
+    },
+
+    async setAdminUserRole(id: string, role: "super" | "admin") {
+      for (const u of adminUsers.values()) {
+        if (u.id === id) {
+          u.role = role;
+          u.updated = new Date().toISOString();
+          return true;
+        }
+      }
+      return false;
     },
     async listMembers(): Promise<MemberRecord[]> {
       return [...members];

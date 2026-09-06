@@ -3,14 +3,17 @@ import Link from "next/link";
 import AdminLogin from "@/components/admin/AdminLogin";
 import AdminLogout from "@/components/admin/AdminLogout";
 import ApplyActions from "@/components/admin/ApplyActions";
+import ChangeOwnPassword from "@/components/admin/ChangeOwnPassword";
 import RegistrationActions from "@/components/admin/RegistrationActions";
+import UserManagement from "@/components/admin/UserManagement";
 import { Card } from "@/components/ui/Card";
 import { buttonStyles } from "@/components/ui/Button";
-import { adminAuthed, adminEnabled } from "@/lib/admin-auth";
+import { adminAuthed, adminSession } from "@/lib/admin-auth";
 import {
   applyStats,
-  listApplies,
+  listAdminUsers,
   listAlumni,
+  listApplies,
   listMembers,
   listRegistrations,
   registrationStats,
@@ -47,29 +50,21 @@ export default async function AdminPage({
   const { q, s } = await searchParams;
   const activeTab = STATUS_TABS.find((t) => t.key === s) ?? STATUS_TABS[0];
 
-  if (!adminEnabled()) {
-    return (
-      <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <Card className="mx-auto max-w-lg">
-          <h1 className="text-xl font-semibold">后台未启用</h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            请在 <code className="rounded bg-background px-1">xinghai-next/.env</code>{" "}
-            中配置 <code className="rounded bg-background px-1">ADMIN_TOKEN=你的口令</code>
-            （参考 <code className="rounded bg-background px-1">.env.example</code>），然后重启服务。
-          </p>
-        </Card>
-      </section>
-    );
-  }
-
   if (!(await adminAuthed())) {
     return (
       <section className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
-        <h1 className="mb-8 text-center text-2xl font-bold">星海艺术团 · 后台</h1>
+        <h1 className="mb-1 text-center text-2xl font-bold">星海艺术团 · 管理后台</h1>
+        <p className="mb-8 text-center text-sm text-muted-foreground">
+          仅限主席团与部门管理人员使用
+        </p>
         <AdminLogin />
       </section>
     );
   }
+
+  const session = await adminSession();
+  const isSuper = session?.role === "super";
+  const managerUsers = isSuper ? await listAdminUsers() : [];
 
   const [stats, rows, aStats, applies, members, alumni] = await Promise.all([
     registrationStats(),
@@ -91,7 +86,12 @@ export default async function AdminPage({
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">后台 · 招新数据</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold">后台 · 招新数据</h1>
+          <span className="rounded-full bg-primary-soft px-3 py-1 text-sm text-primary">
+            {session?.role === "super" ? "超级管理员" : "管理人员"} · {session?.name}
+          </span>
+        </div>
         <AdminLogout />
       </div>
 
@@ -264,6 +264,25 @@ export default async function AdminPage({
           </tbody>
         </table>
       </div>
+
+      {/* 修改自己的密码（应急口令通道不适用） */}
+      <h2 className="mt-10 text-lg font-semibold">账号与安全</h2>
+      <Card className="mt-3">
+        <ChangeOwnPassword />
+      </Card>
+
+      {/* 用户管理（仅超级管理员）：管理人员账号的创建 / 重置 / 停用 / 角色调整 */}
+      {isSuper && (
+        <>
+          <h2 className="mt-10 text-lg font-semibold">
+            用户管理
+            <span className="ml-2 text-sm font-normal text-muted-foreground">
+              新建管理人员账号、重置密码、停用启用与角色调整（{managerUsers.length} 个账号）
+            </span>
+          </h2>
+          <UserManagement users={managerUsers} currentUid={session?.uid ?? ""} />
+        </>
+      )}
 
       <p className="mt-10 text-center text-sm text-muted-foreground">
         <Link href="/" className="hover:text-foreground">

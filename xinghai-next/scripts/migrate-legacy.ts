@@ -38,6 +38,8 @@ interface Mapping {
   source: string;
   /** 额外常量列（列名 → 取值方式：row 的字段名） */
   extra?: Record<string, string>;
+  /** 列重命名（新列名 → 旧列名），如 users 表 xh → username */
+  rename?: Record<string, string>;
 }
 
 const MAPPINGS: Mapping[] = [
@@ -91,6 +93,16 @@ const MAPPINGS: Mapping[] = [
     ],
     source: "legacy",
   },
+  {
+    // 干部账号：主席=超级管理员，其他=管理人员；密码保持旧哈希，
+    // 首次登录（配置 LEGACY_SECRET 后）自动升级为 scrypt
+    dbFile: "users.db",
+    legacyTable: "users",
+    targetTable: "users",
+    columns: ["pwd", "name", "role", "campus", "status"],
+    rename: { username: "xh" },
+    source: "legacy",
+  },
 ];
 
 function main(): void {
@@ -124,7 +136,14 @@ function main(): void {
     const legacy = opened.get(legacyPath)!;
 
     const extraCols = Object.keys(m.extra ?? {});
-    const allCols = [...m.columns, ...extraCols];
+    const renameCols = Object.keys(m.rename ?? {});
+    // users 表的 created/updated 由特判补齐（见下方 targetTable === 'users' 分支）
+    const allCols = [
+      ...m.columns,
+      ...extraCols,
+      ...renameCols,
+      ...(m.targetTable === "users" ? ["created", "updated"] : []),
+    ];
     const stmt = target.prepare(
       `INSERT OR IGNORE INTO ${m.targetTable}
          (id, ${allCols.join(", ")}, source)
@@ -152,8 +171,22 @@ function main(): void {
       for (const [newCol, legacyCol] of Object.entries(m.extra ?? {})) {
         params[newCol] = row[legacyCol] ?? null;
       }
+      for (const [newCol, legacyCol] of Object.entries(m.rename ?? {})) {
+        params[newCol] = row[legacyCol] ?? null;
+      }
       if (m.targetTable === "registrations") {
         params.adjust = row.adjust ? 1 : 0;
+      }
+      if (m.targetTable === "users") {
+        // 旧角色映射：主席 → 超级管理员，其余 → 管理人员；
+        // 旧 status 为「在团」等文案，统一规范化为 active（登录校验依据）；
+        // created/updated 由迁移时间填充（users 表 NOT NULL 且无默认值，
+        // 缺了会被 INSERT OR IGNORE 静默吞掉——曾经踩过的坑）
+        params.role = row.role === "主席" ? "super" : "admin";
+        params.status = "active";
+        const now = new Date().toISOString();
+        params.created = now;
+        params.updated = now;
       }
       const res = stmt.run(params);
       if (res.changes > 0) imported += 1;
@@ -172,7 +205,7 @@ function main(): void {
 
   // 3. 汇总校验
   console.log(`\n迁移完成：新导入 ${totalImported} 条，幂等跳过 ${totalSkipped} 条`);
-  for (const t of ["registrations", "applies", "members", "alumni"]) {
+  for (const t of ["registrations", "applies", "members", "alumni", "users"]) {
     const rows = target
       .prepare(`SELECT source, COUNT(*) AS c FROM ${t} GROUP BY source`)
       .all() as Array<{ source: string; c: number }>;

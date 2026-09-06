@@ -88,6 +88,21 @@ CREATE TABLE IF NOT EXISTS alumni (
   source    TEXT NOT NULL DEFAULT 'legacy'
 );
 
+-- 干部/管理员账号（阶段2）：主席=super，其他管理人员=admin
+CREATE TABLE IF NOT EXISTS users (
+  id       TEXT PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  pwd      TEXT NOT NULL,
+  name     TEXT NOT NULL,
+  role     TEXT NOT NULL DEFAULT 'admin',
+  campus   TEXT,
+  status   TEXT NOT NULL DEFAULT 'active',
+  created  TEXT NOT NULL,
+  updated  TEXT NOT NULL,
+  source   TEXT NOT NULL DEFAULT 'legacy'
+);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_users_username ON users(username);
+
 -- 防重复提交：新提交（source='new'）的手机号/邮箱不允许重复；
 -- 迁移的历史数据不参与该约束（旧栈历史上存在同号多届报名的可能）。
 CREATE UNIQUE INDEX IF NOT EXISTS uq_regs_phone_new

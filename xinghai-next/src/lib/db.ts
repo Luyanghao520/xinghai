@@ -12,6 +12,10 @@
 
 import { createMemoryStore } from "./stores/memory-store";
 import {
+  type AdminRole,
+  type AdminUser,
+  type AdminUserAuthRow,
+  type AdminUserCreateInput,
   type AlumniRecord,
   type ApplyAuthRow,
   type ApplyCreateInput,
@@ -105,6 +109,51 @@ export async function findApplyAuthByXh(xh: string): Promise<ApplyAuthRow | null
 /** 更新申请账号密码（登录升级旧格式 / 重置密码） */
 export async function updateApplyPassword(xh: string, pwdHash: string): Promise<boolean> {
   return (await getStore()).updateApplyPassword(xh, pwdHash);
+}
+
+/* ---------- 管理员账号（阶段2：多管理人员 + 角色） ---------- */
+
+/** 登录内部使用：按用户名取管理员认证行（含密码哈希，严禁对外返回） */
+export async function findAdminUserAuthByUsername(
+  username: string,
+): Promise<AdminUserAuthRow | null> {
+  return (await getStore()).findAdminUserAuthByUsername(username);
+}
+
+export async function listAdminUsers(): Promise<AdminUser[]> {
+  return (await getStore()).listAdminUsers();
+}
+
+export async function findAdminUserById(id: string): Promise<AdminUser | null> {
+  return (await getStore()).findAdminUserById(id);
+}
+
+/** 新建管理员（用户名重复抛 DuplicateAdminUserError；pwdHash 须先经 hashPassword） */
+export async function createAdminUser(
+  input: AdminUserCreateInput,
+): Promise<AdminUser> {
+  return (await getStore()).createAdminUser(input);
+}
+
+export async function updateAdminUserPassword(
+  id: string,
+  pwdHash: string,
+): Promise<boolean> {
+  return (await getStore()).updateAdminUserPassword(id, pwdHash);
+}
+
+export async function setAdminUserStatus(
+  id: string,
+  status: "active" | "disabled",
+): Promise<boolean> {
+  return (await getStore()).setAdminUserStatus(id, status);
+}
+
+export async function setAdminUserRole(
+  id: string,
+  role: AdminRole,
+): Promise<boolean> {
+  return (await getStore()).setAdminUserRole(id, role);
 }
 
 /* ---------- 招新申请（旧栈 applies 审核体系，只读展示） ---------- */
